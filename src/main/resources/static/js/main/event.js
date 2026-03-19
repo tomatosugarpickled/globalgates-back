@@ -24,12 +24,12 @@ window.onload = () => {
 };
 
 function showTimedToast({
-    toastElement,
-    message,
-    duration = 3000,
-    activeTimer = null,
-    setActiveTimer = null,
-}) {
+                            toastElement,
+                            message,
+                            duration = 3000,
+                            activeTimer = null,
+                            setActiveTimer = null,
+                        }) {
     if (!toastElement) {
         return;
     }
@@ -72,14 +72,14 @@ function escapeHtml(value) {
 // 더보기 메뉴는 버튼 위치를 기준으로 뜨되 화면 밖으로 밀리면 안 된다.
 // 추가 의존성 없이 동일 계산을 보장하려고 좌표 계산을 파일 안에 유지한다.
 function calculateMoreMenuPosition({
-    windowWidth,
-    windowHeight,
-    buttonRect,
-    menuWidth,
-    menuHeight,
-    gap = 8,
-    margin = 12,
-}) {
+                                       windowWidth,
+                                       windowHeight,
+                                       buttonRect,
+                                       menuWidth,
+                                       menuHeight,
+                                       gap = 8,
+                                       margin = 12,
+                                   }) {
     const safeMenuWidth = Math.max(0, Number(menuWidth) || 0);
     const safeMenuHeight = Math.max(0, Number(menuHeight) || 0);
     const maxLeft = Math.max(margin, windowWidth - safeMenuWidth - margin);
@@ -88,12 +88,12 @@ function calculateMoreMenuPosition({
     const bottomAlignedTop = buttonRect.bottom + gap;
     const topIfOverflow = buttonRect.top - safeMenuHeight - gap;
     const top = safeMenuHeight > 0 &&
-        bottomAlignedTop + safeMenuHeight > windowHeight - margin &&
-        topIfOverflow >= margin
+    bottomAlignedTop + safeMenuHeight > windowHeight - margin &&
+    topIfOverflow >= margin
         ? topIfOverflow
         : Math.max(margin, bottomAlignedTop);
 
-    return { left, top };
+    return {left, top};
 }
 
 // 피드에서는 긴 본문만 접기/펼치기 UI가 필요하다.
@@ -145,7 +145,7 @@ function getTextContent(element) {
 }
 
 function cloneTaggedUsers(users) {
-    return users.map((user) => ({ ...user }));
+    return users.map((user) => ({...user}));
 }
 
 function getTaggedUserSummary(users) {
@@ -186,12 +186,12 @@ function buildTagResultMarkup(user, isSelected) {
 }
 
 function renderTagResultsPanel({
-    input,
-    resultsElement,
-    users,
-    selectedUsers,
-    resultId,
-}) {
+                                   input,
+                                   resultsElement,
+                                   users,
+                                   selectedUsers,
+                                   resultId,
+                               }) {
     if (!input || !resultsElement) {
         return;
     }
@@ -296,22 +296,22 @@ function getMainPageTagUsers() {
 const attachmentGridLayouts = {
     1: {
         aspectClassName: "media-aspect-ratio media-aspect-ratio--single",
-        columns: [[{ index: 0, className: "media-cell--single" }]],
+        columns: [[{index: 0, className: "media-cell--single"}]],
     },
     2: {
         aspectClassName: "media-aspect-ratio",
         columns: [
-            [{ index: 0, className: "media-cell--left" }],
-            [{ index: 1, className: "media-cell--right" }],
+            [{index: 0, className: "media-cell--left"}],
+            [{index: 1, className: "media-cell--right"}],
         ],
     },
     3: {
         aspectClassName: "media-aspect-ratio",
         columns: [
-            [{ index: 0, className: "media-cell--left-tall" }],
+            [{index: 0, className: "media-cell--left-tall"}],
             [
-                { index: 1, className: "media-cell--right-top" },
-                { index: 2, className: "media-cell--right-bottom" },
+                {index: 1, className: "media-cell--right-top"},
+                {index: 2, className: "media-cell--right-bottom"},
             ],
         ],
     },
@@ -319,24 +319,24 @@ const attachmentGridLayouts = {
         aspectClassName: "media-aspect-ratio",
         columns: [
             [
-                { index: 0, className: "media-cell--top-left" },
-                { index: 2, className: "media-cell--bottom-left" },
+                {index: 0, className: "media-cell--top-left"},
+                {index: 2, className: "media-cell--bottom-left"},
             ],
             [
-                { index: 1, className: "media-cell--top-right" },
-                { index: 3, className: "media-cell--bottom-right" },
+                {index: 1, className: "media-cell--top-right"},
+                {index: 3, className: "media-cell--bottom-right"},
             ],
         ],
     },
 };
 
 function buildAttachmentActionMarkup({
-    index,
-    deleteLabel,
-    removeAttribute,
-    includeEdit = true,
-    editAttribute = "data-attachment-edit-index",
-}) {
+                                         index,
+                                         deleteLabel,
+                                         removeAttribute,
+                                         includeEdit = true,
+                                         editAttribute = "data-attachment-edit-index",
+                                     }) {
     const editButtonMarkup = includeEdit
         ? `<div class="media-btn-row"><button type="button" class="media-btn" ${editAttribute}="${index}"><span>수정</span></button></div>`
         : "";
@@ -345,20 +345,20 @@ function buildAttachmentActionMarkup({
 }
 
 function buildAttachmentMediaCellMarkup({
-    className,
-    mediaMarkup,
-    actionMarkup,
-}) {
+                                            className,
+                                            mediaMarkup,
+                                            actionMarkup,
+                                        }) {
     return `<div class="media-cell ${className}"><div class="media-cell-inner">${mediaMarkup}${actionMarkup}</div></div>`;
 }
 
 function buildAttachmentImageCellMarkup({
-    index,
-    url,
-    className,
-    alt,
-    actionMarkup,
-}) {
+                                            index,
+                                            url,
+                                            className,
+                                            alt,
+                                            actionMarkup,
+                                        }) {
     const mediaMarkup = `<div class="media-img-container" aria-label="미디어" role="group"><div class="media-bg" style="background-image: url('${url}');"></div><img alt="${escapeHtml(alt)}" draggable="false" src="${url}" class="media-img"></div>`;
     return buildAttachmentMediaCellMarkup({
         className,
@@ -368,16 +368,16 @@ function buildAttachmentImageCellMarkup({
 }
 
 function buildAttachmentGridMarkup({
-    count,
-    urls,
-    getAlt,
-    getActionMarkup,
-}) {
+                                       count,
+                                       urls,
+                                       getAlt,
+                                       getActionMarkup,
+                                   }) {
     const layout = attachmentGridLayouts[count] || attachmentGridLayouts[4];
     const columnsMarkup = layout.columns
         .map((column) => {
             const cellsMarkup = column
-                .map(({ index, className }) =>
+                .map(({index, className}) =>
                     buildAttachmentImageCellMarkup({
                         index,
                         url: urls[index],
@@ -400,11 +400,11 @@ function buildAttachmentGridMarkup({
 }
 
 function buildAttachmentVideoMarkup({
-    index = 0,
-    url,
-    fileType,
-    actionMarkup,
-}) {
+                                        index = 0,
+                                        url,
+                                        fileType,
+                                        actionMarkup,
+                                    }) {
     const mediaMarkup = `<div class="media-img-container" aria-label="미디어" role="group"><video class="tweet-modal__attachment-video" controls preload="metadata"><source src="${url}" type="${escapeHtml(fileType)}"></video></div>`;
     const cellMarkup = buildAttachmentMediaCellMarkup({
         className: "media-cell--single",
@@ -416,11 +416,11 @@ function buildAttachmentVideoMarkup({
 }
 
 function buildAttachmentFileCardMarkup({
-    file,
-    index,
-    objectUrl = "",
-    actionMarkup,
-}) {
+                                           file,
+                                           index,
+                                           objectUrl = "",
+                                           actionMarkup,
+                                       }) {
     if (file.type.startsWith("video/")) {
         return buildAttachmentMediaCellMarkup({
             className: "media-cell--single",
@@ -494,20 +494,20 @@ function resetSharedDraftPanelState(draftPanelState) {
 }
 
 function renderDraftPanelChrome({
-    draftPanelState,
-    itemCount,
-    allSelected,
-    actionButton,
-    empty,
-    emptyTitle,
-    emptyBody,
-    footer,
-    selectAllButton,
-    deleteButton,
-    confirmOverlay,
-    confirmTitle,
-    confirmDesc,
-}) {
+                                    draftPanelState,
+                                    itemCount,
+                                    allSelected,
+                                    actionButton,
+                                    empty,
+                                    emptyTitle,
+                                    emptyBody,
+                                    footer,
+                                    selectAllButton,
+                                    deleteButton,
+                                    confirmOverlay,
+                                    confirmTitle,
+                                    confirmDesc,
+                                }) {
     const hasItems = itemCount > 0;
     const emptyCopy = getSharedDraftEmptyCopy();
     const confirmCopy = getSharedDraftConfirmCopy();
@@ -552,17 +552,17 @@ function renderDraftPanelChrome({
 }
 
 function renderMediaAltEditorPanel({
-    edits,
-    activeIndex,
-    previewImage,
-    altInput,
-    altCount,
-    titleElement,
-    prevButton,
-    nextButton,
-    imageUrls,
-    maxLength,
-}) {
+                                       edits,
+                                       activeIndex,
+                                       previewImage,
+                                       altInput,
+                                       altCount,
+                                       titleElement,
+                                       prevButton,
+                                       nextButton,
+                                       imageUrls,
+                                       maxLength,
+                                   }) {
     if (!previewImage || !altInput || !altCount) {
         return;
     }
@@ -584,7 +584,7 @@ function renderMediaAltEditorPanel({
         return;
     }
 
-    const edit = edits[activeIndex] || { alt: "" };
+    const edit = edits[activeIndex] || {alt: ""};
     const alt = edit.alt ?? "";
     altInput.value = alt;
     altCount.textContent = `${alt.length} / ${maxLength.toLocaleString("ko-KR")}`;
@@ -631,16 +631,16 @@ const moreMenuIconPaths = {
 };
 
 function syncComposerSubviewState({
-    composerSection,
-    composeView,
-    activeView = null,
-    subviews = [],
-}) {
+                                      composerSection,
+                                      composeView,
+                                      activeView = null,
+                                      subviews = [],
+                                  }) {
     if (composeView) {
         composeView.hidden = Boolean(activeView);
     }
 
-    subviews.forEach(({ element, className }) => {
+    subviews.forEach(({element, className}) => {
         const isActive = Boolean(activeView) && element === activeView;
 
         if (element) {
@@ -681,7 +681,7 @@ function setupMoreMenu() {
         if (moreLayer.hidden) {
             return;
         }
-        const { left, top } = calculateMoreMenuPosition({
+        const {left, top} = calculateMoreMenuPosition({
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
             buttonRect: moreButton.getBoundingClientRect(),
@@ -897,7 +897,7 @@ function setupPostMoreMenus() {
         const postCard = button.closest(".postCard");
         const handle =
             getPostMoreText(postCard?.querySelector(".postHandle")) || "@user";
-        return { postCard, handle };
+        return {postCard, handle};
     }
 
     function setPostMoreMenuItem(item, action, label, iconMarkup) {
@@ -940,10 +940,10 @@ function setupPostMoreMenus() {
         const items = Array.from(
             menu.querySelectorAll(".post-more-menu__item"),
         );
-        const { handle } = getPostMoreMeta(button);
+        const {handle} = getPostMoreMeta(button);
         const isFollowed = postMoreFollowState.get(handle) ?? false;
         getPostMoreMenuDefinitions(handle, isFollowed, items).forEach(
-            ({ action, label, iconMarkup }, index) => {
+            ({action, label, iconMarkup}, index) => {
                 setPostMoreMenuItem(items[index], action, label, iconMarkup);
             },
         );
@@ -981,7 +981,7 @@ function setupPostMoreMenus() {
 
     // 차단은 즉시 실행하지 않고 확인 모달을 한 단계 더 띄워 오동작을 막는다.
     function openPostMoreBlockModal(button) {
-        const { handle } = getPostMoreMeta(button);
+        const {handle} = getPostMoreMeta(button);
         closePostMoreMenu();
         closePostMoreModal();
         blockHandleTargets.forEach((target) => {
@@ -1000,7 +1000,7 @@ function setupPostMoreMenus() {
     // 실제 메뉴 항목 클릭 시 어떤 후속 UI로 갈지 분기하는 중심 라우터 역할을 한다.
     function handlePostMoreMenuAction(button, menu, item) {
         const action = item.dataset.postMoreAction;
-        const { handle } = getPostMoreMeta(button);
+        const {handle} = getPostMoreMeta(button);
 
         if (action === "follow-toggle") {
             const isFollowed = postMoreFollowState.get(handle) ?? false;
@@ -1276,11 +1276,11 @@ function setupComposerModal() {
 
     const composerProductModal = document.querySelector("[data-composer-product-modal]"); // 판매글 선택 서브뷰
     const composerSubviews = [
-        { element: locationView, className: "isLocationViewOpen" },
-        { element: mediaView, className: "isMediaViewOpen" },
-        { element: tagView, className: "isTagViewOpen" },
-        { element: draftView, className: "isDraftViewOpen" },
-        { element: composerProductModal, className: "isProductViewOpen" }, // 판매글 선택 서브뷰
+        {element: locationView, className: "isLocationViewOpen"},
+        {element: mediaView, className: "isMediaViewOpen"},
+        {element: tagView, className: "isTagViewOpen"},
+        {element: draftView, className: "isDraftViewOpen"},
+        {element: composerProductModal, className: "isProductViewOpen"}, // 판매글 선택 서브뷰
     ];
 
     function syncComposerModalSubviews(activeView = null) {
@@ -1295,7 +1295,7 @@ function setupComposerModal() {
     composerSection.__syncComposerSubviewState = syncComposerModalSubviews;
 
     // 작성 버튼 클릭 시 기본 작성 뷰만 보이게 정리하고 본문으로 포커스를 보낸다.
-    function openComposerModal({ focusEditor = true } = {}) {
+    function openComposerModal({focusEditor = true} = {}) {
         composerSection.hidden = false;
         composerModalOverlay.hidden = false;
         composerSection.classList.add("isExpanded");
@@ -1363,12 +1363,12 @@ function setupComposerModal() {
             composerSection.__renderDraftPanel?.();
         }
         if (typeof composerSection.__closeDraftPanel === "function") {
-            composerSection.__closeDraftPanel({ restoreFocus: false });
+            composerSection.__closeDraftPanel({restoreFocus: false});
         } else if (draftView) {
             draftView.hidden = true;
         }
         if (typeof composerSection.__closeTagPanel === "function") {
-            composerSection.__closeTagPanel({ restoreFocus: false });
+            composerSection.__closeTagPanel({restoreFocus: false});
         } else if (tagView) {
             tagView.hidden = true;
         }
@@ -1509,7 +1509,7 @@ function setupComposerTagInput() {
     }
 
     // `태그 추가` 버튼과 실제 입력창은 동시에 보이지 않도록 상태를 맞춘다.
-    function syncTagInputVisibility({ focus = false } = {}) {
+    function syncTagInputVisibility({focus = false} = {}) {
         const hasTags = getTagDivs().length > 0;
         inputTag.hidden = !hasTags;
         tagEditor.hidden = !isTagEditorOpen;
@@ -1529,7 +1529,7 @@ function setupComposerTagInput() {
     }
 
     // 수동 입력 태그와 카테고리 태그가 같은 렌더링/검증 경로를 타도록 공용 추가 함수로 묶는다.
-    function addComposerTag(rawTag, { silent = false } = {}) {
+    function addComposerTag(rawTag, {silent = false} = {}) {
         const tag = String(rawTag || "").trim();
         const tagDivs = getTagDivs();
 
@@ -1569,7 +1569,7 @@ function setupComposerTagInput() {
 
     tagToggle.addEventListener("click", () => {
         isTagEditorOpen = true;
-        syncTagInputVisibility({ focus: true });
+        syncTagInputVisibility({focus: true});
     });
 
     addTag.addEventListener("keyup", (event) => {
@@ -1624,7 +1624,7 @@ function setupComposerTagInput() {
                 .trim()
                 .replace(/^#/, "");
             if (normalizedTag) {
-                addComposerTag(normalizedTag, { silent: true });
+                addComposerTag(normalizedTag, {silent: true});
             }
         });
         isTagEditorOpen = false;
@@ -1632,7 +1632,7 @@ function setupComposerTagInput() {
     };
     composerSection.__openComposerTagInput = () => {
         isTagEditorOpen = true;
-        syncTagInputVisibility({ focus: true });
+        syncTagInputVisibility({focus: true});
     };
     syncTagInputVisibility();
 }
@@ -1671,10 +1671,10 @@ function setupComposerCategoryTags() {
     checkScroll();
 
     btnLeft.addEventListener("click", () => {
-        scrollEl.scrollBy({ left: -200, behavior: "smooth" });
+        scrollEl.scrollBy({left: -200, behavior: "smooth"});
     });
     btnRight.addEventListener("click", () => {
-        scrollEl.scrollBy({ left: 200, behavior: "smooth" });
+        scrollEl.scrollBy({left: 200, behavior: "smooth"});
     });
 
     scrollEl.addEventListener("click", (event) => {
@@ -1893,16 +1893,16 @@ function setupBoardSelector() {
                 updateBoardMenuPosition();
             }
         },
-        { passive: true },
+        {passive: true},
     );
 
     if (composerSection) {
-        composerSection.__getComposerBoard = () => ({ ...selectedBoard });
+        composerSection.__getComposerBoard = () => ({...selectedBoard});
         composerSection.__setComposerBoard = ({
-            label = "일반",
-            boardValue = "general",
-            communityValue = "",
-        } = {}) => {
+                                                  label = "일반",
+                                                  boardValue = "general",
+                                                  communityValue = "",
+                                              } = {}) => {
             if (boardValue === "community" && communityValue) {
                 const matchedCommunity = communityOptions.find(
                     (option) => option.dataset.communityId === communityValue,
@@ -2144,7 +2144,7 @@ function setupComposerToolbar() {
             }
 
             saveComposerSelection();
-            composerTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+            composerTextarea.dispatchEvent(new Event("input", {bubbles: true}));
         }
 
         syncFormatButtons();
@@ -2174,7 +2174,7 @@ function setupComposerToolbar() {
     }
 
     function cloneComposerMediaEdits(edits) {
-        return edits.map((entry) => ({ ...entry }));
+        return edits.map((entry) => ({...entry}));
     }
 
     function syncComposerMediaEditsToAttachments() {
@@ -2220,7 +2220,7 @@ function setupComposerToolbar() {
         }
 
         if (!canEditMediaAlt && isMediaEditorOpen()) {
-            closeMediaEditor({ restoreFocus: false, discardChanges: true });
+            closeMediaEditor({restoreFocus: false, discardChanges: true});
         }
     }
 
@@ -2259,9 +2259,9 @@ function setupComposerToolbar() {
     }
 
     function closeMediaEditor({
-        restoreFocus = true,
-        discardChanges = true,
-    } = {}) {
+                                  restoreFocus = true,
+                                  discardChanges = true,
+                              } = {}) {
         if (!composeView || !mediaView || mediaView.hidden) {
             return;
         }
@@ -2289,7 +2289,7 @@ function setupComposerToolbar() {
         composerMediaEdits = cloneComposerMediaEdits(pendingComposerMediaEdits);
         renderAttachments(attachedComposerFiles);
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     // User tagging is only available when every attached file is an image.
@@ -2330,7 +2330,7 @@ function setupComposerToolbar() {
             pendingTaggedUsers = [];
             currentTagResults = [];
             if (isTagModalOpen()) {
-                closeTagPanel({ restoreFocus: false });
+                closeTagPanel({restoreFocus: false});
             }
         }
     }
@@ -2386,7 +2386,7 @@ function setupComposerToolbar() {
         });
     }
 
-    function closeTagPanel({ restoreFocus = true } = {}) {
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !tagView || tagView.hidden) {
             return;
         }
@@ -2560,7 +2560,7 @@ function setupComposerToolbar() {
             return;
         }
 
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         runTagSearch();
     });
@@ -2820,7 +2820,7 @@ function setupComposerToolbar() {
                     buildFileFromDataUrl(
                         attachment.dataUrl,
                         attachment.name ||
-                            `draft-attachment-${files.length + 1}`,
+                        `draft-attachment-${files.length + 1}`,
                         attachment.type || "",
                         attachment.lastModified,
                     ),
@@ -2862,8 +2862,8 @@ function setupComposerToolbar() {
 
         return searchTerm
             ? cachedLocationNames.filter((location) =>
-                  location.includes(searchTerm),
-              )
+                location.includes(searchTerm),
+            )
             : cachedLocationNames;
     }
 
@@ -2946,7 +2946,7 @@ function setupComposerToolbar() {
         });
     }
 
-    function closeLocationModal({ restoreFocus = true } = {}) {
+    function closeLocationModal({restoreFocus = true} = {}) {
         if (!composeView || !locationView || locationView.hidden) {
             return;
         }
@@ -3122,39 +3122,39 @@ function setupComposerDraftPanel() {
                     richContent: String(item.richContent || ""),
                     tags: Array.isArray(item.tags)
                         ? item.tags
-                              .map((tag) => String(tag || "").trim())
-                              .filter(Boolean)
+                            .map((tag) => String(tag || "").trim())
+                            .filter(Boolean)
                         : [],
                     attachments: Array.isArray(item.attachments)
                         ? item.attachments
-                              .filter(
-                                  (attachment) =>
-                                      attachment &&
-                                      typeof attachment === "object",
-                              )
-                              .map((attachment) => ({
-                                  name: String(attachment.name || ""),
-                                  type: String(attachment.type || ""),
-                                  size: Number(attachment.size || 0),
-                                  lastModified: Number(
-                                      attachment.lastModified || 0,
-                                  ),
-                                  dataUrl: String(attachment.dataUrl || ""),
-                                  alt: String(attachment.alt || ""),
-                              }))
+                            .filter(
+                                (attachment) =>
+                                    attachment &&
+                                    typeof attachment === "object",
+                            )
+                            .map((attachment) => ({
+                                name: String(attachment.name || ""),
+                                type: String(attachment.type || ""),
+                                size: Number(attachment.size || 0),
+                                lastModified: Number(
+                                    attachment.lastModified || 0,
+                                ),
+                                dataUrl: String(attachment.dataUrl || ""),
+                                alt: String(attachment.alt || ""),
+                            }))
                         : [],
                     taggedUsers: Array.isArray(item.taggedUsers)
                         ? item.taggedUsers
-                              .filter(
-                                  (user) => user && typeof user === "object",
-                              )
-                              .map((user) => ({
-                                  id: String(user.id || ""),
-                                  name: String(user.name || ""),
-                                  handle: String(user.handle || ""),
-                                  avatar: String(user.avatar || ""),
-                              }))
-                              .filter((user) => user.id && user.name)
+                            .filter(
+                                (user) => user && typeof user === "object",
+                            )
+                            .map((user) => ({
+                                id: String(user.id || ""),
+                                name: String(user.name || ""),
+                                handle: String(user.handle || ""),
+                                avatar: String(user.avatar || ""),
+                            }))
+                            .filter((user) => user.id && user.name)
                         : [],
                     location: String(item.location || ""),
                     boardLabel: String(item.boardLabel || "일반"),
@@ -3387,7 +3387,7 @@ function setupComposerDraftPanel() {
             .join(" ");
         const avatarText = escapeHtml(
             (draft.avatarText || draft.boardLabel || "나").trim().charAt(0) ||
-                "나",
+            "나",
         );
         const previewText = escapeHtml(getDraftPreviewText(draft));
         const savedAt = escapeHtml(formatDraftDate(draft.savedAt));
@@ -3521,7 +3521,7 @@ function setupComposerDraftPanel() {
     }
 
     // 드래프트 패널을 닫을 때는 선택 상태와 편집 모드를 정리한 뒤 작성 화면 포커스를 복원한다.
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+    function closeDraftPanel({restoreFocus = true} = {}) {
         exitDraftEditMode();
         closeDraftConfirm();
         composerSection.__syncComposerSubviewState?.();
@@ -3564,7 +3564,7 @@ function setupComposerDraftPanel() {
         }
         await restoreComposerDraftAttachments(draft.attachments);
         composerSection.__setComposerTaggedUsers?.(draft.taggedUsers);
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
 
         window.requestAnimationFrame(() => {
             composerSection.__refreshCategoryTagsLayout?.();
@@ -4257,7 +4257,7 @@ function setupReplyModal() {
     }
 
     function cloneReplyMediaEdits(edits) {
-        return edits.map((entry) => ({ ...entry }));
+        return edits.map((entry) => ({...entry}));
     }
 
     function resetTaggedUsers() {
@@ -4308,7 +4308,7 @@ function setupReplyModal() {
         // 참조하면 즉시 ReferenceError가 난다. 현재 답글 미디어 서브뷰가 실제로
         // 열려 있는지만 이 함수 안에서 직접 판단해 안전하게 닫는다.
         if (!can && replyMediaView && !replyMediaView.hidden) {
-            closeMediaEditor({ restoreFocus: false, discardChanges: true });
+            closeMediaEditor({restoreFocus: false, discardChanges: true});
         }
     }
 
@@ -4363,7 +4363,7 @@ function setupReplyModal() {
         syncReplySubmitState();
     }
 
-    function syncReplyAttachmentDerivedState({ keepTaggedUsers = false } = {}) {
+    function syncReplyAttachmentDerivedState({keepTaggedUsers = false} = {}) {
         if (!keepTaggedUsers) {
             resetTaggedUsers();
         }
@@ -4399,7 +4399,7 @@ function setupReplyModal() {
         }
         createReplyAttachmentUrls();
         if (isReplyImageSet()) {
-            syncReplyAttachmentDerivedState({ keepTaggedUsers: true });
+            syncReplyAttachmentDerivedState({keepTaggedUsers: true});
             replyAttachmentMedia.innerHTML = buildAttachmentGridMarkup({
                 count: attachedReplyFileUrls.length,
                 urls: attachedReplyFileUrls,
@@ -4480,7 +4480,7 @@ function setupReplyModal() {
                     editable.length === 0
                         ? [replacement]
                         : ((editable[pendingAttachmentEditIndex] = replacement),
-                          editable.slice(0, maxReplyImages));
+                            editable.slice(0, maxReplyImages));
                 setReplyAttachments(nextAttachedFiles);
             }
             return;
@@ -4539,7 +4539,7 @@ function setupReplyModal() {
         });
     }
 
-    function closeTagPanel({ restoreFocus = true } = {}) {
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyTagView || replyTagView.hidden) {
             return;
         }
@@ -4647,7 +4647,7 @@ function setupReplyModal() {
         });
     }
 
-    function closeLocationPanel({ restoreFocus = true } = {}) {
+    function closeLocationPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyLocationView || replyLocationView.hidden) {
             return;
         }
@@ -4694,9 +4694,9 @@ function setupReplyModal() {
     }
 
     function closeMediaEditor({
-        restoreFocus = true,
-        discardChanges = true,
-    } = {}) {
+                                  restoreFocus = true,
+                                  discardChanges = true,
+                              } = {}) {
         if (!composeView || !replyMediaView || replyMediaView.hidden) {
             return;
         }
@@ -4715,7 +4715,7 @@ function setupReplyModal() {
         replyMediaEdits = cloneReplyMediaEdits(pendingReplyMediaEdits);
         renderReplyAttachment();
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     function syncReplySubmitState() {
@@ -4791,8 +4791,8 @@ function setupReplyModal() {
             postCard.querySelector(".postAvatarImage")?.getAttribute("src") ||
             buildInitialAvatarDataUri(
                 getTextContent(postCard.querySelector(".postAvatar")) ||
-                    name.charAt(0) ||
-                    "?",
+                name.charAt(0) ||
+                "?",
             );
         if (replyContextButton) {
             replyContextButton.textContent = getReplyContextText(postCard);
@@ -4892,7 +4892,7 @@ function setupReplyModal() {
         replyModalOverlay.__syncReplyModalSubviewState?.(draftView);
     }
 
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+    function closeDraftPanel({restoreFocus = true} = {}) {
         if (!composeView || !draftView) {
             return;
         }
@@ -4934,7 +4934,7 @@ function setupReplyModal() {
         replyEditor.textContent = getTextContent(
             item.querySelector(".draft-panel__text"),
         );
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         syncReplySubmitState();
         saveReplySelection();
         window.requestAnimationFrame(() => {
@@ -5004,7 +5004,7 @@ function setupReplyModal() {
         syncReplyAvatars();
         populateReplyModal(button);
         resetReplyModalState();
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         window.requestAnimationFrame(() => {
             replyEditor.focus();
         });
@@ -5012,7 +5012,7 @@ function setupReplyModal() {
 
     // 닫기 시에는 서브뷰, 피커, 임시저장 확인창을 순서대로 정리하고 필요 시 상태 초기화까지 수행한다.
     function closeReplyModal(options = {}) {
-        const { skipConfirm = false, restoreFocus = true } = options;
+        const {skipConfirm = false, restoreFocus = true} = options;
         if (replyModalOverlay.hidden) {
             return;
         }
@@ -5021,10 +5021,10 @@ function setupReplyModal() {
         }
         replyModalOverlay.hidden = true;
         document.body.classList.remove("modal-open");
-        closeLocationPanel({ restoreFocus: false });
-        closeTagPanel({ restoreFocus: false });
-        closeMediaEditor({ restoreFocus: false, discardChanges: true });
-        closeDraftPanel({ restoreFocus: false });
+        closeLocationPanel({restoreFocus: false});
+        closeTagPanel({restoreFocus: false});
+        closeMediaEditor({restoreFocus: false, discardChanges: true});
+        closeDraftPanel({restoreFocus: false});
         resetReplyModalState();
         if (restoreFocus) {
             activeReplyTrigger?.focus();
@@ -5168,7 +5168,7 @@ function setupReplyModal() {
             removeReplyAttachment(
                 Number.parseInt(
                     removeButton.getAttribute("data-attachment-remove-index") ??
-                        "-1",
+                    "-1",
                     10,
                 ),
             );
@@ -5260,7 +5260,7 @@ function setupReplyModal() {
         if (!user) {
             return;
         }
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         if (replyTagSearchInput) {
             replyTagSearchInput.value = "";
@@ -5357,7 +5357,7 @@ function setupReplyModal() {
             return;
         }
         updateReplyCount(activeReplyTrigger);
-        closeReplyModal({ skipConfirm: true });
+        closeReplyModal({skipConfirm: true});
     });
 
     // 이모티콘 버튼 클릭: 버튼 위치 기준으로 피커를 fixed 배치 후 열기/닫기
@@ -5584,7 +5584,7 @@ function setupTweetActions() {
     }
 
     function copyShareLink(button) {
-        const { permalink } = getSharePostMeta(button);
+        const {permalink} = getSharePostMeta(button);
         closeShareDropdown();
         if (!navigator.clipboard?.writeText) {
             showShareToast("링크를 복사하지 못했습니다");
@@ -5662,7 +5662,7 @@ function setupTweetActions() {
     }
 
     function openShareBookmarkModal(button) {
-        const { bookmarkButton } = getSharePostMeta(button);
+        const {bookmarkButton} = getSharePostMeta(button);
         closeShareDropdown();
         closeShareModal();
 
@@ -5758,7 +5758,7 @@ function setupTweetActions() {
                         isActive
                             ? path.dataset.pathActive || path.getAttribute("d")
                             : path.dataset.pathInactive ||
-                                  path.getAttribute("d"),
+                            path.getAttribute("d"),
                     );
                 }
             });
@@ -5875,7 +5875,7 @@ function setupExpandablePostText() {
     const maxLength = 200;
 
     document.querySelectorAll(".postText").forEach((element, index) => {
-        const { fullText, isExpandable, truncatedText } =
+        const {fullText, isExpandable, truncatedText} =
             getCollapsedPostTextState(element.textContent, maxLength);
         if (!isExpandable) {
             return;

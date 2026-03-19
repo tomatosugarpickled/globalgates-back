@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum MemberRole {
-    BUSINESS("business"), EXPERT("expert"),  ADMIN("admin");
+    BUSINESS("business"), EXPERT("expert"), ADMIN("admin");
 
     private final String value;
 

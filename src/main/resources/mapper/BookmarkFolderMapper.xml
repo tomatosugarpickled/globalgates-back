@@ -9,12 +9,14 @@
 
     <update id="update">
         update tbl_bookmark_folder
-        set folder_name = #{folderName}, updated_datetime = now()
+        set folder_name      = #{folderName},
+            updated_datetime = now()
         where id = #{id}
     </update>
 
     <delete id="delete">
-        delete from tbl_bookmark_folder
+        delete
+        from tbl_bookmark_folder
         where id = #{id}
     </delete>
 
@@ -27,7 +29,11 @@
 
 
     <select id="selectAllByMemberId">
-        select bf.id, bf.member_id, bf.folder_name, bf.created_datetime, bf.updated_datetime,
+        select bf.id,
+               bf.member_id,
+               bf.folder_name,
+               bf.created_datetime,
+               bf.updated_datetime,
                (select count(*) from tbl_bookmark b where b.folder_id = bf.id) as bookmarkCount
         from tbl_bookmark_folder bf
         where bf.member_id = #{memberId}

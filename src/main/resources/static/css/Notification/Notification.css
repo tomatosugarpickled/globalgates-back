@@ -544,9 +544,8 @@ body {
     flex-direction: column;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
     overflow: hidden;
     max-width: 400px;
     width: max-content;
@@ -749,9 +748,8 @@ a.menu-item:visited {
     overflow: auto;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
 }
 
 .notification-dialog__card--small {
@@ -1143,6 +1141,7 @@ a.menu-item:visited {
 .tweet-action-btn--like.active {
     color: #f91880;
 }
+
 .tweet-action-btn--like.active:hover {
     background-color: rgba(249, 24, 128, 0.1);
 }
@@ -1151,6 +1150,7 @@ a.menu-item:visited {
 .tweet-action-btn--bookmark.active {
     color: #1d9bf0;
 }
+
 .tweet-action-btn--bookmark.active:hover {
     background-color: rgba(29, 155, 240, 0.1);
 }
@@ -2395,6 +2395,7 @@ body.modal-open {
     object-fit: contain;
     background: #000000;
 }
+
 .tweet-modal__media-alt-label {
     font-size: 14px;
     font-weight: 700;
@@ -2811,9 +2812,8 @@ body.modal-open {
     overflow: hidden;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
     display: flex;
     flex-direction: column;
 }

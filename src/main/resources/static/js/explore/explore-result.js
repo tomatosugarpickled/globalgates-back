@@ -1,799 +1,853 @@
 window.onload = () => {
-const tabPopular = document.getElementById("tabPopular");
-const tabLatest = document.getElementById("tabLatest");
-const tabMembers = document.getElementById("tabMembers");
+    const tabPopular = document.getElementById("tabPopular");
+    const tabLatest = document.getElementById("tabLatest");
+    const tabMembers = document.getElementById("tabMembers");
 
-const popularSection = document.getElementById("popularSection");
-const latestSection = document.getElementById("latestSection");
-const membersSection = document.getElementById("membersSection");
+    const popularSection = document.getElementById("popularSection");
+    const latestSection = document.getElementById("latestSection");
+    const membersSection = document.getElementById("membersSection");
 
-if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && membersSection) {
-    function showPopularTab() {
-        tabPopular.classList.add("isActive");
-        tabPopular.setAttribute("aria-current", "page");
-        tabLatest.classList.remove("isActive");
-        tabLatest.removeAttribute("aria-current");
-        tabMembers.classList.remove("isActive");
-        tabMembers.removeAttribute("aria-current");
+    if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && membersSection) {
+        function showPopularTab() {
+            tabPopular.classList.add("isActive");
+            tabPopular.setAttribute("aria-current", "page");
+            tabLatest.classList.remove("isActive");
+            tabLatest.removeAttribute("aria-current");
+            tabMembers.classList.remove("isActive");
+            tabMembers.removeAttribute("aria-current");
 
-        popularSection.hidden = false;
-        latestSection.hidden = true;
-        membersSection.hidden = true;
+            popularSection.hidden = false;
+            latestSection.hidden = true;
+            membersSection.hidden = true;
+        }
+
+        function showLatestTab() {
+            tabLatest.classList.add("isActive");
+            tabLatest.setAttribute("aria-current", "page");
+            tabPopular.classList.remove("isActive");
+            tabPopular.removeAttribute("aria-current");
+            tabMembers.classList.remove("isActive");
+            tabMembers.removeAttribute("aria-current");
+
+            popularSection.hidden = true;
+            latestSection.hidden = false;
+            membersSection.hidden = true;
+        }
+
+        function showMembersTab() {
+            tabMembers.classList.add("isActive");
+            tabMembers.setAttribute("aria-current", "page");
+            tabPopular.classList.remove("isActive");
+            tabPopular.removeAttribute("aria-current");
+            tabLatest.classList.remove("isActive");
+            tabLatest.removeAttribute("aria-current");
+
+            popularSection.hidden = true;
+            latestSection.hidden = true;
+            membersSection.hidden = false;
+        }
+
+        tabPopular.addEventListener("click", () => {
+            showPopularTab();
+        });
+        tabLatest.addEventListener("click", () => {
+            showLatestTab();
+        });
+        tabMembers.addEventListener("click", () => {
+            showMembersTab();
+        });
     }
-
-    function showLatestTab() {
-        tabLatest.classList.add("isActive");
-        tabLatest.setAttribute("aria-current", "page");
-        tabPopular.classList.remove("isActive");
-        tabPopular.removeAttribute("aria-current");
-        tabMembers.classList.remove("isActive");
-        tabMembers.removeAttribute("aria-current");
-
-        popularSection.hidden = true;
-        latestSection.hidden = false;
-        membersSection.hidden = true;
-    }
-
-    function showMembersTab() {
-        tabMembers.classList.add("isActive");
-        tabMembers.setAttribute("aria-current", "page");
-        tabPopular.classList.remove("isActive");
-        tabPopular.removeAttribute("aria-current");
-        tabLatest.classList.remove("isActive");
-        tabLatest.removeAttribute("aria-current");
-
-        popularSection.hidden = true;
-        latestSection.hidden = true;
-        membersSection.hidden = false;
-    }
-
-    tabPopular.addEventListener("click", () => { showPopularTab(); });
-    tabLatest.addEventListener("click", () => { showLatestTab(); });
-    tabMembers.addEventListener("click", () => { showMembersTab(); });
-}
 
 
 // 검색 패널
-(function () {
-    const searchForm = document.getElementById("searchForm");
-    const searchInput = document.getElementById("searchInput");
-    const searchClearBtn = document.getElementById("searchClearBtn");
-    const searchPanel = document.getElementById("searchPanel");
-    const searchPanelEmpty = document.getElementById("searchPanelEmpty");
-    const searchRecentSec = document.getElementById("searchRecentSection");
-    const searchResultsEl = document.getElementById("searchResults");
-    const searchResultTopic = document.getElementById("searchResultTopic");
-    const searchResultLabel = document.getElementById("searchResultLabel");
+    (function () {
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+        const searchClearBtn = document.getElementById("searchClearBtn");
+        const searchPanel = document.getElementById("searchPanel");
+        const searchPanelEmpty = document.getElementById("searchPanelEmpty");
+        const searchRecentSec = document.getElementById("searchRecentSection");
+        const searchResultsEl = document.getElementById("searchResults");
+        const searchResultTopic = document.getElementById("searchResultTopic");
+        const searchResultLabel = document.getElementById("searchResultLabel");
 
-    if (!searchForm || !searchInput || !searchPanel) {
-        return;
-    }
-
-    function hasRecentItems() {
-        return !!(
-            searchRecentSec &&
-            searchRecentSec.querySelectorAll(".searchResultItem").length > 0
-        );
-    }
-
-    function showEmpty() {
-        if (searchPanelEmpty) searchPanelEmpty.hidden = false;
-        if (searchRecentSec) searchRecentSec.hidden = true;
-        if (searchResultsEl) searchResultsEl.hidden = true;
-    }
-
-    function showRecent() {
-        if (searchPanelEmpty) searchPanelEmpty.hidden = true;
-        if (searchRecentSec) searchRecentSec.hidden = false;
-        if (searchResultsEl) searchResultsEl.hidden = true;
-    }
-
-    function showResults(value) {
-        if (searchResultLabel) searchResultLabel.textContent = value;
-        if (searchPanelEmpty) searchPanelEmpty.hidden = true;
-        if (searchRecentSec) searchRecentSec.hidden = true;
-        if (searchResultsEl) searchResultsEl.hidden = false;
-    }
-
-    function updateSearchClearButton() {
-        if (!searchClearBtn) {
+        if (!searchForm || !searchInput || !searchPanel) {
             return;
         }
 
-        searchClearBtn.hidden = searchInput.value.length === 0;
-    }
-
-    function updatePanel() {
-        const value = searchInput.value.trim();
-        updateSearchClearButton();
-
-        if (value.length > 0) {
-            showResults(value);
-        } else if (hasRecentItems()) {
-            showRecent();
-        } else {
-            showEmpty();
-        }
-    }
-
-    searchPanel.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-    });
-
-    searchInput.addEventListener("focus", function () {
-        searchForm.classList.add("isFocused");
-        searchPanel.hidden = false;
-        updatePanel();
-    });
-
-    searchInput.addEventListener("input", function () {
-        updatePanel();
-    });
-
-    if (searchClearBtn) {
-        searchClearBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            searchInput.value = "";
-            updatePanel();
-            searchInput.focus();
-        });
-    }
-
-    searchInput.addEventListener("blur", function () {
-        if (!document.hasFocus()) {
-            return;
+        function hasRecentItems() {
+            return !!(
+                searchRecentSec &&
+                searchRecentSec.querySelectorAll(".searchResultItem").length > 0
+            );
         }
 
-        searchForm.classList.remove("isFocused");
-        searchPanel.hidden = true;
-    });
-
-    searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            searchForm.classList.remove("isFocused");
-            searchPanel.hidden = true;
-            searchInput.blur();
+        function showEmpty() {
+            if (searchPanelEmpty) searchPanelEmpty.hidden = false;
+            if (searchRecentSec) searchRecentSec.hidden = true;
+            if (searchResultsEl) searchResultsEl.hidden = true;
         }
-    });
 
-    if (searchResultTopic) {
-        searchResultTopic.addEventListener("click", function () {
-            searchForm.classList.remove("isFocused");
-            searchPanel.hidden = true;
-        });
-    }
+        function showRecent() {
+            if (searchPanelEmpty) searchPanelEmpty.hidden = true;
+            if (searchRecentSec) searchRecentSec.hidden = false;
+            if (searchResultsEl) searchResultsEl.hidden = true;
+        }
 
-    if (searchRecentSec) {
-        searchRecentSec.addEventListener("click", (e) => {
-            const deleteBtn = e.target.closest(".searchRecentDeleteBtn");
-            if (!deleteBtn) {
+        function showResults(value) {
+            if (searchResultLabel) searchResultLabel.textContent = value;
+            if (searchPanelEmpty) searchPanelEmpty.hidden = true;
+            if (searchRecentSec) searchRecentSec.hidden = true;
+            if (searchResultsEl) searchResultsEl.hidden = false;
+        }
+
+        function updateSearchClearButton() {
+            if (!searchClearBtn) {
                 return;
             }
 
-            e.stopPropagation();
-            const searchItem = deleteBtn.closest(".searchResultItem");
-            if (searchItem) {
-                searchItem.remove();
-            }
+            searchClearBtn.hidden = searchInput.value.length === 0;
+        }
 
+        function updatePanel() {
+            const value = searchInput.value.trim();
+            updateSearchClearButton();
+
+            if (value.length > 0) {
+                showResults(value);
+            } else if (hasRecentItems()) {
+                showRecent();
+            } else {
+                showEmpty();
+            }
+        }
+
+        searchPanel.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+        });
+
+        searchInput.addEventListener("focus", function () {
+            searchForm.classList.add("isFocused");
+            searchPanel.hidden = false;
             updatePanel();
         });
 
-        const clearAllBtn = searchRecentSec.querySelector(".searchRecentClearAll");
-        if (clearAllBtn) {
-            clearAllBtn.addEventListener("click", (e) => {
+        searchInput.addEventListener("input", function () {
+            updatePanel();
+        });
+
+        if (searchClearBtn) {
+            searchClearBtn.addEventListener("click", (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                searchRecentSec.querySelectorAll(".searchResultItem").forEach((item) => {
-                    item.remove();
-                });
+                searchInput.value = "";
+                updatePanel();
+                searchInput.focus();
+            });
+        }
+
+        searchInput.addEventListener("blur", function () {
+            if (!document.hasFocus()) {
+                return;
+            }
+
+            searchForm.classList.remove("isFocused");
+            searchPanel.hidden = true;
+        });
+
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                searchForm.classList.remove("isFocused");
+                searchPanel.hidden = true;
+                searchInput.blur();
+            }
+        });
+
+        if (searchResultTopic) {
+            searchResultTopic.addEventListener("click", function () {
+                searchForm.classList.remove("isFocused");
+                searchPanel.hidden = true;
+            });
+        }
+
+        if (searchRecentSec) {
+            searchRecentSec.addEventListener("click", (e) => {
+                const deleteBtn = e.target.closest(".searchRecentDeleteBtn");
+                if (!deleteBtn) {
+                    return;
+                }
+
+                e.stopPropagation();
+                const searchItem = deleteBtn.closest(".searchResultItem");
+                if (searchItem) {
+                    searchItem.remove();
+                }
 
                 updatePanel();
             });
-        }
-    }
 
-    updateSearchClearButton();
-})();
+            const clearAllBtn = searchRecentSec.querySelector(".searchRecentClearAll");
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    searchRecentSec.querySelectorAll(".searchResultItem").forEach((item) => {
+                        item.remove();
+                    });
+
+                    updatePanel();
+                });
+            }
+        }
+
+        updateSearchClearButton();
+    })();
 
 // postMoreButton 더보기 드롭다운 (팔로우/차단/신고)
-(function () {
-    let followState = {};
-    const reportReasons = [
-        "다른 회사 제품 도용 신고",
-        "실제 존재하지 않는 제품 등록 신고",
-        "스펙·원산지 허위 표기 신고",
-        "특허 제품 무단 판매 신고",
-        "수출입 제한 품목 신고",
-        "반복적인 동일 게시물 신고"
-    ];
+    (function () {
+        let followState = {};
+        const reportReasons = [
+            "다른 회사 제품 도용 신고",
+            "실제 존재하지 않는 제품 등록 신고",
+            "스펙·원산지 허위 표기 신고",
+            "특허 제품 무단 판매 신고",
+            "수출입 제한 품목 신고",
+            "반복적인 동일 게시물 신고"
+        ];
 
-    let activeMoreDropdown = null;
-    let activeMoreButton = null;
-    let activeMoreModal = null;
+        let activeMoreDropdown = null;
+        let activeMoreButton = null;
+        let activeMoreModal = null;
 
-    function getUserMetaFromButton(button) {
-        const card = button.closest(".postCard");
-        const handleEl = card ? card.querySelector(".postHandle") : null;
-        const nameEl   = card ? card.querySelector(".postName")   : null;
-        const handle = handleEl ? (handleEl.textContent || "").trim() : "@user";
-        const name   = nameEl   ? (nameEl.textContent   || "").trim() : "사용자";
-        return { handle: handle, name: name };
-    }
-
-    function showPostMoreToast(message) {
-        const existing = document.querySelector(".notification-toast");
-        if (existing) { existing.remove(); }
-        const toast = document.createElement("div");
-        toast.className = "notification-toast";
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function () { toast.remove(); }, 3000);
-    }
-
-    function closePostMoreDropdown() {
-        if (!activeMoreDropdown) { return; }
-        activeMoreDropdown.remove();
-        activeMoreDropdown = null;
-        if (activeMoreButton) {
-            activeMoreButton.setAttribute("aria-expanded", "false");
-            activeMoreButton = null;
+        function getUserMetaFromButton(button) {
+            const card = button.closest(".postCard");
+            const handleEl = card ? card.querySelector(".postHandle") : null;
+            const nameEl = card ? card.querySelector(".postName") : null;
+            const handle = handleEl ? (handleEl.textContent || "").trim() : "@user";
+            const name = nameEl ? (nameEl.textContent || "").trim() : "사용자";
+            return {handle: handle, name: name};
         }
-    }
 
-    function closePostMoreModal() {
-        if (!activeMoreModal) { return; }
-        activeMoreModal.remove();
-        activeMoreModal = null;
-        document.body.classList.remove("modal-open");
-    }
+        function showPostMoreToast(message) {
+            const existing = document.querySelector(".notification-toast");
+            if (existing) {
+                existing.remove();
+            }
+            const toast = document.createElement("div");
+            toast.className = "notification-toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.remove();
+            }, 3000);
+        }
 
-    function openBlockModal(button) {
-        const meta = getUserMetaFromButton(button);
-        const handle = meta.handle;
-        closePostMoreDropdown();
-        closePostMoreModal();
-        const modal = document.createElement("div");
-        modal.className = "notification-dialog";
-        modal.classList.add("notification-dialog--block");
-        modal.innerHTML =
-            '<div class="notification-dialog__backdrop"></div>' +
-            '<div class="notification-dialog__card notification-dialog__card--small" role="alertdialog" aria-modal="true">' +
+        function closePostMoreDropdown() {
+            if (!activeMoreDropdown) {
+                return;
+            }
+            activeMoreDropdown.remove();
+            activeMoreDropdown = null;
+            if (activeMoreButton) {
+                activeMoreButton.setAttribute("aria-expanded", "false");
+                activeMoreButton = null;
+            }
+        }
+
+        function closePostMoreModal() {
+            if (!activeMoreModal) {
+                return;
+            }
+            activeMoreModal.remove();
+            activeMoreModal = null;
+            document.body.classList.remove("modal-open");
+        }
+
+        function openBlockModal(button) {
+            const meta = getUserMetaFromButton(button);
+            const handle = meta.handle;
+            closePostMoreDropdown();
+            closePostMoreModal();
+            const modal = document.createElement("div");
+            modal.className = "notification-dialog";
+            modal.classList.add("notification-dialog--block");
+            modal.innerHTML =
+                '<div class="notification-dialog__backdrop"></div>' +
+                '<div class="notification-dialog__card notification-dialog__card--small" role="alertdialog" aria-modal="true">' +
                 '<h2 class="notification-dialog__title">' + handle + ' 님을 차단할까요?</h2>' +
                 '<p class="notification-dialog__description">내 공개 게시물을 볼 수 있지만 더 이상 게시물에 참여할 수 없습니다. 또한 ' + handle + ' 님은 나를 팔로우하거나 쪽지를 보낼 수 없으며, 이 계정과 관련된 알림도 내게 표시되지 않습니다.</p>' +
                 '<div class="notification-dialog__actions">' +
-                    '<button type="button" class="notification-dialog__danger notification-dialog__confirm-block">차단</button>' +
-                    '<button type="button" class="notification-dialog__secondary notification-dialog__close">취소</button>' +
+                '<button type="button" class="notification-dialog__danger notification-dialog__confirm-block">차단</button>' +
+                '<button type="button" class="notification-dialog__secondary notification-dialog__close">취소</button>' +
                 '</div>' +
-            '</div>';
-        modal.addEventListener("click", function (e) {
-            if (
-                e.target.classList.contains("notification-dialog__backdrop") ||
-                e.target.closest(".notification-dialog__close")
-            ) {
-                e.preventDefault();
-                closePostMoreModal();
-                return;
-            }
-            if (e.target.closest(".notification-dialog__confirm-block")) {
-                e.preventDefault();
-                showPostMoreToast(handle + " 님을 차단했습니다");
-                closePostMoreModal();
-            }
-        });
-        document.body.appendChild(modal);
-        document.body.classList.add("modal-open");
-        activeMoreModal = modal;
-    }
-
-    function openReportModal(button) {
-        closePostMoreDropdown();
-        closePostMoreModal();
-        let listHtml = "";
-        for (let i = 0; i < reportReasons.length; i++) {
-            listHtml +=
-                '<li><button type="button" class="notification-report__item">' +
-                    '<span>' + reportReasons[i] + '</span>' +
-                    '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.293 6.293 10.707 4.88 17.828 12l-7.121 7.12-1.414-1.413L14.999 12z"></path></g></svg>' +
-                '</button></li>';
+                '</div>';
+            modal.addEventListener("click", function (e) {
+                if (
+                    e.target.classList.contains("notification-dialog__backdrop") ||
+                    e.target.closest(".notification-dialog__close")
+                ) {
+                    e.preventDefault();
+                    closePostMoreModal();
+                    return;
+                }
+                if (e.target.closest(".notification-dialog__confirm-block")) {
+                    e.preventDefault();
+                    showPostMoreToast(handle + " 님을 차단했습니다");
+                    closePostMoreModal();
+                }
+            });
+            document.body.appendChild(modal);
+            document.body.classList.add("modal-open");
+            activeMoreModal = modal;
         }
-        const modal = document.createElement("div");
-        modal.className = "notification-dialog";
-        modal.classList.add("notification-dialog--report");
-        modal.innerHTML =
-            '<div class="notification-dialog__backdrop"></div>' +
-            '<div class="notification-dialog__card notification-dialog__card--report" role="dialog" aria-modal="true">' +
-                '<div class="notification-dialog__header">' +
-                    '<button type="button" class="notification-dialog__icon-btn notification-dialog__close" aria-label="돌아가기">' +
-                        '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg>' +
-                    '</button>' +
-                    '<h2 class="notification-dialog__title">신고하기</h2>' +
-                '</div>' +
-                '<div class="notification-dialog__body">' +
-                    '<p class="notification-dialog__question">이 게시물에 어떤 문제가 있나요?</p>' +
-                    '<ul class="notification-report__list">' + listHtml + '</ul>' +
-                '</div>' +
-            '</div>';
-        modal.addEventListener("click", function (e) {
-            if (
-                e.target.classList.contains("notification-dialog__backdrop") ||
-                e.target.closest(".notification-dialog__close")
-            ) {
-                e.preventDefault();
-                closePostMoreModal();
-                return;
-            }
-            if (e.target.closest(".notification-report__item")) {
-                e.preventDefault();
-                showPostMoreToast("신고가 접수되었습니다");
-                closePostMoreModal();
-            }
-        });
-        document.body.appendChild(modal);
-        document.body.classList.add("modal-open");
-        activeMoreModal = modal;
-    }
 
-    function handleDropdownAction(button, actionClass) {
-        const meta = getUserMetaFromButton(button);
-        const handle = meta.handle;
-        if (actionClass === "menu-item--follow-toggle") {
-            const isF = followState[handle] ? true : false;
-            followState[handle] = !isF;
-            closePostMoreDropdown();
-            showPostMoreToast(isF ? (handle + " 님 팔로우를 취소했습니다") : (handle + " 님을 팔로우했습니다"));
-            return;
-        }
-        if (actionClass === "menu-item--block") {
-            openBlockModal(button);
-            return;
-        }
-        if (actionClass === "menu-item--report") {
-            openReportModal(button);
-        }
-    }
-
-    function openPostMoreDropdown(button) {
-        closePostMoreDropdown();
-        const meta = getUserMetaFromButton(button);
-        const handle = meta.handle;
-        const isF = followState[handle] ? true : false;
-        const rect = button.getBoundingClientRect();
-        const top   = rect.bottom + window.scrollY + 8;
-        const right = Math.max(16, window.innerWidth - rect.right);
-
-        const followIcon = isF
-            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path></g></svg>'
-            : '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm4 7c-3.053 0-5.563 1.193-7.443 3.596l1.548 1.207C5.573 15.922 7.541 15 10 15s4.427.922 5.895 2.803l1.548-1.207C15.563 14.193 13.053 13 10 13zm8-6V5h-3V3h-2v2h-3v2h3v3h2V7h3z"></path></g></svg>';
-        const followLabel = isF ? (handle + " 님 언팔로우하기") : (handle + " 님 팔로우하기");
-
-        const lc = document.createElement("div");
-        lc.className = "layers-dropdown-container";
-        lc.innerHTML =
-            '<div class="layers-overlay"></div>' +
-            '<div class="layers-dropdown-inner">' +
-                '<div role="menu" class="dropdown-menu" style="top:' + top + 'px;right:' + right + 'px;display:flex;">' +
-                    '<div><div class="dropdown-inner">' +
-                        '<button type="button" role="menuitem" class="menu-item menu-item--follow-toggle">' +
-                            '<span class="menu-item__icon">' + followIcon + '</span>' +
-                            '<span class="menu-item__label">' + followLabel + '</span>' +
-                        '</button>' +
-                        '<button type="button" role="menuitem" class="menu-item menu-item--block">' +
-                            '<span class="menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M12 3.75c-4.55 0-8.25 3.69-8.25 8.25 0 1.92.66 3.68 1.75 5.08L17.09 5.5C15.68 4.4 13.92 3.75 12 3.75zm6.5 3.17L6.92 18.5c1.4 1.1 3.16 1.75 5.08 1.75 4.56 0 8.25-3.69 8.25-8.25 0-1.92-.65-3.68-1.75-5.08zM1.75 12C1.75 6.34 6.34 1.75 12 1.75S22.25 6.34 22.25 12 17.66 22.25 12 22.25 1.75 17.66 1.75 12z"></path></g></svg></span>' +
-                            '<span class="menu-item__label">' + handle + ' 님 차단하기</span>' +
-                        '</button>' +
-                        '<button type="button" role="menuitem" class="menu-item menu-item--report">' +
-                            '<span class="menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path></g></svg></span>' +
-                            '<span class="menu-item__label">게시물 신고하기</span>' +
-                        '</button>' +
-                    '</div></div>' +
-                '</div>' +
-            '</div>';
-        lc.addEventListener("click", function (e) {
-            const item = e.target.closest(".menu-item");
-            if (!item) {
-                e.stopPropagation();
-                return;
-            }
-            e.preventDefault();
-            e.stopPropagation();
-            let ac = "";
-            if (item.classList.contains("menu-item--follow-toggle")) { ac = "menu-item--follow-toggle"; }
-            else if (item.classList.contains("menu-item--block"))         { ac = "menu-item--block"; }
-            else if (item.classList.contains("menu-item--report"))        { ac = "menu-item--report"; }
-            if (ac && activeMoreButton) {
-                handleDropdownAction(activeMoreButton, ac);
-            }
-        });
-        document.body.appendChild(lc);
-        activeMoreDropdown = lc;
-        activeMoreButton = button;
-        activeMoreButton.setAttribute("aria-expanded", "true");
-    }
-
-    // postMoreButton 클릭 (이벤트 위임)
-    document.addEventListener("click", (e) => {
-        const btn = e.target.closest(".postMoreButton");
-        if (btn) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (activeMoreButton === btn) {
-                closePostMoreDropdown();
-                return;
-            }
-            openPostMoreDropdown(btn);
-            return;
-        }
-        // 드롭다운 외부 클릭 시 닫기
-        if (activeMoreDropdown && !activeMoreDropdown.contains(e.target)) {
-            closePostMoreDropdown();
-        }
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
+        function openReportModal(button) {
             closePostMoreDropdown();
             closePostMoreModal();
+            let listHtml = "";
+            for (let i = 0; i < reportReasons.length; i++) {
+                listHtml +=
+                    '<li><button type="button" class="notification-report__item">' +
+                    '<span>' + reportReasons[i] + '</span>' +
+                    '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.293 6.293 10.707 4.88 17.828 12l-7.121 7.12-1.414-1.413L14.999 12z"></path></g></svg>' +
+                    '</button></li>';
+            }
+            const modal = document.createElement("div");
+            modal.className = "notification-dialog";
+            modal.classList.add("notification-dialog--report");
+            modal.innerHTML =
+                '<div class="notification-dialog__backdrop"></div>' +
+                '<div class="notification-dialog__card notification-dialog__card--report" role="dialog" aria-modal="true">' +
+                '<div class="notification-dialog__header">' +
+                '<button type="button" class="notification-dialog__icon-btn notification-dialog__close" aria-label="돌아가기">' +
+                '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg>' +
+                '</button>' +
+                '<h2 class="notification-dialog__title">신고하기</h2>' +
+                '</div>' +
+                '<div class="notification-dialog__body">' +
+                '<p class="notification-dialog__question">이 게시물에 어떤 문제가 있나요?</p>' +
+                '<ul class="notification-report__list">' + listHtml + '</ul>' +
+                '</div>' +
+                '</div>';
+            modal.addEventListener("click", function (e) {
+                if (
+                    e.target.classList.contains("notification-dialog__backdrop") ||
+                    e.target.closest(".notification-dialog__close")
+                ) {
+                    e.preventDefault();
+                    closePostMoreModal();
+                    return;
+                }
+                if (e.target.closest(".notification-report__item")) {
+                    e.preventDefault();
+                    showPostMoreToast("신고가 접수되었습니다");
+                    closePostMoreModal();
+                }
+            });
+            document.body.appendChild(modal);
+            document.body.classList.add("modal-open");
+            activeMoreModal = modal;
         }
-    });
-})();
+
+        function handleDropdownAction(button, actionClass) {
+            const meta = getUserMetaFromButton(button);
+            const handle = meta.handle;
+            if (actionClass === "menu-item--follow-toggle") {
+                const isF = followState[handle] ? true : false;
+                followState[handle] = !isF;
+                closePostMoreDropdown();
+                showPostMoreToast(isF ? (handle + " 님 팔로우를 취소했습니다") : (handle + " 님을 팔로우했습니다"));
+                return;
+            }
+            if (actionClass === "menu-item--block") {
+                openBlockModal(button);
+                return;
+            }
+            if (actionClass === "menu-item--report") {
+                openReportModal(button);
+            }
+        }
+
+        function openPostMoreDropdown(button) {
+            closePostMoreDropdown();
+            const meta = getUserMetaFromButton(button);
+            const handle = meta.handle;
+            const isF = followState[handle] ? true : false;
+            const rect = button.getBoundingClientRect();
+            const top = rect.bottom + window.scrollY + 8;
+            const right = Math.max(16, window.innerWidth - rect.right);
+
+            const followIcon = isF
+                ? '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"></path></g></svg>'
+                : '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm4 7c-3.053 0-5.563 1.193-7.443 3.596l1.548 1.207C5.573 15.922 7.541 15 10 15s4.427.922 5.895 2.803l1.548-1.207C15.563 14.193 13.053 13 10 13zm8-6V5h-3V3h-2v2h-3v2h3v3h2V7h3z"></path></g></svg>';
+            const followLabel = isF ? (handle + " 님 언팔로우하기") : (handle + " 님 팔로우하기");
+
+            const lc = document.createElement("div");
+            lc.className = "layers-dropdown-container";
+            lc.innerHTML =
+                '<div class="layers-overlay"></div>' +
+                '<div class="layers-dropdown-inner">' +
+                '<div role="menu" class="dropdown-menu" style="top:' + top + 'px;right:' + right + 'px;display:flex;">' +
+                '<div><div class="dropdown-inner">' +
+                '<button type="button" role="menuitem" class="menu-item menu-item--follow-toggle">' +
+                '<span class="menu-item__icon">' + followIcon + '</span>' +
+                '<span class="menu-item__label">' + followLabel + '</span>' +
+                '</button>' +
+                '<button type="button" role="menuitem" class="menu-item menu-item--block">' +
+                '<span class="menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M12 3.75c-4.55 0-8.25 3.69-8.25 8.25 0 1.92.66 3.68 1.75 5.08L17.09 5.5C15.68 4.4 13.92 3.75 12 3.75zm6.5 3.17L6.92 18.5c1.4 1.1 3.16 1.75 5.08 1.75 4.56 0 8.25-3.69 8.25-8.25 0-1.92-.65-3.68-1.75-5.08zM1.75 12C1.75 6.34 6.34 1.75 12 1.75S22.25 6.34 22.25 12 17.66 22.25 12 22.25 1.75 17.66 1.75 12z"></path></g></svg></span>' +
+                '<span class="menu-item__label">' + handle + ' 님 차단하기</span>' +
+                '</button>' +
+                '<button type="button" role="menuitem" class="menu-item menu-item--report">' +
+                '<span class="menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path></g></svg></span>' +
+                '<span class="menu-item__label">게시물 신고하기</span>' +
+                '</button>' +
+                '</div></div>' +
+                '</div>' +
+                '</div>';
+            lc.addEventListener("click", function (e) {
+                const item = e.target.closest(".menu-item");
+                if (!item) {
+                    e.stopPropagation();
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                let ac = "";
+                if (item.classList.contains("menu-item--follow-toggle")) {
+                    ac = "menu-item--follow-toggle";
+                } else if (item.classList.contains("menu-item--block")) {
+                    ac = "menu-item--block";
+                } else if (item.classList.contains("menu-item--report")) {
+                    ac = "menu-item--report";
+                }
+                if (ac && activeMoreButton) {
+                    handleDropdownAction(activeMoreButton, ac);
+                }
+            });
+            document.body.appendChild(lc);
+            activeMoreDropdown = lc;
+            activeMoreButton = button;
+            activeMoreButton.setAttribute("aria-expanded", "true");
+        }
+
+        // postMoreButton 클릭 (이벤트 위임)
+        document.addEventListener("click", (e) => {
+            const btn = e.target.closest(".postMoreButton");
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (activeMoreButton === btn) {
+                    closePostMoreDropdown();
+                    return;
+                }
+                openPostMoreDropdown(btn);
+                return;
+            }
+            // 드롭다운 외부 클릭 시 닫기
+            if (activeMoreDropdown && !activeMoreDropdown.contains(e.target)) {
+                closePostMoreDropdown();
+            }
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closePostMoreDropdown();
+                closePostMoreModal();
+            }
+        });
+    })();
 
 // Connect / Disconnect 버튼
-(function () {
-    const modal = document.getElementById("disconnectModal");
-    const modalTitle = document.getElementById("disconnectModalTitle");
-    const modalConfirm = document.getElementById("disconnectConfirm");
-    const modalCancel = document.getElementById("disconnectCancel");
-    let pendingBtn = null;
+    (function () {
+        const modal = document.getElementById("disconnectModal");
+        const modalTitle = document.getElementById("disconnectModalTitle");
+        const modalConfirm = document.getElementById("disconnectConfirm");
+        const modalCancel = document.getElementById("disconnectCancel");
+        let pendingBtn = null;
 
-    function getHandleFromButton(button) {
-        const userCard = button.closest("[data-handle]");
-        return userCard ? (userCard.dataset.handle || "") : "";
-    }
-
-    function setButtonToConnected(button) {
-        button.classList.remove("default");
-        button.classList.add("connected");
-        button.textContent = "Connected";
-    }
-
-    function resetButtonToDefault(button) {
-        button.classList.remove("connected");
-        button.classList.add("default");
-        button.textContent = "Connect";
-        button.style.borderColor = "";
-        button.style.color = "";
-        button.style.background = "";
-    }
-
-    function updateConnectedButtonHoverState(button, isHovering) {
-        if (isHovering) {
-            button.textContent = "Disconnect";
-            button.style.borderColor = "#f4212e";
-            button.style.color = "#f4212e";
-            button.style.background = "rgba(244,33,46,.1)";
-            return;
+        function getHandleFromButton(button) {
+            const userCard = button.closest("[data-handle]");
+            return userCard ? (userCard.dataset.handle || "") : "";
         }
-        button.textContent = "Connected";
-        button.style.borderColor = "#cfd9de";
-        button.style.color = "#0f1419";
-        button.style.background = "transparent";
-    }
 
-    function openDisconnectModal(button) {
-        if (!modal || !modalTitle) { return; }
-        pendingBtn = button;
-        const handle = getHandleFromButton(button);
-        modalTitle.textContent = handle ? (handle + " 님과의 연결을 끊으시겠습니까?") : "연결을 끊으시겠습니까?";
-        modal.classList.add("active");
-    }
-
-    function closeDisconnectModal() {
-        if (!modal) { return; }
-        modal.classList.remove("active");
-        pendingBtn = null;
-    }
-
-    document.addEventListener("click", (e) => {
-        const btn = e.target.closest(".connect-btn");
-        if (!btn) { return; }
-        if (btn.classList.contains("default")) {
-            setButtonToConnected(btn);
-        } else if (btn.classList.contains("connected")) {
-            openDisconnectModal(btn);
+        function setButtonToConnected(button) {
+            button.classList.remove("default");
+            button.classList.add("connected");
+            button.textContent = "Connected";
         }
-    });
 
-    document.addEventListener("mouseover", (e) => {
-        const btn = e.target.closest(".connect-btn.connected");
-        if (!btn) { return; }
-        updateConnectedButtonHoverState(btn, true);
-    });
+        function resetButtonToDefault(button) {
+            button.classList.remove("connected");
+            button.classList.add("default");
+            button.textContent = "Connect";
+            button.style.borderColor = "";
+            button.style.color = "";
+            button.style.background = "";
+        }
 
-    document.addEventListener("mouseout", (e) => {
-        const btn = e.target.closest(".connect-btn.connected");
-        if (!btn) { return; }
-        updateConnectedButtonHoverState(btn, false);
-    });
+        function updateConnectedButtonHoverState(button, isHovering) {
+            if (isHovering) {
+                button.textContent = "Disconnect";
+                button.style.borderColor = "#f4212e";
+                button.style.color = "#f4212e";
+                button.style.background = "rgba(244,33,46,.1)";
+                return;
+            }
+            button.textContent = "Connected";
+            button.style.borderColor = "#cfd9de";
+            button.style.color = "#0f1419";
+            button.style.background = "transparent";
+        }
 
-    if (modalConfirm) {
-        modalConfirm.addEventListener("click", (e) => {
-            if (pendingBtn) { resetButtonToDefault(pendingBtn); }
-            closeDisconnectModal();
+        function openDisconnectModal(button) {
+            if (!modal || !modalTitle) {
+                return;
+            }
+            pendingBtn = button;
+            const handle = getHandleFromButton(button);
+            modalTitle.textContent = handle ? (handle + " 님과의 연결을 끊으시겠습니까?") : "연결을 끊으시겠습니까?";
+            modal.classList.add("active");
+        }
+
+        function closeDisconnectModal() {
+            if (!modal) {
+                return;
+            }
+            modal.classList.remove("active");
+            pendingBtn = null;
+        }
+
+        document.addEventListener("click", (e) => {
+            const btn = e.target.closest(".connect-btn");
+            if (!btn) {
+                return;
+            }
+            if (btn.classList.contains("default")) {
+                setButtonToConnected(btn);
+            } else if (btn.classList.contains("connected")) {
+                openDisconnectModal(btn);
+            }
         });
-    }
 
-    if (modalCancel) {
-        modalCancel.addEventListener("click", (e) => { closeDisconnectModal(); });
-    }
-
-    if (modal) {
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) { closeDisconnectModal(); }
+        document.addEventListener("mouseover", (e) => {
+            const btn = e.target.closest(".connect-btn.connected");
+            if (!btn) {
+                return;
+            }
+            updateConnectedButtonHoverState(btn, true);
         });
-    }
-})();
+
+        document.addEventListener("mouseout", (e) => {
+            const btn = e.target.closest(".connect-btn.connected");
+            if (!btn) {
+                return;
+            }
+            updateConnectedButtonHoverState(btn, false);
+        });
+
+        if (modalConfirm) {
+            modalConfirm.addEventListener("click", (e) => {
+                if (pendingBtn) {
+                    resetButtonToDefault(pendingBtn);
+                }
+                closeDisconnectModal();
+            });
+        }
+
+        if (modalCancel) {
+            modalCancel.addEventListener("click", (e) => {
+                closeDisconnectModal();
+            });
+        }
+
+        if (modal) {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    closeDisconnectModal();
+                }
+            });
+        }
+    })();
 
 // Post-Card 인터랙션 (Like / Bookmark / Share)
-(function () {
-    // Toast 알림
-    function showToast(message, extraClass) {
-        const existing = document.querySelector(".toast");
-        if (existing) { existing.remove(); }
-        const toast = document.createElement("div");
-        toast.className = "toast";
-        if (extraClass) {
-            toast.classList.add(extraClass);
+    (function () {
+        // Toast 알림
+        function showToast(message, extraClass) {
+            const existing = document.querySelector(".toast");
+            if (existing) {
+                existing.remove();
+            }
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            if (extraClass) {
+                toast.classList.add(extraClass);
+            }
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.remove();
+            }, 2500);
         }
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function () { toast.remove(); }, 2500);
-    }
 
-    function showShareToast(message) {
-        const existing = document.querySelector(".share-toast");
-        if (existing) { existing.remove(); }
-        const toast = document.createElement("div");
-        toast.className = "share-toast";
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function () { toast.remove(); }, 3000);
-    }
-
-    function setBookmarkButtonState(button, isActive) {
-        if (!button) { return; }
-        const path = button.querySelector("path");
-        if (!path) { return; }
-        const activePath = path.getAttribute("data-path-active") || "M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z";
-        const inactivePath = path.getAttribute("data-path-inactive") || "M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z";
-        button.classList.toggle("active", isActive);
-        path.setAttribute("d", isActive ? activePath : inactivePath);
-    }
-
-    let activeShareDropdown = null;
-    let activeShareButton = null;
-    let activeShareModal = null;
-
-    function closeShareDropdown() {
-        if (!activeShareDropdown) { return; }
-        activeShareDropdown.remove();
-        activeShareDropdown = null;
-        if (activeShareButton) {
-            activeShareButton.setAttribute("aria-expanded", "false");
-            activeShareButton = null;
+        function showShareToast(message) {
+            const existing = document.querySelector(".share-toast");
+            if (existing) {
+                existing.remove();
+            }
+            const toast = document.createElement("div");
+            toast.className = "share-toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.remove();
+            }, 3000);
         }
-    }
 
-    function closeShareModal() {
-        if (!activeShareModal) { return; }
-        activeShareModal.remove();
-        activeShareModal = null;
-    }
-
-    function copyShareLink() {
-        closeShareDropdown();
-        if (!navigator.clipboard || !navigator.clipboard.writeText) {
-            showShareToast("링크를 복사하지 못했습니다");
-            return;
+        function setBookmarkButtonState(button, isActive) {
+            if (!button) {
+                return;
+            }
+            const path = button.querySelector("path");
+            if (!path) {
+                return;
+            }
+            const activePath = path.getAttribute("data-path-active") || "M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5z";
+            const inactivePath = path.getAttribute("data-path-inactive") || "M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z";
+            button.classList.toggle("active", isActive);
+            path.setAttribute("d", isActive ? activePath : inactivePath);
         }
-        navigator.clipboard.writeText(window.location.href).then(function () {
-            showShareToast("클립보드로 복사함");
-        }).catch(function () {
-            showShareToast("링크를 복사하지 못했습니다");
-        });
-    }
 
-    function openShareChatModal() {
-        closeShareDropdown();
-        closeShareModal();
-        const modal = document.createElement("div");
-        modal.className = "share-sheet";
-        modal.innerHTML =
-            '<div class="share-sheet__backdrop" data-share-close="true"></div>' +
-            '<div class="share-sheet__card" role="dialog" aria-modal="true" aria-labelledby="share-chat-title">' +
+        let activeShareDropdown = null;
+        let activeShareButton = null;
+        let activeShareModal = null;
+
+        function closeShareDropdown() {
+            if (!activeShareDropdown) {
+                return;
+            }
+            activeShareDropdown.remove();
+            activeShareDropdown = null;
+            if (activeShareButton) {
+                activeShareButton.setAttribute("aria-expanded", "false");
+                activeShareButton = null;
+            }
+        }
+
+        function closeShareModal() {
+            if (!activeShareModal) {
+                return;
+            }
+            activeShareModal.remove();
+            activeShareModal = null;
+        }
+
+        function copyShareLink() {
+            closeShareDropdown();
+            if (!navigator.clipboard || !navigator.clipboard.writeText) {
+                showShareToast("링크를 복사하지 못했습니다");
+                return;
+            }
+            navigator.clipboard.writeText(window.location.href).then(function () {
+                showShareToast("클립보드로 복사함");
+            }).catch(function () {
+                showShareToast("링크를 복사하지 못했습니다");
+            });
+        }
+
+        function openShareChatModal() {
+            closeShareDropdown();
+            closeShareModal();
+            const modal = document.createElement("div");
+            modal.className = "share-sheet";
+            modal.innerHTML =
+                '<div class="share-sheet__backdrop" data-share-close="true"></div>' +
+                '<div class="share-sheet__card" role="dialog" aria-modal="true" aria-labelledby="share-chat-title">' +
                 '<div class="share-sheet__header">' +
-                    '<button type="button" class="share-sheet__icon-btn" data-share-close="true" aria-label="돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg></button>' +
-                    '<h2 id="share-chat-title" class="share-sheet__title">공유하기</h2>' +
-                    '<span class="share-sheet__header-spacer"></span>' +
+                '<button type="button" class="share-sheet__icon-btn" data-share-close="true" aria-label="돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg></button>' +
+                '<h2 id="share-chat-title" class="share-sheet__title">공유하기</h2>' +
+                '<span class="share-sheet__header-spacer"></span>' +
                 '</div>' +
                 '<div class="share-sheet__search"><input type="text" class="share-sheet__search-input" placeholder="검색" aria-label="검색"></div>' +
                 '<div class="share-sheet__list">' +
-                    '<button type="button" class="share-sheet__user" data-share-user-id="tradehub-kr">' +
-                        '<span class="share-sheet__user-avatar"><img src="https://pbs.twimg.com/profile_images/2029361845321207808/LltLeaLS_bigger.jpg" alt="TradeHub KR"></span>' +
-                        '<span class="share-sheet__user-body"><span class="share-sheet__user-name">TradeHub KR</span><span class="share-sheet__user-handle">@TradeHub_KR</span></span>' +
-                    '</button>' +
+                '<button type="button" class="share-sheet__user" data-share-user-id="tradehub-kr">' +
+                '<span class="share-sheet__user-avatar"><img src="https://pbs.twimg.com/profile_images/2029361845321207808/LltLeaLS_bigger.jpg" alt="TradeHub KR"></span>' +
+                '<span class="share-sheet__user-body"><span class="share-sheet__user-name">TradeHub KR</span><span class="share-sheet__user-handle">@TradeHub_KR</span></span>' +
+                '</button>' +
                 '</div>' +
-            '</div>';
-        modal.addEventListener("click", (e) => {
-            if (
-                e.target.closest("[data-share-close='true']") ||
-                e.target.classList.contains("share-sheet__backdrop") ||
-                e.target.closest(".share-sheet__user")
-            ) {
-                e.preventDefault();
-                closeShareModal();
-            }
-        });
-        document.body.appendChild(modal);
-        activeShareModal = modal;
-    }
+                '</div>';
+            modal.addEventListener("click", (e) => {
+                if (
+                    e.target.closest("[data-share-close='true']") ||
+                    e.target.classList.contains("share-sheet__backdrop") ||
+                    e.target.closest(".share-sheet__user")
+                ) {
+                    e.preventDefault();
+                    closeShareModal();
+                }
+            });
+            document.body.appendChild(modal);
+            activeShareModal = modal;
+        }
 
-    function openShareBookmarkModal(button) {
-        const actionBar = button.closest(".tweet-action-bar");
-        const bookmarkButton = actionBar ? actionBar.querySelector(".tweet-action-btn--bookmark") : null;
-        const isBookmarked = bookmarkButton ? bookmarkButton.classList.contains("active") : false;
-        closeShareDropdown();
-        closeShareModal();
-        const checkClass = "share-sheet__folder-check" + (isBookmarked ? " share-sheet__folder-check--active" : "");
-        const modal = document.createElement("div");
-        modal.className = "share-sheet";
-        modal.innerHTML =
-            '<div class="share-sheet__backdrop" data-share-close="true"></div>' +
-            '<div class="share-sheet__card share-sheet__card--bookmark" role="dialog" aria-modal="true" aria-labelledby="share-bookmark-title">' +
+        function openShareBookmarkModal(button) {
+            const actionBar = button.closest(".tweet-action-bar");
+            const bookmarkButton = actionBar ? actionBar.querySelector(".tweet-action-btn--bookmark") : null;
+            const isBookmarked = bookmarkButton ? bookmarkButton.classList.contains("active") : false;
+            closeShareDropdown();
+            closeShareModal();
+            const checkClass = "share-sheet__folder-check" + (isBookmarked ? " share-sheet__folder-check--active" : "");
+            const modal = document.createElement("div");
+            modal.className = "share-sheet";
+            modal.innerHTML =
+                '<div class="share-sheet__backdrop" data-share-close="true"></div>' +
+                '<div class="share-sheet__card share-sheet__card--bookmark" role="dialog" aria-modal="true" aria-labelledby="share-bookmark-title">' +
                 '<div class="share-sheet__header">' +
-                    '<button type="button" class="share-sheet__icon-btn" data-share-close="true" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button>' +
-                    '<h2 id="share-bookmark-title" class="share-sheet__title">폴더에 추가</h2>' +
-                    '<span class="share-sheet__header-spacer"></span>' +
+                '<button type="button" class="share-sheet__icon-btn" data-share-close="true" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button>' +
+                '<h2 id="share-bookmark-title" class="share-sheet__title">폴더에 추가</h2>' +
+                '<span class="share-sheet__header-spacer"></span>' +
                 '</div>' +
                 '<button type="button" class="share-sheet__create-folder">새 북마크 폴더 만들기</button>' +
                 '<button type="button" class="share-sheet__folder" data-share-folder="all-bookmarks">' +
-                    '<span class="share-sheet__folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2.998 8.5c0-1.38 1.119-2.5 2.5-2.5h9c1.381 0 2.5 1.12 2.5 2.5v14.12l-7-3.5-7 3.5V8.5zM18.5 2H8.998v2H18.5c.275 0 .5.224.5.5V15l2 1.4V4.5c0-1.38-1.119-2.5-2.5-2.5z"></path></g></svg></span>' +
-                    '<span class="share-sheet__folder-name">모든 북마크</span>' +
-                    '<span class="' + checkClass + '"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path></g></svg></span>' +
+                '<span class="share-sheet__folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2.998 8.5c0-1.38 1.119-2.5 2.5-2.5h9c1.381 0 2.5 1.12 2.5 2.5v14.12l-7-3.5-7 3.5V8.5zM18.5 2H8.998v2H18.5c.275 0 .5.224.5.5V15l2 1.4V4.5c0-1.38-1.119-2.5-2.5-2.5z"></path></g></svg></span>' +
+                '<span class="share-sheet__folder-name">모든 북마크</span>' +
+                '<span class="' + checkClass + '"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path></g></svg></span>' +
                 '</button>' +
-            '</div>';
-        modal.addEventListener("click", (e) => {
-            if (
-                e.target.closest("[data-share-close='true']") ||
-                e.target.classList.contains("share-sheet__backdrop")
-            ) {
-                e.preventDefault();
-                closeShareModal();
-                return;
-            }
-            if (e.target.closest(".share-sheet__create-folder")) {
-                e.preventDefault();
-                closeShareModal();
-                return;
-            }
-            if (e.target.closest("[data-share-folder='all-bookmarks']")) {
-                e.preventDefault();
-                setBookmarkButtonState(bookmarkButton, !isBookmarked);
-                closeShareModal();
-            }
-        });
-        document.body.appendChild(modal);
-        activeShareModal = modal;
-    }
-
-    function openShareDropdown(button) {
-        closeShareDropdown();
-        const rect = button.getBoundingClientRect();
-        const top = rect.bottom + window.scrollY + 8;
-        const right = Math.max(16, window.innerWidth - rect.right);
-        const layer = document.createElement("div");
-        layer.className = "layers-dropdown-container";
-        layer.innerHTML =
-            '<div class="layers-overlay"></div>' +
-            '<div class="layers-dropdown-inner">' +
-                '<div role="menu" class="dropdown-menu" style="top:' + top + 'px;right:' + right + 'px;display:flex;">' +
-                    '<div><div class="dropdown-inner">' +
-                        '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--copy">' +
-                            '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path></g></svg></span>' +
-                            '<span class="menu-item__label">링크 복사하기</span>' +
-                        '</button>' +
-                        '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--chat">' +
-                            '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path></g></svg></span>' +
-                            '<span class="menu-item__label">Chat으로 전송하기</span>' +
-                        '</button>' +
-                        '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--bookmark">' +
-                            '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M18 3V0h2v3h3v2h-3v3h-2V5h-3V3zm-7.5 1a.5.5 0 00-.5.5V7h3.5A2.5 2.5 0 0116 9.5v3.48l3 2.1V11h2v7.92l-5-3.5v7.26l-6.5-3.54L3 22.68V9.5A2.5 2.5 0 015.5 7H8V4.5A2.5 2.5 0 0110.5 2H12v2zm-5 5a.5.5 0 00-.5.5v9.82l4.5-2.46 4.5 2.46V9.5a.5.5 0 00-.5-.5z"></path></g></svg></span>' +
-                            '<span class="menu-item__label">폴더에 북마크 추가하기</span>' +
-                        '</button>' +
-                    '</div></div>' +
-                '</div>' +
-            '</div>';
-        layer.addEventListener("click", (e) => {
-            const actionButton = e.target.closest(".share-menu-item");
-            if (!actionButton || !activeShareButton) {
-                e.stopPropagation();
-                return;
-            }
-            e.preventDefault();
-            e.stopPropagation();
-            if (actionButton.classList.contains("share-menu-item--copy")) {
-                copyShareLink();
-                return;
-            }
-            if (actionButton.classList.contains("share-menu-item--chat")) {
-                openShareChatModal();
-                return;
-            }
-            if (actionButton.classList.contains("share-menu-item--bookmark")) {
-                openShareBookmarkModal(activeShareButton);
-            }
-        });
-        document.body.appendChild(layer);
-        activeShareDropdown = layer;
-        activeShareButton = button;
-        activeShareButton.setAttribute("aria-expanded", "true");
-    }
-
-    // Like 버튼
-    document.querySelectorAll(".tweet-action-btn--like").forEach((likeButton) => {
-        const countEl = likeButton.querySelector(".tweet-action-count");
-        const path = likeButton.querySelector("svg path");
-        if (!path) { return; }
-        let isLiked = false;
-        likeButton.addEventListener("click", (e) => {
-            isLiked = !isLiked;
-            likeButton.classList.toggle("active", isLiked);
-            path.setAttribute("d", isLiked ? path.getAttribute("data-path-active") : path.getAttribute("data-path-inactive"));
-            if (countEl) {
-                const cur = parseInt(countEl.textContent.replace(/[^0-9]/g, ""), 10) || 0;
-                countEl.textContent = isLiked ? cur + 1 : cur - 1;
-            }
-            showToast(isLiked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.", "toast--like");
-        });
-    });
-
-    // Bookmark 버튼
-    document.querySelectorAll(".tweet-action-btn--bookmark").forEach((bookmarkButton) => {
-        const path = bookmarkButton.querySelector("svg path");
-        if (!path) { return; }
-        let isBookmarked = false;
-        bookmarkButton.addEventListener("click", (e) => {
-            isBookmarked = !isBookmarked;
-            setBookmarkButtonState(bookmarkButton, isBookmarked);
-            showToast(isBookmarked ? "북마크에 저장되었습니다." : "북마크가 해제되었습니다.");
-        });
-    });
-
-    // Share 버튼
-    document.querySelectorAll(".tweet-action-btn--share").forEach((shareButton) => {
-        shareButton.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (activeShareButton === shareButton) {
-                closeShareDropdown();
-                return;
-            }
-            openShareDropdown(shareButton);
-        });
-    });
-
-    // 외부 클릭 시 드롭다운 닫기
-    document.addEventListener("click", (e) => {
-        closeShareDropdown();
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            closeShareDropdown();
-            closeShareModal();
+                '</div>';
+            modal.addEventListener("click", (e) => {
+                if (
+                    e.target.closest("[data-share-close='true']") ||
+                    e.target.classList.contains("share-sheet__backdrop")
+                ) {
+                    e.preventDefault();
+                    closeShareModal();
+                    return;
+                }
+                if (e.target.closest(".share-sheet__create-folder")) {
+                    e.preventDefault();
+                    closeShareModal();
+                    return;
+                }
+                if (e.target.closest("[data-share-folder='all-bookmarks']")) {
+                    e.preventDefault();
+                    setBookmarkButtonState(bookmarkButton, !isBookmarked);
+                    closeShareModal();
+                }
+            });
+            document.body.appendChild(modal);
+            activeShareModal = modal;
         }
-    });
-})();
+
+        function openShareDropdown(button) {
+            closeShareDropdown();
+            const rect = button.getBoundingClientRect();
+            const top = rect.bottom + window.scrollY + 8;
+            const right = Math.max(16, window.innerWidth - rect.right);
+            const layer = document.createElement("div");
+            layer.className = "layers-dropdown-container";
+            layer.innerHTML =
+                '<div class="layers-overlay"></div>' +
+                '<div class="layers-dropdown-inner">' +
+                '<div role="menu" class="dropdown-menu" style="top:' + top + 'px;right:' + right + 'px;display:flex;">' +
+                '<div><div class="dropdown-inner">' +
+                '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--copy">' +
+                '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M18.36 5.64c-1.95-1.96-5.11-1.96-7.07 0L9.88 7.05 8.46 5.64l1.42-1.42c2.73-2.73 7.16-2.73 9.9 0 2.73 2.74 2.73 7.17 0 9.9l-1.42 1.42-1.41-1.42 1.41-1.41c1.96-1.96 1.96-5.12 0-7.07zm-2.12 3.53l-7.07 7.07-1.41-1.41 7.07-7.07 1.41 1.41zm-12.02.71l1.42-1.42 1.41 1.42-1.41 1.41c-1.96 1.96-1.96 5.12 0 7.07 1.95 1.96 5.11 1.96 7.07 0l1.41-1.41 1.42 1.41-1.42 1.42c-2.73 2.73-7.16 2.73-9.9 0-2.73-2.74-2.73-7.17 0-9.9z"></path></g></svg></span>' +
+                '<span class="menu-item__label">링크 복사하기</span>' +
+                '</button>' +
+                '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--chat">' +
+                '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path></g></svg></span>' +
+                '<span class="menu-item__label">Chat으로 전송하기</span>' +
+                '</button>' +
+                '<button type="button" role="menuitem" class="menu-item share-menu-item share-menu-item--bookmark">' +
+                '<span class="menu-item__icon share-menu-item__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M18 3V0h2v3h3v2h-3v3h-2V5h-3V3zm-7.5 1a.5.5 0 00-.5.5V7h3.5A2.5 2.5 0 0116 9.5v3.48l3 2.1V11h2v7.92l-5-3.5v7.26l-6.5-3.54L3 22.68V9.5A2.5 2.5 0 015.5 7H8V4.5A2.5 2.5 0 0110.5 2H12v2zm-5 5a.5.5 0 00-.5.5v9.82l4.5-2.46 4.5 2.46V9.5a.5.5 0 00-.5-.5z"></path></g></svg></span>' +
+                '<span class="menu-item__label">폴더에 북마크 추가하기</span>' +
+                '</button>' +
+                '</div></div>' +
+                '</div>' +
+                '</div>';
+            layer.addEventListener("click", (e) => {
+                const actionButton = e.target.closest(".share-menu-item");
+                if (!actionButton || !activeShareButton) {
+                    e.stopPropagation();
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                if (actionButton.classList.contains("share-menu-item--copy")) {
+                    copyShareLink();
+                    return;
+                }
+                if (actionButton.classList.contains("share-menu-item--chat")) {
+                    openShareChatModal();
+                    return;
+                }
+                if (actionButton.classList.contains("share-menu-item--bookmark")) {
+                    openShareBookmarkModal(activeShareButton);
+                }
+            });
+            document.body.appendChild(layer);
+            activeShareDropdown = layer;
+            activeShareButton = button;
+            activeShareButton.setAttribute("aria-expanded", "true");
+        }
+
+        // Like 버튼
+        document.querySelectorAll(".tweet-action-btn--like").forEach((likeButton) => {
+            const countEl = likeButton.querySelector(".tweet-action-count");
+            const path = likeButton.querySelector("svg path");
+            if (!path) {
+                return;
+            }
+            let isLiked = false;
+            likeButton.addEventListener("click", (e) => {
+                isLiked = !isLiked;
+                likeButton.classList.toggle("active", isLiked);
+                path.setAttribute("d", isLiked ? path.getAttribute("data-path-active") : path.getAttribute("data-path-inactive"));
+                if (countEl) {
+                    const cur = parseInt(countEl.textContent.replace(/[^0-9]/g, ""), 10) || 0;
+                    countEl.textContent = isLiked ? cur + 1 : cur - 1;
+                }
+                showToast(isLiked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.", "toast--like");
+            });
+        });
+
+        // Bookmark 버튼
+        document.querySelectorAll(".tweet-action-btn--bookmark").forEach((bookmarkButton) => {
+            const path = bookmarkButton.querySelector("svg path");
+            if (!path) {
+                return;
+            }
+            let isBookmarked = false;
+            bookmarkButton.addEventListener("click", (e) => {
+                isBookmarked = !isBookmarked;
+                setBookmarkButtonState(bookmarkButton, isBookmarked);
+                showToast(isBookmarked ? "북마크에 저장되었습니다." : "북마크가 해제되었습니다.");
+            });
+        });
+
+        // Share 버튼
+        document.querySelectorAll(".tweet-action-btn--share").forEach((shareButton) => {
+            shareButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (activeShareButton === shareButton) {
+                    closeShareDropdown();
+                    return;
+                }
+                openShareDropdown(shareButton);
+            });
+        });
+
+        // 외부 클릭 시 드롭다운 닫기
+        document.addEventListener("click", (e) => {
+            closeShareDropdown();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeShareDropdown();
+                closeShareModal();
+            }
+        });
+    })();
 
 
 // ===== reply부분 =====
@@ -1275,6 +1329,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
                 })[c] ?? c,
         );
     }
+
     // 로컬스토리지에서 최근 사용 이모지 목록을 가져온다
     function getRecentEmojis() {
         try {
@@ -1308,6 +1363,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             return;
         }
     }
+
     // 이모지 검색 입력값을 소문자로 반환한다
     function getEmojiSearchTerm() {
         return replyEmojiSearchInput?.value.trim().toLowerCase() ?? "";
@@ -1340,7 +1396,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     function buildEmojiSection(
         title,
         emojis,
-        { clearable = false, emptyText = "" } = {},
+        {clearable = false, emptyText = ""} = {},
     ) {
         const headerAction = clearable
             ? '<button type="button" class="tweet-modal__emoji-clear" data-action="clear-recent">모두 지우기</button>'
@@ -1373,13 +1429,16 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
                 const entries = getFilteredEmojiEntries(cat);
                 return entries.length === 0 ? "" : buildEmojiSection(emojiCategoryMeta[cat].sectionTitle, entries.map((e) => e.emoji));
             }).join("");
-            replyEmojiContent.innerHTML = sections || buildEmojiSection("검색 결과", [], { emptyText: "일치하는 이모티콘이 없습니다." });
+            replyEmojiContent.innerHTML = sections || buildEmojiSection("검색 결과", [], {emptyText: "일치하는 이모티콘이 없습니다."});
 
             return;
         }
         if (activeEmojiCategory === "recent") {
             const recent = getRecentEmojis();
-            replyEmojiContent.innerHTML = buildEmojiSection("최근", recent, { clearable: recent.length > 0, emptyText: "최근 사용한 이모티콘이 없습니다." }) + buildEmojiSection(emojiCategoryMeta.smileys.sectionTitle, getEmojiEntriesForCategory("smileys").map((e) => e.emoji));
+            replyEmojiContent.innerHTML = buildEmojiSection("최근", recent, {
+                clearable: recent.length > 0,
+                emptyText: "최근 사용한 이모티콘이 없습니다."
+            }) + buildEmojiSection(emojiCategoryMeta.smileys.sectionTitle, getEmojiEntriesForCategory("smileys").map((e) => e.emoji));
             return;
         }
         replyEmojiContent.innerHTML = buildEmojiSection(emojiCategoryMeta[activeEmojiCategory].sectionTitle, getEmojiEntriesForCategory(activeEmojiCategory).map((e) => e.emoji));
@@ -1395,7 +1454,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     // ===== 4-1. User Tags =====
     // 태그된 사용자 배열을 깊은 복사한다
     function cloneTaggedUsers(users) {
-        return users.map((u) => ({ ...u }));
+        return users.map((u) => ({...u}));
     }
 
     // 현재 페이지의 트윗 목록에서 태그 가능한 사용자 목록을 추출한다
@@ -1429,6 +1488,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     function isTagModalOpen() {
         return Boolean(replyTagView && !replyTagView.hidden);
     }
+
     // 태그 검색 입력값을 반환한다
     function getTagSearchTerm() {
         return replyTagSearchInput?.value.trim() ?? "";
@@ -1451,7 +1511,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             replyUserTagTrigger.setAttribute("aria-label", label);
         }
         if (replyUserTagLabel) replyUserTagLabel.textContent = label;
-        if (!can && isTagModalOpen()) closeTagPanel({ restoreFocus: false });
+        if (!can && isTagModalOpen()) closeTagPanel({restoreFocus: false});
     }
 
     // 태그된 사용자 칩 목록을 렌더링한다
@@ -1539,7 +1599,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     }
 
     // 태그 패널을 닫고 변경 사항을 되돌린다
-    function closeTagPanel({ restoreFocus = true } = {}) {
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyTagView || replyTagView.hidden) return;
         replyTagView.hidden = true;
         composeView.hidden = false;
@@ -1574,16 +1634,19 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     // ===== 4-2. Media Alt Editor =====
     // 기본 미디어 편집 객체를 생성한다
     function createDefaultReplyMediaEdit() {
-        return { alt: "" };
+        return {alt: ""};
     }
+
     // 미디어 편집 배열을 깊은 복사한다
     function cloneReplyMediaEdits(edits) {
-        return edits.map((e) => ({ alt: e.alt }));
+        return edits.map((e) => ({alt: e.alt}));
     }
+
     // 미디어 편집기가 열려 있는지 확인한다
     function isMediaEditorOpen() {
         return Boolean(replyMediaView && !replyMediaView.hidden);
     }
+
     // 미디어 ALT 트리거 라벨을 반환한다 (설명 추가/수정)
     function getReplyMediaTriggerLabel() {
         return replyMediaEdits.some((e) => e.alt.trim().length > 0)
@@ -1602,7 +1665,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         }
         replyMediaEdits = attachedReplyFiles.map((_, i) => {
             const ex = replyMediaEdits[i];
-            return ex ? { alt: ex.alt ?? "" } : createDefaultReplyMediaEdit();
+            return ex ? {alt: ex.alt ?? ""} : createDefaultReplyMediaEdit();
         });
         if (pendingReplyMediaEdits.length !== replyMediaEdits.length)
             pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
@@ -1617,10 +1680,12 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     function getCurrentReplyMediaUrl() {
         return attachedReplyFileUrls[activeReplyMediaIndex] ?? "";
     }
+
     // 특정 인덱스의 미디어 ALT 텍스트를 반환한다
     function getReplyMediaImageAlt(index) {
         return replyMediaEdits[index]?.alt ?? "";
     }
+
     // 현재 선택된 미디어의 임시 편집 객체를 반환한다
     function getCurrentPendingReplyMediaEdit() {
         return (
@@ -1628,6 +1693,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             createDefaultReplyMediaEdit()
         );
     }
+
     // 미디어 편집 패널 제목을 반환한다
     function getReplyMediaTitle() {
         return "이미지 설명 수정";
@@ -1644,7 +1710,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         }
         if (replyMediaAltLabel) replyMediaAltLabel.textContent = label;
         if (!can && isMediaEditorOpen())
-            closeMediaEditor({ restoreFocus: false, discardChanges: true });
+            closeMediaEditor({restoreFocus: false, discardChanges: true});
     }
 
     // 미디어 편집기 UI를 현재 상태에 맞게 렌더링한다
@@ -1685,9 +1751,9 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
     // 미디어 편집기를 닫고 선택적으로 변경 사항을 되돌린다
     function closeMediaEditor({
-        restoreFocus = true,
-        discardChanges = true,
-    } = {}) {
+                                  restoreFocus = true,
+                                  discardChanges = true,
+                              } = {}) {
         if (!composeView || !replyMediaView || replyMediaView.hidden) return;
         if (discardChanges)
             pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
@@ -1706,7 +1772,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         replyMediaEdits = cloneReplyMediaEdits(pendingReplyMediaEdits);
         renderReplyAttachment();
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     // ===== 4-3. Location =====
@@ -1714,6 +1780,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     function isLocationModalOpen() {
         return Boolean(replyLocationView && !replyLocationView.hidden);
     }
+
     // 위치 검색 입력값을 반환한다
     function getLocationSearchTerm() {
         return replyLocationSearchInput?.value.trim() ?? "";
@@ -1800,7 +1867,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     }
 
     // 기존 HTML 서브뷰 전환: .tweet-modal__location-view 를 숨기고 .tweet-modal__compose-view 로 복귀한다.
-    function closeLocationPanel({ restoreFocus = true } = {}) {
+    function closeLocationPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyLocationView || replyLocationView.hidden)
             return;
         replyLocationView.hidden = true;
@@ -1848,6 +1915,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             attachedReplyFiles.every((f) => f.type.startsWith("image/"))
         );
     }
+
     // 첨부파일이 단일 동영상인지 확인한다
     function isReplyVideoSet() {
         return (
@@ -1970,7 +2038,10 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         fn.className = "tweet-modal__attachment-file-name";
         fn.textContent = attachedReplyFiles[0]?.name ?? "";
 
-        fg.appendChild(fpath); fi.appendChild(fg); fp.appendChild(fi); fp.appendChild(fn);
+        fg.appendChild(fpath);
+        fi.appendChild(fg);
+        fp.appendChild(fi);
+        fp.appendChild(fn);
         // 일반 파일은 HTML의 [data-attachment-media] 안에 파일 카드 한 장을 직접 추가한다.
 
         replyAttachmentMedia.appendChild(fp);
@@ -2018,7 +2089,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
                     ed.length === 0
                         ? [rep]
                         : ((ed[pendingAttachmentEditIndex] = rep),
-                          ed.slice(0, maxReplyImages));
+                            ed.slice(0, maxReplyImages));
             }
             pendingAttachmentEditIndex = null;
             applyReplyFiles(nextFiles);
@@ -2041,7 +2112,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     // 답글 에디터에 텍스트가 입력되어 있는지 확인한다
     function hasReplyEditorText() {
         return replyEditor
-        ? replyEditor.textContent.replace(/ /g, " ").trim().length > 0
+            ? replyEditor.textContent.replace(/ /g, " ").trim().length > 0
             : false;
     }
 
@@ -2079,7 +2150,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         const sel = window.getSelection();
         const cursorNode = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).startContainer : null;
         const spans = replyEditor.querySelectorAll("span");
-        spans.forEach(function(span) {
+        spans.forEach(function (span) {
             if (span.textContent === "" && !span.contains(cursorNode)) {
                 span.parentNode && span.parentNode.removeChild(span);
             }
@@ -2111,7 +2182,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
         // 현재 커서가 속한 span의 서식 확인
         const parentSpan = getFormatSpanAtCursor(range);
-        const curIsBold   = parentSpan ? parentSpan.style.fontWeight === "bold" : false;
+        const curIsBold = parentSpan ? parentSpan.style.fontWeight === "bold" : false;
         const curIsItalic = parentSpan ? parentSpan.style.fontStyle === "italic" : false;
 
         // 서식이 같으면
@@ -2153,8 +2224,8 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
         // 새 서식 span 생성 후 글자 삽입
         const span = document.createElement("span");
-        if (isBold)   span.style.fontWeight = "bold";
-        if (isItalic) span.style.fontStyle  = "italic";
+        if (isBold) span.style.fontWeight = "bold";
+        if (isItalic) span.style.fontStyle = "italic";
         const textNode = document.createTextNode(e.key);
         span.appendChild(textNode);
         range.insertNode(span);
@@ -2190,7 +2261,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         pre.selectNodeContents(replyEditor);
         pre.setEnd(range.startContainer, range.startOffset);
         const start = pre.toString().length;
-        return { start, end: start + range.toString().length };
+        return {start, end: start + range.toString().length};
     }
 
     // 저장된 텍스트 offset을 실제 DOM 위치로 변환한다
@@ -2205,17 +2276,17 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             lastTextNode = node;
             const length = node.textContent?.length ?? 0;
             if (remaining <= length) {
-                return { node, offset: remaining };
+                return {node, offset: remaining};
             }
             remaining -= length;
             node = walker.nextNode();
         }
 
         if (lastTextNode) {
-            return { node: lastTextNode, offset: lastTextNode.textContent?.length ?? 0 };
+            return {node: lastTextNode, offset: lastTextNode.textContent?.length ?? 0};
         }
 
-        return { node: replyEditor, offset: replyEditor.childNodes.length };
+        return {node: replyEditor, offset: replyEditor.childNodes.length};
     }
 
     // 저장된 offset으로 range를 다시 구성한다
@@ -2230,7 +2301,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         range.setEnd(endPos.node, endPos.offset);
         return range;
 
-      
+
     }
 
     // 저장된 텍스트 선택 영역을 복원한다
@@ -2241,7 +2312,8 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
         const range = buildReplySelectionRangeFromOffsets(savedReplySelectionOffsets) ?? savedReplySelection;
         if (!range) return false;
-        sel.removeAllRanges(); sel.addRange(range);
+        sel.removeAllRanges();
+        sel.addRange(range);
 
         return true;
     }
@@ -2414,7 +2486,10 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         }
 
         const sel = window.getSelection();
-        if (!sel) { isInsertingReplyEmoji = false; return; }
+        if (!sel) {
+            isInsertingReplyEmoji = false;
+            return;
+        }
 
         let range;
         if (sel.rangeCount === 0) {
@@ -2483,8 +2558,9 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             let remaining2 = replyMaxLength;
             let node2;
             while ((node2 = walker.nextNode())) {
-                if (remaining2 <= 0) { node2.textContent = ""; }
-                else if (node2.textContent.length > remaining2) {
+                if (remaining2 <= 0) {
+                    node2.textContent = "";
+                } else if (node2.textContent.length > remaining2) {
                     node2.textContent = node2.textContent.slice(0, remaining2);
                     remaining2 = 0;
                 } else {
@@ -2560,7 +2636,8 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         populateReplyModal(button);
         closeEmojiPicker();
         replyEditor.textContent = "";
-        savedReplySelection = null; savedReplySelectionOffsets = null;
+        savedReplySelection = null;
+        savedReplySelectionOffsets = null;
         pendingReplyFormats = new Set();
         activeEmojiCategory = "recent";
         selectedLocation = null;
@@ -2579,7 +2656,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         if (replyTagView) replyTagView.hidden = true;
         if (replyMediaView) replyMediaView.hidden = true;
         if (replyProductView) replyProductView.hidden = true;
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         renderDraftPanel();
         renderLocationList();
         syncLocationUI();
@@ -2600,7 +2677,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
                 window.confirm("게시물을 삭제하시겠어요?")
             );
         const hasDraft =
-        replyEditor.textContent.replace(/ /g, " ").trim().length > 0;
+            replyEditor.textContent.replace(/ /g, " ").trim().length > 0;
         return (
             (!hasDraft && !hasReplyAttachment()) ||
             window.confirm("게시물을 삭제하시겠어요?")
@@ -2609,30 +2686,38 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
     // 같은 [data-reply-modal] 오버레이를 다시 hidden 처리한다. DOM을 삭제하지 않고 다음 열기 때 재사용한다.
     function closeReplyModal(options = {}) {
-        const { skipConfirm = false, restoreFocus = true } = options;
+        const {skipConfirm = false, restoreFocus = true} = options;
         if (!replyModalOverlay || replyModalOverlay.hidden) return;
         if (!skipConfirm && !canCloseReplyModal()) return;
         shouldRestoreReplyEditorAfterEmojiInsert = false;
         replyModalOverlay.hidden = true;
         document.body.classList.remove("modal-open");
         closeEmojiPicker();
-        closeLocationPanel({ restoreFocus: false });
-        closeTagPanel({ restoreFocus: false });
-        closeMediaEditor({ restoreFocus: false, discardChanges: true });
-        closeDraftPanel({ restoreFocus: false });
+        closeLocationPanel({restoreFocus: false});
+        closeTagPanel({restoreFocus: false});
+        closeMediaEditor({restoreFocus: false, discardChanges: true});
+        closeDraftPanel({restoreFocus: false});
         if (replyProductView) replyProductView.hidden = true;
         if (replyEditor) replyEditor.textContent = "";
 
-        savedReplySelection = null; savedReplySelectionOffsets = null; pendingReplyFormats = new Set();
-        selectedLocation = null; pendingLocation = null;
-        selectedTaggedUsers = []; pendingTaggedUsers = [];
+        savedReplySelection = null;
+        savedReplySelectionOffsets = null;
+        pendingReplyFormats = new Set();
+        selectedLocation = null;
+        pendingLocation = null;
+        selectedTaggedUsers = [];
+        pendingTaggedUsers = [];
         selectedProduct = null;
         if (replyProductButton) replyProductButton.disabled = false;
         const existingProductCard = replyModalOverlay?.querySelector("[data-selected-product]");
         if (existingProductCard) existingProductCard.remove();
-        resetReplyAttachment(); renderLocationList(); syncLocationUI();
-        syncUserTagTrigger(); syncReplyMediaEditsToAttachments();
-        syncReplySubmitState(); syncReplyFormatButtons();
+        resetReplyAttachment();
+        renderLocationList();
+        syncLocationUI();
+        syncUserTagTrigger();
+        syncReplyMediaEditsToAttachments();
+        syncReplySubmitState();
+        syncReplyFormatButtons();
 
         if (restoreFocus) activeReplyTrigger?.focus();
         activeReplyTrigger = null;
@@ -2703,10 +2788,17 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         activeShareToast?.remove();
         const toast = document.createElement("div");
 
-        toast.className = "share-toast"; toast.setAttribute("role", "status"); toast.setAttribute("aria-live", "polite"); toast.textContent = message;
+        toast.className = "share-toast";
+        toast.setAttribute("role", "status");
+        toast.setAttribute("aria-live", "polite");
+        toast.textContent = message;
         // body 직속으로 붙여서 화면 하단에 띄운 뒤 timeout 에서 remove 한다.
-        document.body.appendChild(toast); activeShareToast = toast;
-        window.setTimeout(() => { if (activeShareToast === toast) activeShareToast = null; toast.remove(); }, 3000);
+        document.body.appendChild(toast);
+        activeShareToast = toast;
+        window.setTimeout(() => {
+            if (activeShareToast === toast) activeShareToast = null;
+            toast.remove();
+        }, 3000);
 
     }
 
@@ -2730,7 +2822,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     }
 
     // body 에 동적으로 추가했던 공유 바텀시트를 제거하고 경로를 복원한다.
-    function closeShareModal({ restorePath = true } = {}) {
+    function closeShareModal({restorePath = true} = {}) {
         if (!activeShareModal) return;
         activeShareModal.remove();
         activeShareModal = null;
@@ -2740,7 +2832,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
     // 게시물 링크를 클립보드에 복사한다
     function copyShareLink(button) {
-        const { permalink } = getSharePostMeta(button);
+        const {permalink} = getSharePostMeta(button);
         closeShareDropdown();
         if (!navigator.clipboard?.writeText) {
             showShareToast("링크를 복사하지 못했습니다");
@@ -2768,7 +2860,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     // HTML에 없는 공유 바텀시트를 새로 만들고 body 에 붙인다. closeShareModal() 에서 remove 된다.
     function openShareChatModal(button) {
         closeShareDropdown();
-        closeShareModal({ restorePath: false });
+        closeShareModal({restorePath: false});
         pushSharePath("/messages/compose");
         const modal = document.createElement("div");
         modal.className = "share-sheet";
@@ -2791,15 +2883,17 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         });
 
         // body 직속으로 추가해 오버레이/시트를 전체 화면 기준으로 표시한다.
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeShareModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeShareModal = modal;
 
     }
 
     // HTML에 없는 북마크 바텀시트를 새로 만들고 body 에 붙인다. closeShareModal() 에서 remove 된다.
     function openShareBookmarkModal(button) {
-        const { bookmarkButton } = getSharePostMeta(button);
+        const {bookmarkButton} = getSharePostMeta(button);
         closeShareDropdown();
-        closeShareModal({ restorePath: false });
+        closeShareModal({restorePath: false});
         pushSharePath("/i/bookmarks/add");
         const modal = document.createElement("div");
         const isBookmarked =
@@ -2830,7 +2924,9 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         });
 
         // body 직속으로 추가해 오버레이/시트를 전체 화면 기준으로 표시한다.
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeShareModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeShareModal = modal;
 
     }
 
@@ -2933,7 +3029,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         const displayName =
             getTextContent(ti?.querySelector(".tweet-displayname")) || "사용자";
         const tweetId = String(Math.max(all.indexOf(ti), 0) + 1);
-        return { tweetItem: ti, handle, displayName, tweetId };
+        return {tweetItem: ti, handle, displayName, tweetId};
     }
 
     // 알림 액션 토스트는 HTML에 없으므로 body 아래에 임시 노드를 추가하고 타이머 후 제거한다.
@@ -2941,10 +3037,17 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         activeNotificationToast?.remove();
         const toast = document.createElement("div");
 
-        toast.className = "notification-toast"; toast.setAttribute("role", "status"); toast.setAttribute("aria-live", "polite"); toast.textContent = message;
+        toast.className = "notification-toast";
+        toast.setAttribute("role", "status");
+        toast.setAttribute("aria-live", "polite");
+        toast.textContent = message;
         // body 직속으로 붙여서 화면 하단 토스트로 사용한다.
-        document.body.appendChild(toast); activeNotificationToast = toast;
-        window.setTimeout(() => { if (activeNotificationToast === toast) activeNotificationToast = null; toast.remove(); }, 3000);
+        document.body.appendChild(toast);
+        activeNotificationToast = toast;
+        window.setTimeout(() => {
+            if (activeNotificationToast === toast) activeNotificationToast = null;
+            toast.remove();
+        }, 3000);
 
     }
 
@@ -2958,7 +3061,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
     // HTML에 없는 차단 확인 모달을 새로 만들고 body 에 붙인다. closeNotificationModal() 에서 remove 된다.
     function openNotificationBlockModal(button) {
-        const { handle } = getNotificationUserMeta(button);
+        const {handle} = getNotificationUserMeta(button);
         closeNotificationDropdown();
         closeNotificationModal();
         const modal = document.createElement("div");
@@ -2982,13 +3085,15 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         });
 
         // body 직속으로 추가해 전체 화면 오버레이 모달로 표시한다.
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeNotificationModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeNotificationModal = modal;
 
     }
 
     // HTML에 없는 신고 모달을 새로 만들고 body 에 붙인다. closeNotificationModal() 에서 remove 된다.
     function openNotificationReportModal(button) {
-        const { tweetId } = getNotificationUserMeta(button);
+        const {tweetId} = getNotificationUserMeta(button);
         closeNotificationDropdown();
         closeNotificationModal();
         const modal = document.createElement("div");
@@ -3011,13 +3116,15 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             }
         });
         // body 직속으로 추가해 전체 화면 오버레이 모달로 표시한다.
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeNotificationModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeNotificationModal = modal;
 
     }
 
     // 알림 드롭다운 메뉴 항목 클릭 시 해당 액션을 처리한다
     function handleNotificationDropdownAction(button, actionClass) {
-        const { handle } = getNotificationUserMeta(button);
+        const {handle} = getNotificationUserMeta(button);
         if (actionClass === "menu-item--follow-toggle") {
             const isF = notificationFollowState.get(handle) ?? false;
             notificationFollowState.set(handle, !isF);
@@ -3140,22 +3247,26 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             ? Array.from(draftList.querySelectorAll(".draft-panel__item"))
             : [];
     }
+
     // 임시저장 선택 상태를 초기화한다
     function clearDraftSelection() {
         draftPanelState.selectedItems.clear();
         draftPanelState.confirmOpen = false;
     }
+
     // 임시저장 편집 모드를 종료한다
     function exitDraftEditMode() {
         draftPanelState.isEditMode = false;
         clearDraftSelection();
     }
+
     // 임시저장 편집 모드를 시작한다
     function enterDraftEditMode() {
         if (getDraftItems().length === 0) return;
         draftPanelState.isEditMode = true;
         draftPanelState.confirmOpen = false;
     }
+
     // 해당 요소가 유효한 임시저장 항목인지 확인한다
     function hasDraftItem(item) {
         return item instanceof HTMLElement && getDraftItems().includes(item);
@@ -3194,11 +3305,13 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     function hasDraftSelection() {
         return draftPanelState.selectedItems.size > 0;
     }
+
     // 임시저장 삭제 확인 대화상자를 연다
     function openDraftConfirm() {
         if (draftPanelState.isEditMode && hasDraftSelection())
             draftPanelState.confirmOpen = true;
     }
+
     // 임시저장 삭제 확인 대화상자를 닫는다
     function closeDraftConfirm() {
         draftPanelState.confirmOpen = false;
@@ -3218,14 +3331,17 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         exitDraftEditMode();
         closeDraftConfirm();
     }
+
     // 임시저장 패널이 열려 있는지 확인한다
     function isDraftPanelOpen() {
         return Boolean(draftView && !draftView.hidden);
     }
+
     // 임시저장 삭제 확인 대화상자가 열려 있는지 확인한다
     function isDraftConfirmOpen() {
         return draftPanelState.confirmOpen;
     }
+
     // 임시저장 비어있음 안내 문구를 반환한다
     function getDraftEmptyCopy() {
         return {
@@ -3233,6 +3349,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             body: "아직 게시할 준비가 되지 않았나요? 임시저장해 두고 나중에 이어서 작성하세요.",
         };
     }
+
     // 임시저장 삭제 확인 문구를 반환한다
     function getDraftConfirmCopy() {
         return {
@@ -3321,7 +3438,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     }
 
     // 기존 HTML 서브뷰 전환: .tweet-modal__draft-view 를 숨기고 .tweet-modal__compose-view 로 복귀한다.
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+    function closeDraftPanel({restoreFocus = true} = {}) {
         if (!composeView || !draftView) return;
         resetDraftPanel();
         renderDraftPanel();
@@ -3341,7 +3458,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         replyEditor.textContent = getTextContent(
             item.querySelector(".draft-panel__text"),
         );
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         syncReplySubmitState();
         saveReplySelection();
         window.requestAnimationFrame(() => {
@@ -3379,7 +3496,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
                     : "translateY(0)";
             lastScrollY = cy;
         },
-        { passive: true },
+        {passive: true},
     );
 
     // 알림 탭 클릭 시 해당 탭을 활성화하고 알림 목록을 필터링한다
@@ -3478,10 +3595,25 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         saveReplySelection();
     });
     // 에디터에서 키/마우스/포커스 이벤트 시 커서 위치에서 서식 상태 동기화
-    replyEditor?.addEventListener("keyup", (e) => { syncActiveFormatsFromCursor(); saveReplySelection(); syncReplyFormatButtons(); });
-    replyEditor?.addEventListener("mouseup", (e) => { syncActiveFormatsFromCursor(); saveReplySelection(); syncReplyFormatButtons(); });
-    replyEditor?.addEventListener("focus", (e) => { syncActiveFormatsFromCursor(); saveReplySelection(); syncReplyFormatButtons(); });
-    replyEditor?.addEventListener("click", (e) => { syncActiveFormatsFromCursor(); syncReplyFormatButtons(); });
+    replyEditor?.addEventListener("keyup", (e) => {
+        syncActiveFormatsFromCursor();
+        saveReplySelection();
+        syncReplyFormatButtons();
+    });
+    replyEditor?.addEventListener("mouseup", (e) => {
+        syncActiveFormatsFromCursor();
+        saveReplySelection();
+        syncReplyFormatButtons();
+    });
+    replyEditor?.addEventListener("focus", (e) => {
+        syncActiveFormatsFromCursor();
+        saveReplySelection();
+        syncReplyFormatButtons();
+    });
+    replyEditor?.addEventListener("click", (e) => {
+        syncActiveFormatsFromCursor();
+        syncReplyFormatButtons();
+    });
     // keydown: Ctrl+B/I 단축키 + 서식 불일치 시 직접 글자 삽입
     replyEditor?.addEventListener("keydown", (e) => {
         if (e.ctrlKey || e.metaKey) {
@@ -3547,8 +3679,16 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
 
     // 이모지 버튼 클릭 시 이모지 피커를 토글한다
 
-    replyEmojiButton?.addEventListener("mousedown", (e) => { e.preventDefault(); e.stopPropagation(); saveReplySelection(); });
-    replyEmojiButton?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleEmojiPicker(); });
+    replyEmojiButton?.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        saveReplySelection();
+    });
+    replyEmojiButton?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleEmojiPicker();
+    });
 
     // 위치 버튼 클릭 시 위치 선택 패널을 연다
     replyGeoButton?.addEventListener("click", (e) => {
@@ -3706,7 +3846,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         const uid = ub.getAttribute("data-tag-user-id");
         const user = currentTagResults.find((u) => u.id === uid);
         if (!user || pendingTaggedUsers.some((u) => u.id === user.id)) return;
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagResults([]);
@@ -3717,7 +3857,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     replySubmitButton?.addEventListener("click", (e) => {
         if (!activeReplyTrigger || replySubmitButton.disabled) return;
         updateReplyCount(activeReplyTrigger);
-        closeReplyModal({ skipConfirm: true });
+        closeReplyModal({skipConfirm: true});
     });
 
     // 문서 클릭 시 열린 피커/드롭다운을 외부 클릭으로 닫는다
@@ -3755,7 +3895,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
     // 스크롤 시 이모지 피커 위치를 재계산한다
     window.addEventListener(
@@ -3764,7 +3904,7 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
 
     // Draft panel events
@@ -3876,9 +4016,30 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
         // TODO: REST API - GET /api/products/my 로 실제 데이터 가져오기
         // 현재는 하드코딩된 샘플 데이터 사용
         const sampleProducts = [
-            { id: "1", name: "상품 이름 1", price: "₩50,000", stock: "100개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#전자"] },
-            { id: "2", name: "상품 이름 2", price: "₩30,000", stock: "50개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#기계"] },
-            { id: "3", name: "상품 이름 3", price: "₩80,000", stock: "200개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#소재"] },
+            {
+                id: "1",
+                name: "상품 이름 1",
+                price: "₩50,000",
+                stock: "100개",
+                image: "../../static/images/main/global-gates-logo.png",
+                tags: ["#부품", "#전자"]
+            },
+            {
+                id: "2",
+                name: "상품 이름 2",
+                price: "₩30,000",
+                stock: "50개",
+                image: "../../static/images/main/global-gates-logo.png",
+                tags: ["#부품", "#기계"]
+            },
+            {
+                id: "3",
+                name: "상품 이름 3",
+                price: "₩80,000",
+                stock: "200개",
+                image: "../../static/images/main/global-gates-logo.png",
+                tags: ["#부품", "#소재"]
+            },
         ];
 
         if (sampleProducts.length === 0) {
@@ -3958,14 +4119,14 @@ if (tabPopular && tabLatest && tabMembers && popularSection && latestSection && 
     }
 
     // contenteditable에 공통으로 쓰는 커서 이동 유틸이다.
-function placeCaretAtEnd(element) {
-    const selection = window.getSelection();
-    if (!selection) return;
-    const range = document.createRange();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
+    function placeCaretAtEnd(element) {
+        const selection = window.getSelection();
+        if (!selection) return;
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
 
 };

@@ -240,13 +240,13 @@ window.onload = () => {
 
     if (btnLeft && scrollEl) {
         btnLeft.addEventListener("click", () => {
-            scrollEl.scrollBy({ left: -200, behavior: "smooth" });
+            scrollEl.scrollBy({left: -200, behavior: "smooth"});
         });
     }
 
     if (btnRight && scrollEl) {
         btnRight.addEventListener("click", () => {
-            scrollEl.scrollBy({ left: 200, behavior: "smooth" });
+            scrollEl.scrollBy({left: 200, behavior: "smooth"});
         });
     }
 

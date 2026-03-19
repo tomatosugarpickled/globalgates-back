@@ -11,9 +11,8 @@ html {
 body {
     margin: 0;
     min-height: 100vh;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-        sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
     color: #0f1419;
     background: #ffffff;
 }
@@ -87,9 +86,8 @@ a {
     height: 34px;
     border-radius: 999px;
     color: #536471;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .post-detail-back {
@@ -345,9 +343,8 @@ a {
     border-radius: 999px;
     color: #536471;
     font-size: 13px;
-    transition:
-        color 0.2s ease,
-        background-color 0.2s ease;
+    transition: color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .post-detail-action-button,
@@ -1207,9 +1204,8 @@ a {
     border-radius: 20px;
     background: #ffffff;
     overflow: hidden;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .tweet-modal__location-header {
@@ -1370,7 +1366,7 @@ a {
 }
 
 .post-detail-reply-card:hover {
-   background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .post-detail-reply-header {
@@ -1427,9 +1423,8 @@ a {
     width: max-content;
     border-radius: 12px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
     overflow: hidden;
     pointer-events: auto;
 }
@@ -1450,9 +1445,8 @@ a {
     outline: none;
     background: transparent;
     color: #0f1419;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-        sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
@@ -1578,9 +1572,8 @@ a {
     overflow: hidden;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .share-sheet__card--bookmark {
@@ -1805,9 +1798,8 @@ a {
     overflow: auto;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .post-detail-notification-dialog__card--small {
@@ -1958,9 +1950,8 @@ a {
     border-radius: 20px;
     background: #ffffff;
     overflow: hidden;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .draft-panel__header {

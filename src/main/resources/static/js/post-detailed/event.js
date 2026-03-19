@@ -229,7 +229,7 @@ function setupInlineReplyComposer() {
     function getOrCreateEmojiPicker() {
         if (!emojiButton || !editor || typeof window.EmojiButton !== "function") return null;
         if (emojiLibraryPicker) return emojiLibraryPicker;
-        emojiLibraryPicker = new window.EmojiButton({ position: "bottom-start", zIndex: 9999 });
+        emojiLibraryPicker = new window.EmojiButton({position: "bottom-start", zIndex: 9999});
         emojiLibraryPicker.on("emoji", (sel) => {
             const emoji = typeof sel === "string" ? sel : sel?.emoji;
             if (emoji) insertEmoji(emoji);
@@ -281,13 +281,16 @@ function setupInlineReplyComposer() {
             const handle = card.querySelector(".postHandle")?.textContent?.trim();
             if (!name || !handle || seen.has(handle)) return null;
             seen.add(handle);
-            return { id: `${handle.replace("@", "")}-${i}`, name, handle, avatar: "" };
+            return {id: `${handle.replace("@", "")}-${i}`, name, handle, avatar: ""};
         }).filter(Boolean);
     }
 
     function syncUserTagTrigger() {
         const can = isImageSet();
-        if (userTagTrigger) { userTagTrigger.hidden = !can; userTagTrigger.disabled = !can; }
+        if (userTagTrigger) {
+            userTagTrigger.hidden = !can;
+            userTagTrigger.disabled = !can;
+        }
         if (userTagLabel) userTagLabel.textContent = selectedTaggedUsers.length === 0 ? "사용자 태그하기" : selectedTaggedUsers.map((u) => u.name).join(", ");
         if (!can && tagView && !tagView.hidden) closeTagPanel();
     }
@@ -306,8 +309,14 @@ function setupInlineReplyComposer() {
     function renderTagResults(users) {
         if (!tagResults) return;
         currentTagResults = users;
-        if (!tagSearchInput?.value.trim()) { tagResults.innerHTML = ""; return; }
-        if (users.length === 0) { tagResults.innerHTML = '<p class="tweet-modal__tag-empty">일치하는 사용자를 찾지 못했습니다.</p>'; return; }
+        if (!tagSearchInput?.value.trim()) {
+            tagResults.innerHTML = "";
+            return;
+        }
+        if (users.length === 0) {
+            tagResults.innerHTML = '<p class="tweet-modal__tag-empty">일치하는 사용자를 찾지 못했습니다.</p>';
+            return;
+        }
         tagResults.innerHTML = users.map((u) => {
             const sel = pendingTaggedUsers.some((t) => t.id === u.id);
             return `<div role="option" class="tweet-modal__tag-option">` +
@@ -331,8 +340,8 @@ function setupInlineReplyComposer() {
         hideEmojiPicker();
         toggleLocationPanel(false);
         closeProductPanel();
-        closeMediaEditor({ discardChanges: true });
-        pendingTaggedUsers = selectedTaggedUsers.map((u) => ({ ...u }));
+        closeMediaEditor({discardChanges: true});
+        pendingTaggedUsers = selectedTaggedUsers.map((u) => ({...u}));
         if (tagSearchInput) tagSearchInput.value = "";
         renderTagChipList();
         renderTagResults([]);
@@ -343,7 +352,7 @@ function setupInlineReplyComposer() {
     function closeTagPanel() {
         if (!tagView) return;
         tagView.hidden = true;
-        pendingTaggedUsers = selectedTaggedUsers.map((u) => ({ ...u }));
+        pendingTaggedUsers = selectedTaggedUsers.map((u) => ({...u}));
         if (tagSearchInput) tagSearchInput.value = "";
         renderTagChipList();
         renderTagResults([]);
@@ -351,30 +360,39 @@ function setupInlineReplyComposer() {
 
     function syncMediaAltTrigger() {
         const can = isImageSet();
-        if (mediaAltTrigger) { mediaAltTrigger.hidden = !can; mediaAltTrigger.disabled = !can; }
+        if (mediaAltTrigger) {
+            mediaAltTrigger.hidden = !can;
+            mediaAltTrigger.disabled = !can;
+        }
         if (mediaAltLabel) mediaAltLabel.textContent = mediaEdits.some((e) => e.alt.trim().length > 0) ? "설명 수정" : "설명 추가";
-        if (!can && mediaView && !mediaView.hidden) closeMediaEditor({ discardChanges: true });
+        if (!can && mediaView && !mediaView.hidden) closeMediaEditor({discardChanges: true});
     }
 
     function syncMediaEditsToAttachments() {
         if (!isImageSet()) {
-            mediaEdits = []; pendingMediaEdits = []; activeMediaIndex = 0;
-            syncMediaAltTrigger(); return;
+            mediaEdits = [];
+            pendingMediaEdits = [];
+            activeMediaIndex = 0;
+            syncMediaAltTrigger();
+            return;
         }
-        mediaEdits = attachedFiles.map((_, i) => mediaEdits[i] ?? { alt: "" });
-        if (pendingMediaEdits.length !== mediaEdits.length) pendingMediaEdits = mediaEdits.map((e) => ({ alt: e.alt }));
+        mediaEdits = attachedFiles.map((_, i) => mediaEdits[i] ?? {alt: ""});
+        if (pendingMediaEdits.length !== mediaEdits.length) pendingMediaEdits = mediaEdits.map((e) => ({alt: e.alt}));
         activeMediaIndex = Math.min(activeMediaIndex, Math.max(mediaEdits.length - 1, 0));
         syncMediaAltTrigger();
     }
 
     function renderMediaEditor() {
         if (!mediaView || pendingMediaEdits.length === 0) return;
-        const edit = pendingMediaEdits[activeMediaIndex] ?? { alt: "" };
+        const edit = pendingMediaEdits[activeMediaIndex] ?? {alt: ""};
         const url = attachmentPreviewUrls[activeMediaIndex] ?? "";
         const alt = edit.alt ?? "";
         if (mediaPrevButton) mediaPrevButton.disabled = activeMediaIndex === 0;
         if (mediaNextButton) mediaNextButton.disabled = activeMediaIndex >= pendingMediaEdits.length - 1;
-        if (mediaPreviewImage) { mediaPreviewImage.src = url; mediaPreviewImage.alt = alt; }
+        if (mediaPreviewImage) {
+            mediaPreviewImage.src = url;
+            mediaPreviewImage.alt = alt;
+        }
         if (mediaAltInput) mediaAltInput.value = alt;
         if (mediaAltCount) mediaAltCount.textContent = `${alt.length} / ${maxMediaAltLength.toLocaleString()}`;
     }
@@ -385,23 +403,23 @@ function setupInlineReplyComposer() {
         toggleLocationPanel(false);
         closeProductPanel();
         closeTagPanel();
-        pendingMediaEdits = mediaEdits.map((e) => ({ alt: e.alt }));
+        pendingMediaEdits = mediaEdits.map((e) => ({alt: e.alt}));
         activeMediaIndex = 0;
         mediaView.hidden = false;
         renderMediaEditor();
         window.requestAnimationFrame(() => mediaAltInput?.focus());
     }
 
-    function closeMediaEditor({ discardChanges = true } = {}) {
+    function closeMediaEditor({discardChanges = true} = {}) {
         if (!mediaView) return;
-        if (discardChanges) pendingMediaEdits = mediaEdits.map((e) => ({ alt: e.alt }));
+        if (discardChanges) pendingMediaEdits = mediaEdits.map((e) => ({alt: e.alt}));
         mediaView.hidden = true;
     }
 
     function saveMediaEdits() {
-        mediaEdits = pendingMediaEdits.map((e) => ({ alt: e.alt }));
+        mediaEdits = pendingMediaEdits.map((e) => ({alt: e.alt}));
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     function revokeAttachmentPreviewUrls() {
@@ -492,9 +510,9 @@ function setupInlineReplyComposer() {
                 "d",
                 hasLocation
                     ? geoButtonPath.dataset.pathActive ||
-                          geoButtonPath.getAttribute("d")
+                    geoButtonPath.getAttribute("d")
                     : geoButtonPath.dataset.pathInactive ||
-                          geoButtonPath.getAttribute("d"),
+                    geoButtonPath.getAttribute("d"),
             );
         }
         if (locationDeleteButton) {
@@ -564,8 +582,14 @@ function setupInlineReplyComposer() {
         syncInlineReplySubmitState();
     });
 
-    editor?.addEventListener("keyup", () => { saveEditorSelection(); syncFormatButtons(); });
-    editor?.addEventListener("mouseup", () => { saveEditorSelection(); syncFormatButtons(); });
+    editor?.addEventListener("keyup", () => {
+        saveEditorSelection();
+        syncFormatButtons();
+    });
+    editor?.addEventListener("mouseup", () => {
+        saveEditorSelection();
+        syncFormatButtons();
+    });
     editor?.addEventListener("focus", syncFormatButtons);
 
     editor?.addEventListener("keydown", (event) => {
@@ -778,7 +802,7 @@ function setupInlineReplyComposer() {
 
     tagCloseButton?.addEventListener("click", () => closeTagPanel());
     tagCompleteButton?.addEventListener("click", () => {
-        selectedTaggedUsers = pendingTaggedUsers.map((u) => ({ ...u }));
+        selectedTaggedUsers = pendingTaggedUsers.map((u) => ({...u}));
         syncUserTagTrigger();
         closeTagPanel();
     });
@@ -799,7 +823,7 @@ function setupInlineReplyComposer() {
         const uid = ub.getAttribute("data-tag-user-id");
         const user = currentTagResults.find((u) => u.id === uid);
         if (!user || pendingTaggedUsers.some((u) => u.id === user.id)) return;
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         if (tagSearchInput) tagSearchInput.value = "";
         renderTagResults([]);
@@ -847,7 +871,7 @@ function setupInlineReplyComposer() {
         syncUserTagTrigger();
         syncMediaAltTrigger();
         closeTagPanel();
-        closeMediaEditor({ discardChanges: true });
+        closeMediaEditor({discardChanges: true});
         syncLocationUI();
         syncInlineReplySubmitState();
         hideEmojiPicker();
@@ -864,7 +888,7 @@ function setupInlineReplyComposer() {
             toggleLocationPanel(false);
             closeProductPanel();
             closeTagPanel();
-            closeMediaEditor({ discardChanges: true });
+            closeMediaEditor({discardChanges: true});
             syncExpandedState();
         }
     });
@@ -930,8 +954,8 @@ function setupPostDetailActions() {
         document.body.classList.toggle(
             "modal-open",
             Boolean(activeShareModal) ||
-                blockDialog?.hidden === false ||
-                reportDialog?.hidden === false,
+            blockDialog?.hidden === false ||
+            reportDialog?.hidden === false,
         );
     }
 
@@ -1035,7 +1059,7 @@ function setupPostDetailActions() {
 
     // 메인 게시글처럼 공유 메뉴에서 현재 상세 게시글 링크를 복사한다.
     function copyShareLink(button) {
-        const { permalink } = getSharePostMeta(button);
+        const {permalink} = getSharePostMeta(button);
         closeShareDropdown();
         if (!navigator.clipboard?.writeText) {
             showShareToast("링크를 복사하지 못했습니다");
@@ -1125,7 +1149,7 @@ function setupPostDetailActions() {
         const handle =
             postCard?.querySelector(".postHandle")?.textContent?.trim() ||
             "@user";
-        return { button, handle };
+        return {button, handle};
     }
 
     function closeMoreDropdown() {
@@ -1240,7 +1264,7 @@ function setupPostDetailActions() {
     }
 
     function openShareBookmarkModal(button) {
-        const { bookmarkButton } = getSharePostMeta(button);
+        const {bookmarkButton} = getSharePostMeta(button);
         const isBookmarked =
             bookmarkButton?.classList.contains("active") ?? false;
         openShareModal(
@@ -1397,7 +1421,7 @@ function setupPostDetailActions() {
                         isActive
                             ? path.dataset.pathActive || path.getAttribute("d")
                             : path.dataset.pathInactive ||
-                                  path.getAttribute("d"),
+                            path.getAttribute("d"),
                     );
                 }
             });
@@ -1508,7 +1532,7 @@ function setupPostDetailActions() {
             closeMoreDropdown();
             closeShareDropdown();
         },
-        { passive: true },
+        {passive: true},
     );
 
     document.addEventListener("keydown", (event) => {
@@ -1659,9 +1683,9 @@ function setupCardReplyModal() {
                 "d",
                 hasLocation
                     ? geoButtonPath.dataset.pathActive ||
-                          geoButtonPath.getAttribute("d")
+                    geoButtonPath.getAttribute("d")
                     : geoButtonPath.dataset.pathInactive ||
-                          geoButtonPath.getAttribute("d"),
+                    geoButtonPath.getAttribute("d"),
             );
         }
         if (locationDeleteButton) {
@@ -1700,7 +1724,7 @@ function setupCardReplyModal() {
         }
     }
 
-    function closeLocationPanel({ resetPending = true } = {}) {
+    function closeLocationPanel({resetPending = true} = {}) {
         if (!locationView) {
             return;
         }
@@ -1724,7 +1748,7 @@ function setupCardReplyModal() {
         }
         closeProductPanel();
         closeTagPanel();
-        closeMediaEditor({ discardChanges: true });
+        closeMediaEditor({discardChanges: true});
         pendingLocation = selectedLocation;
         renderLocationList();
         syncLocationUI();
@@ -1760,7 +1784,7 @@ function setupCardReplyModal() {
         }
         closeLocationPanel();
         closeTagPanel();
-        closeMediaEditor({ discardChanges: true });
+        closeMediaEditor({discardChanges: true});
         productView.hidden = false;
     }
 
@@ -1866,7 +1890,7 @@ function setupCardReplyModal() {
                 : "설명 추가";
         }
         if (!canEditAlt && mediaView && !mediaView.hidden) {
-            closeMediaEditor({ discardChanges: true });
+            closeMediaEditor({discardChanges: true});
         }
     }
 
@@ -1879,10 +1903,10 @@ function setupCardReplyModal() {
             return;
         }
         mediaEdits = attachedFiles.map(
-            (_, index) => mediaEdits[index] ?? { alt: "" },
+            (_, index) => mediaEdits[index] ?? {alt: ""},
         );
         if (pendingMediaEdits.length !== mediaEdits.length) {
-            pendingMediaEdits = mediaEdits.map((edit) => ({ alt: edit.alt }));
+            pendingMediaEdits = mediaEdits.map((edit) => ({alt: edit.alt}));
         }
         activeMediaIndex = Math.min(
             activeMediaIndex,
@@ -1977,12 +2001,12 @@ function setupCardReplyModal() {
         renderTagResults(
             term
                 ? getPageUsers()
-                      .filter((user) =>
-                          `${user.name} ${user.handle}`
-                              .toLowerCase()
-                              .includes(term),
-                      )
-                      .slice(0, 6)
+                    .filter((user) =>
+                        `${user.name} ${user.handle}`
+                            .toLowerCase()
+                            .includes(term),
+                    )
+                    .slice(0, 6)
                 : [],
         );
     }
@@ -1993,8 +2017,8 @@ function setupCardReplyModal() {
         }
         closeLocationPanel();
         closeProductPanel();
-        closeMediaEditor({ discardChanges: true });
-        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({ ...user }));
+        closeMediaEditor({discardChanges: true});
+        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({...user}));
         if (tagSearchInput) {
             tagSearchInput.value = "";
         }
@@ -2009,7 +2033,7 @@ function setupCardReplyModal() {
             return;
         }
         tagView.hidden = true;
-        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({ ...user }));
+        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({...user}));
         if (tagSearchInput) {
             tagSearchInput.value = "";
         }
@@ -2021,7 +2045,7 @@ function setupCardReplyModal() {
         if (!mediaView || pendingMediaEdits.length === 0) {
             return;
         }
-        const edit = pendingMediaEdits[activeMediaIndex] ?? { alt: "" };
+        const edit = pendingMediaEdits[activeMediaIndex] ?? {alt: ""};
         const url = attachmentPreviewUrls[activeMediaIndex] ?? "";
         if (mediaPrevButton) {
             mediaPrevButton.disabled = activeMediaIndex === 0;
@@ -2049,27 +2073,27 @@ function setupCardReplyModal() {
         closeLocationPanel();
         closeProductPanel();
         closeTagPanel();
-        pendingMediaEdits = mediaEdits.map((edit) => ({ alt: edit.alt }));
+        pendingMediaEdits = mediaEdits.map((edit) => ({alt: edit.alt}));
         activeMediaIndex = 0;
         mediaView.hidden = false;
         renderMediaEditor();
         window.requestAnimationFrame(() => mediaAltInput?.focus());
     }
 
-    function closeMediaEditor({ discardChanges = true } = {}) {
+    function closeMediaEditor({discardChanges = true} = {}) {
         if (!mediaView) {
             return;
         }
         if (discardChanges) {
-            pendingMediaEdits = mediaEdits.map((edit) => ({ alt: edit.alt }));
+            pendingMediaEdits = mediaEdits.map((edit) => ({alt: edit.alt}));
         }
         mediaView.hidden = true;
     }
 
     function saveMediaEdits() {
-        mediaEdits = pendingMediaEdits.map((edit) => ({ alt: edit.alt }));
+        mediaEdits = pendingMediaEdits.map((edit) => ({alt: edit.alt}));
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     function formatDraftDate(date) {
@@ -2095,9 +2119,9 @@ function setupCardReplyModal() {
             text: editor?.textContent ?? "",
             files: [...attachedFiles],
             location: selectedLocation,
-            product: selectedProduct ? { ...selectedProduct } : null,
-            taggedUsers: selectedTaggedUsers.map((user) => ({ ...user })),
-            mediaAlt: mediaEdits.map((edit) => ({ alt: edit.alt })),
+            product: selectedProduct ? {...selectedProduct} : null,
+            taggedUsers: selectedTaggedUsers.map((user) => ({...user})),
+            mediaAlt: mediaEdits.map((edit) => ({alt: edit.alt})),
             savedAt: new Date(),
         };
     }
@@ -2149,13 +2173,13 @@ function setupCardReplyModal() {
             return;
         }
         editor.textContent = draft.text;
-        selectedTaggedUsers = draft.taggedUsers.map((user) => ({ ...user }));
-        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({ ...user }));
+        selectedTaggedUsers = draft.taggedUsers.map((user) => ({...user}));
+        pendingTaggedUsers = selectedTaggedUsers.map((user) => ({...user}));
         selectedLocation = draft.location ?? null;
         pendingLocation = selectedLocation;
-        selectedProduct = draft.product ? { ...draft.product } : null;
-        mediaEdits = draft.mediaAlt.map((edit) => ({ alt: edit.alt }));
-        pendingMediaEdits = mediaEdits.map((edit) => ({ alt: edit.alt }));
+        selectedProduct = draft.product ? {...draft.product} : null;
+        mediaEdits = draft.mediaAlt.map((edit) => ({alt: edit.alt}));
+        pendingMediaEdits = mediaEdits.map((edit) => ({alt: edit.alt}));
         setAttachments(draft.files);
         if (sourceAvatar) {
             sourceAvatar.className =
@@ -2208,7 +2232,7 @@ function setupCardReplyModal() {
         closeLocationPanel();
         closeProductPanel();
         closeTagPanel();
-        closeMediaEditor({ discardChanges: true });
+        closeMediaEditor({discardChanges: true});
         closeDraftPanel();
         syncLocationUI();
         syncSelectedProductCard();
@@ -2339,7 +2363,7 @@ function setupCardReplyModal() {
         closeLocationPanel();
         closeProductPanel();
         closeTagPanel();
-        closeMediaEditor({ discardChanges: true });
+        closeMediaEditor({discardChanges: true});
         if (!emojiPicker) {
             emojiPicker = new window.EmojiButton({
                 position: "bottom-start",
@@ -2457,11 +2481,11 @@ function setupCardReplyModal() {
     locationDeleteButton?.addEventListener("click", () => {
         selectedLocation = null;
         pendingLocation = null;
-        closeLocationPanel({ resetPending: false });
+        closeLocationPanel({resetPending: false});
     });
     locationCompleteButton?.addEventListener("click", () => {
         selectedLocation = pendingLocation;
-        closeLocationPanel({ resetPending: false });
+        closeLocationPanel({resetPending: false});
         syncLocationUI();
     });
 
@@ -2481,11 +2505,11 @@ function setupCardReplyModal() {
         selectedProduct = isSameItem
             ? null
             : {
-                  id: item.dataset.productId ?? "",
-                  name: item.dataset.productName ?? "",
-                  price: item.dataset.productPrice ?? "",
-                  image: item.dataset.productImage ?? "",
-              };
+                id: item.dataset.productId ?? "",
+                name: item.dataset.productName ?? "",
+                price: item.dataset.productPrice ?? "",
+                image: item.dataset.productImage ?? "",
+            };
         syncSelectedProductCard();
         syncProductListSelection();
     });
@@ -2539,7 +2563,7 @@ function setupCardReplyModal() {
     tagSearchInput?.addEventListener("input", () => runTagSearch());
     tagCloseButton?.addEventListener("click", () => closeTagPanel());
     tagCompleteButton?.addEventListener("click", () => {
-        selectedTaggedUsers = pendingTaggedUsers.map((user) => ({ ...user }));
+        selectedTaggedUsers = pendingTaggedUsers.map((user) => ({...user}));
         syncUserTagTrigger();
         closeTagPanel();
     });
@@ -2566,7 +2590,7 @@ function setupCardReplyModal() {
         if (!user) {
             return;
         }
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         if (tagSearchInput) {
             tagSearchInput.value = "";
@@ -2579,7 +2603,7 @@ function setupCardReplyModal() {
         openMediaEditor();
     });
     mediaBackButton?.addEventListener("click", () =>
-        closeMediaEditor({ discardChanges: true }),
+        closeMediaEditor({discardChanges: true}),
     );
     mediaSaveButton?.addEventListener("click", () => saveMediaEdits());
     mediaPrevButton?.addEventListener("click", () => {

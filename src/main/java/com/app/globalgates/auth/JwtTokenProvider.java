@@ -39,12 +39,12 @@ public class JwtTokenProvider {
     private static final String BLACKLIST_PREFIX = "blacklist:";
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-//    액세스 토큰 생성
+    //    액세스 토큰 생성
     public String createAccessToken(String username) {
         final long ACCESS_TOKEN_VALIDITY = 1000L * 60 * 10;
         String accessToken = Jwts.builder()
@@ -82,7 +82,7 @@ public class JwtTokenProvider {
         return accessToken;
     }
 
-//    JWT 토큰 유효성 검증
+    //    JWT 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build()
@@ -98,7 +98,7 @@ public class JwtTokenProvider {
         }
     }
 
-//    인증 정보 객체 생성
+    //    인증 정보 객체 생성
     public Authentication getAuthentication(String token) {
 
         String username = getUsername(token);
@@ -108,14 +108,14 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-//    토큰 소유자 추출
+    //    토큰 소유자 추출
     public String getUsername(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
                 .getBody().getSubject();
     }
 
-//    리프레시 토큰 생성
-    public String createRefreshToken(String username){
+    //    리프레시 토큰 생성
+    public String createRefreshToken(String username) {
         final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 1;
         String refreshToken = Jwts.builder()
                 .setSubject(username)
@@ -139,7 +139,7 @@ public class JwtTokenProvider {
         return refreshToken;
     }
 
-    public String createRefreshToken(String username, String provider){
+    public String createRefreshToken(String username, String provider) {
         final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 1;
         String refreshToken = Jwts.builder()
                 .setSubject(username)
@@ -164,27 +164,27 @@ public class JwtTokenProvider {
         return refreshToken;
     }
 
-//    쿠키와 Redis에서 각 RefreshToken을 가져와서 비교
-    public boolean checkRefreshTokenBetweenCookieAndRedis(String username, String cookieRefreshToken){
+    //    쿠키와 Redis에서 각 RefreshToken을 가져와서 비교
+    public boolean checkRefreshTokenBetweenCookieAndRedis(String username, String cookieRefreshToken) {
         String redisRefreshToken = getRefreshTokenFromRedis(username);
         return redisRefreshToken.equals(cookieRefreshToken);
     }
 
-//    Redis에서 RefreshToken 조회
-    public String getRefreshTokenFromRedis(String username){
+    //    Redis에서 RefreshToken 조회
+    public String getRefreshTokenFromRedis(String username) {
         return (String) redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + username);
     }
 
-//    클라이언트 요청에서 액세스 토큰 추출
-    public String parseTokenFromHeader(HttpServletRequest request){
+    //    클라이언트 요청에서 액세스 토큰 추출
+    public String parseTokenFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
 
-        if(request.getCookies() != null){
-            for(Cookie cookie : request.getCookies()){
-                if("accessToken".equals(cookie.getName())){
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -192,8 +192,8 @@ public class JwtTokenProvider {
 
         return null;
     }
-    
-//    로그아웃 블랙 리스트 추가
+
+    //    로그아웃 블랙 리스트 추가
     public void addToBlacklist(String token) {
         try {
             String blacklistToken = getBlacklistTokenKey(token);
@@ -208,25 +208,25 @@ public class JwtTokenProvider {
                         TimeUnit.MILLISECONDS
                 );
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("토큰을 블랙리스트에 추가하는데에 실패했습니다.");
         }
     }
 
-//    블랙리스트 조회
+    //    블랙리스트 조회
     public boolean isTokenInBlacklist(String token) {
         try {
             String blacklistToken = getBlacklistTokenKey(token);
             String blacklistKey = BLACKLIST_PREFIX + blacklistToken;
             Boolean hasKey = redisTemplate.hasKey(blacklistKey);
             return hasKey;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.info("블랙리스트 확인 중 오류 발생: {}", e.getMessage());
             return true;
         }
     }
-    
-    public String getBlacklistTokenKey(String token){
+
+    public String getBlacklistTokenKey(String token) {
 //        긴 토큰 문자열을 짧고 고유한 키로 관리 가능(메모리 효율)
         return DigestUtils.md5DigestAsHex(token.getBytes());
     }
@@ -238,7 +238,7 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token).getBody();
     }
 
-//    리프레시 토큰 삭제
+    //    리프레시 토큰 삭제
     public void deleteRefreshToken(String username) {
         log.info("refresh token deleted: {}", redisTemplate.delete(REFRESH_TOKEN_PREFIX + username));
     }

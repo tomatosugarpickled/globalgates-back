@@ -1,13 +1,25 @@
 @keyframes slideRight {
-  0%   { transform: translateX(0); }
-  40%  { transform: translateX(20px); }
-  100% { transform: translateX(0); }
+    0% {
+        transform: translateX(0);
+    }
+    40% {
+        transform: translateX(20px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 @keyframes slideLeft {
-  0%   { transform: translateX(0); }
-  40%  { transform: translateX(-20px); }
-  100% { transform: translateX(0); }
+    0% {
+        transform: translateX(0);
+    }
+    40% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 body {
@@ -230,9 +242,11 @@ body {
     padding: 0 4px;
     white-space: nowrap;
 }
+
 .Search-Clear-Btn:hover {
     color: #0f141a;
 }
+
 .Search-Clear-Btn.off {
     display: none;
 }
@@ -548,7 +562,7 @@ body {
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
-    color: #829aab; 
+    color: #829aab;
 }
 
 .UserName-Badge {
@@ -641,7 +655,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-left: 1px solid #e4eaec; 
+    border-left: 1px solid #e4eaec;
     gap: 24px;
 }
 
@@ -692,7 +706,7 @@ body {
     font-size: 15px;
     line-height: 20px;
     outline-color: #0f141a;
-    background-color: #0f141a;    
+    background-color: #0f141a;
     border-radius: 9999px;
     align-items: center;
     justify-content: center;
@@ -917,7 +931,7 @@ body {
     color: #6b7f8e;
 }
 
-.Left{
+.Left {
     flex-direction: column;
     align-items: flex-start;
 }
@@ -1019,7 +1033,7 @@ body {
     font-size: 12px;
     list-style: 15px;
     font-weight: 400;
-    color: inherit; 
+    color: inherit;
 }
 
 .Message-SendTime {
@@ -1101,7 +1115,7 @@ body {
     justify-content: center;
     gap: 4px;
     border-radius: 9999px;
-    border: 1px solid  transparent;
+    border: 1px solid transparent;
     background-color: transparent;
     font-size: 14px;
     line-height: 16px;
@@ -1372,13 +1386,13 @@ body {
     color: #0f141a;
     border: none;
     outline: none;
-    
-    max-height: 160px;      
-    min-height: 24px;        
-    padding: 4px 20px;       
-    font-size: 15px;         
+
+    max-height: 160px;
+    min-height: 24px;
+    padding: 4px 20px;
+    font-size: 15px;
     font-weight: 400;
-    line-height: 1.5;        
+    line-height: 1.5;
 
     scrollbar-width: thin;
     scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
@@ -2144,7 +2158,7 @@ body {
     font-size: 15px;
     line-height: 20px;
     font-weight: 400;
-    color: inherit;   
+    color: inherit;
 }
 
 .Bottom-Setting-Arrow {
@@ -2697,7 +2711,7 @@ button[name="delete"] {
     z-index: 9999;
     background: #ffffff;
     border-radius: 999px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     padding: 6px 10px;
 }
 
@@ -2756,11 +2770,11 @@ button[name="delete"] {
 
 /* 애니메이션 */
 .chat-pop-right {
-  animation: slideRight 0.5s ease;
+    animation: slideRight 0.5s ease;
 }
 
 .chat-pop-left {
-  animation: slideLeft 0.5s ease;
+    animation: slideLeft 0.5s ease;
 }
 
 

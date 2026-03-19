@@ -132,13 +132,13 @@ window.onload = function () {
 
     if (btnLeft) {
         btnLeft.addEventListener("click", () => {
-            scrollEl?.scrollBy({ left: -200, behavior: "smooth" });
+            scrollEl?.scrollBy({left: -200, behavior: "smooth"});
         });
     }
 
     if (btnRight) {
         btnRight.addEventListener("click", () => {
-            scrollEl?.scrollBy({ left: 200, behavior: "smooth" });
+            scrollEl?.scrollBy({left: 200, behavior: "smooth"});
         });
     }
 
@@ -211,7 +211,7 @@ window.onload = function () {
                     : "translateY(0)";
             lastScrollY = currentY;
         },
-        { passive: true },
+        {passive: true},
     );
 
     if (headerBack) {

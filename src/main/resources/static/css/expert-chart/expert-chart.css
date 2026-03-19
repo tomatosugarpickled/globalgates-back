@@ -1,32 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-    --color-bg:           #ffffff;
-    --color-surface:      #ffffff;
-    --color-surface-2:    #f7f9f9;
-    --color-border:       #eff3f4;
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-2: #f7f9f9;
+    --color-border: #eff3f4;
     --color-border-input: #d6dce3;
 
-    
-    --color-primary:      #1d9bf0;
+
+    --color-primary: #1d9bf0;
     --color-primary-soft: #e8f5fd;
     --color-primary-dark: #1a8cd8;
 
-    --color-text-primary:   #0f1419;
+    --color-text-primary: #0f1419;
     --color-text-secondary: #536471;
-    --color-text-tertiary:  #9CA3AF;
+    --color-text-tertiary: #9CA3AF;
 
-    --color-positive:  #10B981;
-    --color-negative:  #EF4444;
+    --color-positive: #10B981;
+    --color-negative: #EF4444;
 
-    --radius-sm:  5px;
-    --radius-md:  10px;
-    --radius-lg:  16px;
-    --radius-xl:  20px;
+    --radius-sm: 5px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
 
     --shadow-card: 0 0 0 1px #eff3f4;
     --shadow-dropdown: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-                       rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
 
     --font-sans: 'DM Sans', 'Noto Sans KR', sans-serif;
 
@@ -34,8 +34,16 @@
     --transition-base: 200ms ease;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
 body {
     font-family: var(--font-sans);
     background: var(--color-bg);
@@ -91,7 +99,10 @@ body {
     align-items: center;
     scrollbar-width: none;
 }
-.Inquiry-Tabnav-Inner::-webkit-scrollbar { display: none; }
+
+.Inquiry-Tabnav-Inner::-webkit-scrollbar {
+    display: none;
+}
 
 .Inquiry-Tabnav-List {
     display: flex;
@@ -100,7 +111,10 @@ body {
     scrollbar-width: none;
     gap: 0;
 }
-.Inquiry-Tabnav-List::-webkit-scrollbar { display: none; }
+
+.Inquiry-Tabnav-List::-webkit-scrollbar {
+    display: none;
+}
 
 .Inquiry-Tabnav-Item {
     flex: 1;
@@ -186,7 +200,7 @@ body {
 }
 
 .Expert-State-Card:hover {
-    box-shadow: 0 4px 16px rgba(29, 155, 240, 0.08), 0 1px 4px rgba(0,0,0,.04);
+    box-shadow: 0 4px 16px rgba(29, 155, 240, 0.08), 0 1px 4px rgba(0, 0, 0, .04);
     transform: translateY(-1px);
 }
 
@@ -284,7 +298,11 @@ body {
     animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 .Single-Chart-Header {
     display: flex;
@@ -363,8 +381,14 @@ body {
 }
 
 @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .Chart-Option {

@@ -44,7 +44,7 @@ window.addEventListener("load", () => {
     // 탭 프리뷰 애니메이션 지속 시간이다.
     const PREVIEW_DURATION_MS = 280;
     // 기간칩별 일 수 매핑이다.
-    const PERIOD_DAYS = { "7D": 7, "2W": 14, "4W": 28, "3M": 90 };
+    const PERIOD_DAYS = {"7D": 7, "2W": 14, "4W": 28, "3M": 90};
     // 모달을 연 마지막 버튼을 기억한다.
     let activeDetailTrigger = null;
     // 확인 대기 중인 버튼 영역이다.
@@ -239,7 +239,7 @@ window.addEventListener("load", () => {
     // 승인 확인 모달을 연다.
     const openConfirmModal = (slot, type) => {
         if (!confirmModal || !(slot instanceof HTMLElement) || !type) return;
-        pendingDecision = { slot, type };
+        pendingDecision = {slot, type};
         if (confirmTitle) {
             confirmTitle.textContent =
                 type === "approve"

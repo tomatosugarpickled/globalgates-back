@@ -220,26 +220,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const accentOptions = [
-        { id: "blue", label: "기본", color: "#1d9bf0" },
-        { id: "yellow", label: "노랑", color: "#ffd400" },
-        { id: "pink", label: "핑크", color: "#f91880" },
-        { id: "purple", label: "보라", color: "#7856ff" },
-        { id: "orange", label: "주황", color: "#ff7a00" },
-        { id: "green", label: "초록", color: "#00ba7c" },
+        {id: "blue", label: "기본", color: "#1d9bf0"},
+        {id: "yellow", label: "노랑", color: "#ffd400"},
+        {id: "pink", label: "핑크", color: "#f91880"},
+        {id: "purple", label: "보라", color: "#7856ff"},
+        {id: "orange", label: "주황", color: "#ff7a00"},
+        {id: "green", label: "초록", color: "#00ba7c"},
     ];
 
     const surfaceOptions = [
-        { id: "light", label: "기본", color: "#ffffff" },
-        { id: "dim", label: "어두운", color: "#15202b" },
-        { id: "lights-out", label: "완전 어두운", color: "#000000" },
+        {id: "light", label: "기본", color: "#ffffff"},
+        {id: "dim", label: "어두운", color: "#15202b"},
+        {id: "lights-out", label: "완전 어두운", color: "#000000"},
     ];
     const languageSelectionOptions = [
-        { id: "ko", label: "한국어 - 한국어" },
-        { id: "en", label: "영어 - English" },
-        { id: "en-gb", label: "영어(영국) - British English" },
-        { id: "ja", label: "일본어 - 日本語" },
-        { id: "es", label: "스페인어 - Español" },
-        { id: "fr", label: "프랑스어 - Français" },
+        {id: "ko", label: "한국어 - 한국어"},
+        {id: "en", label: "영어 - English"},
+        {id: "en-gb", label: "영어(영국) - British English"},
+        {id: "ja", label: "일본어 - 日本語"},
+        {id: "es", label: "스페인어 - Español"},
+        {id: "fr", label: "프랑스어 - Français"},
     ];
     const countryOptionMarkup = `
         <option value="gh">가나</option><option value="ga">가봉</option><option value="gy">가이아나</option><option value="gm">감비아</option><option value="gg">건지</option><option value="gp">과들루프</option><option value="gt">과테말라</option><option value="gu">괌</option><option value="gd">그레나다</option><option value="gr">그리스</option><option value="gl">그린란드</option><option value="gn">기니</option><option value="gw">기니비사우</option><option value="na">나미비아</option><option value="nr">나우루</option><option value="ng">나이지리아</option><option value="za">남아프리카</option><option value="nl">네덜란드</option><option value="bq">네덜란드령 카리브</option><option value="np">네팔</option><option value="no">노르웨이</option><option value="nf">노퍽섬</option><option value="nz">뉴질랜드</option><option value="nc">뉴칼레도니아</option><option value="nu">니우에</option><option value="ne">니제르</option><option value="ni">니카라과</option><option value="tw">대만</option><option value="kr">대한민국</option><option value="dk">덴마크</option><option value="dm">도미니카</option><option value="do">도미니카 공화국</option><option value="de">독일</option><option value="tl">동티모르</option><option value="la">라오스</option><option value="lr">라이베리아</option><option value="lv">라트비아</option><option value="ru">러시아</option><option value="lb">레바논</option><option value="ls">레소토</option><option value="ro">루마니아</option><option value="lu">룩셈부르크</option><option value="rw">르완다</option><option value="ly">리비아</option><option value="re">리유니온</option><option value="lt">리투아니아</option><option value="li">리히텐슈타인</option><option value="mg">마다가스카르</option><option value="mq">마르티니크</option><option value="mh">마셜 제도</option><option value="yt">마요트</option><option value="mo">마카오(중국 특별행정구)</option><option value="mk">마케도니아</option><option value="mw">말라위</option><option value="my">말레이시아</option><option value="ml">말리</option><option value="im">맨 섬</option><option value="mx">멕시코</option><option value="mc">모나코</option><option value="ma">모로코</option><option value="mu">모리셔스</option><option value="mr">모리타니</option><option value="mz">모잠비크</option><option value="me">몬테네그로</option><option value="ms">몬트세라트</option><option value="md">몰도바</option><option value="mv">몰디브</option><option value="mt">몰타</option><option value="mn">몽골</option><option value="us">미국</option><option value="vi">미국령 버진아일랜드</option><option value="fm">미크로네시아</option><option value="vu">바누아투</option><option value="bh">바레인</option><option value="bb">바베이도스</option><option value="va">바티칸 시국</option><option value="bs">바하마</option><option value="bd">방글라데시</option><option value="bm">버뮤다</option><option value="bj">베냉</option><option value="ve">베네수엘라</option><option value="vn">베트남</option><option value="be">벨기에</option><option value="by">벨라루스</option><option value="bz">벨리즈</option><option value="ba">보스니아 헤르체고비나</option><option value="bw">보츠와나</option><option value="bo">볼리비아</option><option value="bi">부룬디</option><option value="bf">부르키나파소</option><option value="bv">부베섬</option><option value="bt">부탄</option><option value="mp">북마리아나제도</option><option value="bg">불가리아</option><option value="br">브라질</option><option value="bn">브루나이</option><option value="ws">사모아</option><option value="sa">사우디아라비아</option><option value="gs">사우스조지아 사우스샌드위치 제도</option><option value="sm">산마리노</option><option value="st">상투메 프린시페</option><option value="mf">생마르탱</option><option value="bl">생바르텔레미</option><option value="pm">생피에르 미클롱</option><option value="sn">세네갈</option><option value="rs">세르비아</option><option value="sc">세이셸</option><option value="lc">세인트루시아</option><option value="vc">세인트빈센트그레나딘</option><option value="kn">세인트키츠 네비스</option><option value="sh">세인트헬레나</option><option value="so">소말리아</option><option value="sb">솔로몬 제도</option><option value="sr">수리남</option><option value="lk">스리랑카</option><option value="sz">스와질란드</option><option value="se">스웨덴</option><option value="ch">스위스</option><option value="es">스페인</option><option value="sk">슬로바키아</option><option value="si">슬로베니아</option><option value="sl">시에라리온</option><option value="sx">신트마르턴</option><option value="sg">싱가포르</option><option value="ae">아랍에미리트</option><option value="aw">아루바</option><option value="am">아르메니아</option><option value="ar">아르헨티나</option><option value="as">아메리칸 사모아</option><option value="is">아이슬란드</option><option value="ht">아이티</option><option value="ie">아일랜드</option><option value="az">아제르바이잔</option><option value="af">아프가니스탄</option><option value="ad">안도라</option><option value="al">알바니아</option><option value="dz">알제리</option><option value="ao">앙골라</option><option value="ag">앤티가 바부다</option><option value="ai">앵귈라</option><option value="er">에리트리아</option><option value="ee">에스토니아</option><option value="ec">에콰도르</option><option value="et">에티오피아</option><option value="sv">엘살바도르</option><option value="gb">영국</option><option value="io">영국령 인도양 식민지</option><option value="ye">예멘</option><option value="om">오만</option><option value="au">오스트레일리아</option><option value="at">오스트리아</option><option value="hn">온두라스</option><option value="ax">올란드 제도</option><option value="wf">왈리스-푸투나 제도</option><option value="jo">요르단</option><option value="ug">우간다</option><option value="uy">우루과이</option><option value="uz">우즈베키스탄</option><option value="ua">우크라이나</option><option value="iq">이라크</option><option value="ir">이란</option><option value="il">이스라엘</option><option value="eg">이집트</option><option value="it">이탈리아</option><option value="in">인도</option><option value="id">인도네시아</option><option value="jp">일본</option><option value="jm">자메이카</option><option value="zm">잠비아</option><option value="je">저지</option><option value="gq">적도 기니</option><option value="ge">조지아</option><option value="cf">중앙 아프리카 공화국</option><option value="dj">지부티</option><option value="gi">지브롤터</option><option value="zw">짐바브웨</option><option value="td">차드</option><option value="cz">체코</option><option value="cl">칠레</option><option value="cm">카메룬</option><option value="cv">카보베르데</option><option value="kz">카자흐스탄</option><option value="qa">카타르</option><option value="kh">캄보디아</option><option value="ca">캐나다</option><option value="ke">케냐</option><option value="ky">케이맨 제도</option><option value="km">코모로</option><option value="xk">코소보</option><option value="cr">코스타리카</option><option value="cc">코코스 제도</option><option value="ci">코트디부아르</option><option value="co">콜롬비아</option><option value="cg">콩고-브라자빌</option><option value="cd">콩고-킨샤사</option><option value="cu">쿠바</option><option value="kw">쿠웨이트</option><option value="ck">쿡 제도</option><option value="cw">퀴라소</option><option value="hr">크로아티아</option><option value="cx">크리스마스섬</option><option value="kg">키르기스스탄</option><option value="ki">키리바시</option><option value="cy">키프로스</option><option value="tj">타지키스탄</option><option value="tz">탄자니아</option><option value="th">태국</option><option value="tc">터크스 케이커스 제도</option><option value="tr">터키</option><option value="tg">토고</option><option value="tk">토켈라우</option><option value="to">통가</option><option value="tm">투르크메니스탄</option><option value="tv">투발루</option><option value="tn">튀니지</option><option value="tt">트리니다드 토바고</option><option value="pa">파나마</option><option value="py">파라과이</option><option value="pk">파키스탄</option><option value="pg">파푸아뉴기니</option><option value="pw">팔라우</option><option value="ps">팔레스타인 지구</option><option value="fo">페로 제도</option><option value="pe">페루</option><option value="pt">포르투갈</option><option value="fk">포클랜드 제도</option><option value="pl">폴란드</option><option value="pr">푸에르토리코</option><option value="fr">프랑스</option><option value="tf">프랑스 남부 지방</option><option value="gf">프랑스령 기아나</option><option value="pf">프랑스령 폴리네시아</option><option value="fj">피지</option><option value="fi">핀란드</option><option value="ph">필리핀</option><option value="pn">핏케언 섬</option><option value="hu">헝가리</option><option value="hk">홍콩(중국 특별행정구)</option>
@@ -454,8 +454,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const visibleOptions = isAppStep
             ? selectedOptions
             : !normalizedQuery && !languageSelectionState.showAll
-              ? filteredOptions.slice(0, 3)
-              : filteredOptions;
+                ? filteredOptions.slice(0, 3)
+                : filteredOptions;
 
         languageSelectionBackButton.hidden = !isAppStep;
         languageSelectionModalTitle.textContent = isAppStep
@@ -475,22 +475,22 @@ document.addEventListener("DOMContentLoaded", () => {
         languageSelectionSearchInput.value = languageSelectionState.query;
         languageSelectionList.innerHTML = visibleOptions.length
             ? visibleOptions
-                  .map((option) => {
-                      const isChecked = isAppStep
-                          ? languageSelectionState.appLanguageId === option.id
-                          : languageSelectionState.selectedIds.has(option.id);
-                      const boxClass = isAppStep
-                          ? "language-selection__item-box language-selection__item-box--radio"
-                          : "language-selection__item-box";
-                      const itemClass = isAppStep
-                          ? "language-selection__item language-selection__item--app"
-                          : "language-selection__item";
-                      const inputType = isAppStep ? "radio" : "checkbox";
-                      const inputName = isAppStep
-                          ? 'name="appLanguageOption"'
-                          : "";
+                .map((option) => {
+                    const isChecked = isAppStep
+                        ? languageSelectionState.appLanguageId === option.id
+                        : languageSelectionState.selectedIds.has(option.id);
+                    const boxClass = isAppStep
+                        ? "language-selection__item-box language-selection__item-box--radio"
+                        : "language-selection__item-box";
+                    const itemClass = isAppStep
+                        ? "language-selection__item language-selection__item--app"
+                        : "language-selection__item";
+                    const inputType = isAppStep ? "radio" : "checkbox";
+                    const inputName = isAppStep
+                        ? 'name="appLanguageOption"'
+                        : "";
 
-                      return `
+                    return `
                             <label class="${itemClass}">
                                 <span class="language-selection__item-label">
                                     ${option.label}
@@ -505,14 +505,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                     />
                                     <span class="${boxClass}" aria-hidden="true">
                                         ${buildIcon(
-                                            "M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z",
-                                        )}
+                        "M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z",
+                    )}
                                     </span>
                                 </span>
                             </label>
                         `;
-                  })
-                  .join("")
+                })
+                .join("")
             : '<p class="language-selection__empty">검색 결과가 없습니다.</p>';
 
         languageSelectionSearchInput.disabled = isAppStep;
@@ -577,11 +577,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function setDetailHeaderAction({
-        label = "",
-        iconPath = "",
-        ariaLabel,
-        action,
-    }) {
+                                       label = "",
+                                       iconPath = "",
+                                       ariaLabel,
+                                       action,
+                                   }) {
         detailActionButton.hidden = false;
         detailActionButton.textContent = label;
         detailActionButton.innerHTML = iconPath
@@ -1338,6 +1338,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * - 좌측 메뉴에서 선택된 섹션 또는 활성 라우트를 data-detail-route-view로 표시
      * - 제목은 routeRoot의 data-route-title에서 읽는다
      */
+
     /*
      * 우측 상세 패널 전체 재렌더 진입점.
      * - 어떤 route를 보여줄지 결정
@@ -1595,7 +1596,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "account" &&
             entryLink.getAttribute("href") ===
-                "/settings/your_twitter_data/account"
+            "/settings/your_twitter_data/account"
         ) {
             event.preventDefault();
             activeDetailRoute = "account-info-auth";
@@ -1636,7 +1637,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "notifications" &&
             entryLink.getAttribute("href") ===
-                "/settings/notifications/preferences"
+            "/settings/notifications/preferences"
         ) {
             event.preventDefault();
             activeDetailRoute = "notification-preferences-edit";
@@ -1647,7 +1648,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "privacy_and_safety" &&
             entryLink.getAttribute("href") ===
-                "/settings/privacy_and_safety/your_posts"
+            "/settings/privacy_and_safety/your_posts"
         ) {
             event.preventDefault();
             activeDetailRoute = "privacy-posts-edit";
@@ -1658,7 +1659,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "privacy_and_safety" &&
             entryLink.getAttribute("href") ===
-                "/settings/privacy_and_safety/mute_and_block"
+            "/settings/privacy_and_safety/mute_and_block"
         ) {
             event.preventDefault();
             activeDetailRoute = "privacy-mute-block-edit";
@@ -1669,7 +1670,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "privacy_and_safety" &&
             entryLink.getAttribute("href") ===
-                "/settings/privacy_and_safety/direct_messages"
+            "/settings/privacy_and_safety/direct_messages"
         ) {
             event.preventDefault();
             activeDetailRoute = "privacy-chat-edit";
@@ -1680,7 +1681,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             activeSectionId === "privacy_and_safety" &&
             entryLink.getAttribute("href") ===
-                "/settings/privacy_and_safety/discoverability_and_contacts"
+            "/settings/privacy_and_safety/discoverability_and_contacts"
         ) {
             event.preventDefault();
             activeDetailRoute = "privacy-discoverability-edit";

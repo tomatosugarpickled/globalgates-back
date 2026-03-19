@@ -49,6 +49,7 @@ window.onload = () => {
         overlay.classList.remove("off");
         document.body.classList.add("modal-open");
     }
+
     function closeOverlay() {
         if (!overlay) return;
         overlay.classList.add("off");
@@ -57,6 +58,7 @@ window.onload = () => {
             if (overlayImg) overlayImg.src = "";
         }, 200);
     }
+
     overlayClose?.addEventListener("click", closeOverlay);
     overlay?.addEventListener("click", (e) => {
         if (e.target === overlay) closeOverlay();
@@ -82,6 +84,7 @@ window.onload = () => {
         menu.style.left = `${left}px`;
         menu.style.top = `${top}px`;
     }
+
     function openMenu(menu, btn) {
         if (activeMenu && activeMenu !== menu) closeAllMenus();
         menu.classList.remove("off");
@@ -92,6 +95,7 @@ window.onload = () => {
         menu.style.zIndex = "9999";
         requestAnimationFrame(() => positionMenu(menu, btn));
     }
+
     function closeMenu(menu, btn) {
         if (!menu) return;
         menu.classList.add("off");
@@ -101,6 +105,7 @@ window.onload = () => {
             activeTrigger = null;
         }
     }
+
     function closeAllMenus() {
         closeMenu(moreMenu, moreBtn);
         closeMenu(shareMenu, shareBtn);
@@ -114,12 +119,14 @@ window.onload = () => {
         )
             closeAllMenus();
     });
+
     function onViewportChange() {
         if (activeMenu && activeTrigger)
             positionMenu(activeMenu, activeTrigger);
     }
-    window.addEventListener("scroll", onViewportChange, { passive: true });
-    window.addEventListener("resize", onViewportChange, { passive: true });
+
+    window.addEventListener("scroll", onViewportChange, {passive: true});
+    window.addEventListener("resize", onViewportChange, {passive: true});
 
     moreBtn?.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -139,10 +146,12 @@ window.onload = () => {
         modal?.classList.remove("off");
         backdropModal?.classList.remove("off");
     }
+
     function closeSmall(modal) {
         modal?.classList.add("off");
         backdropModal?.classList.add("off");
     }
+
     backdropModal?.addEventListener("click", () => {
         closeSmall(deleteModal);
         closeSmall(reportDialog);
@@ -290,6 +299,7 @@ window.onload = () => {
             sheet.remove();
             backdropModal?.classList.add("off");
         }
+
         sheet
             .querySelector(".Share-Sheet-Backdrop")
             .addEventListener("click", closeSheet);

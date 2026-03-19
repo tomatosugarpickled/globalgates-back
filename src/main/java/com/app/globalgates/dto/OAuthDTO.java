@@ -4,7 +4,9 @@ import com.app.globalgates.common.enumeration.OAuthProvider;
 import com.app.globalgates.domain.OAuthVO;
 import lombok.*;
 
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class OAuthDTO {
@@ -16,7 +18,7 @@ public class OAuthDTO {
     private String createdDatetime;
     private String updatedDatetime;
 
-    public OAuthVO toOAuthVO(){
+    public OAuthVO toOAuthVO() {
         return OAuthVO.builder()
                 .id(id)
                 .providerId(providerId)

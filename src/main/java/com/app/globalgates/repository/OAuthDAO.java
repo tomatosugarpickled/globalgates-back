@@ -14,16 +14,18 @@ import java.util.Optional;
 public class OAuthDAO {
     private final OAuthMapper oAuthMapper;
 
-//    회원가입
-    public void save(OAuthVO oAuthVO){
+    //    회원가입
+    public void save(OAuthVO oAuthVO) {
         oAuthMapper.insert(oAuthVO);
     }
-//    로그인
-    public Optional<MemberDTO> findMemberForLogin(MemberDTO memberDTO){
+
+    //    로그인
+    public Optional<MemberDTO> findMemberForLogin(MemberDTO memberDTO) {
         return oAuthMapper.selectMemberForLogin(memberDTO);
     }
-//    이메일로 조회
-    public Optional<MemberDTO> findMemberByMemberEmail(String memberEmail, OAuthProvider provider){
+
+    //    이메일로 조회
+    public Optional<MemberDTO> findMemberByMemberEmail(String memberEmail, OAuthProvider provider) {
         return oAuthMapper.selectMemberByMemberEmail(memberEmail, provider);
     }
 }

@@ -140,7 +140,7 @@ window.onload = () => {
         const now = new Date();
 
         if (period === "7d") {
-            return Array.from({ length: 7 }, (_, i) => {
+            return Array.from({length: 7}, (_, i) => {
                 const d = new Date(now);
                 d.setDate(d.getDate() - (6 - i));
                 return [
@@ -151,7 +151,7 @@ window.onload = () => {
         }
 
         if (period === "30d") {
-            return Array.from({ length: 30 }, (_, i) => {
+            return Array.from({length: 30}, (_, i) => {
                 const d = new Date(now);
                 d.setDate(d.getDate() - (29 - i));
                 return [
@@ -162,7 +162,7 @@ window.onload = () => {
         }
 
         // 6m – 월별 집계
-        return Array.from({ length: 6 }, (_, i) => {
+        return Array.from({length: 6}, (_, i) => {
             const d = new Date(now);
             d.setMonth(d.getMonth() - (5 - i));
             return [
@@ -180,7 +180,7 @@ window.onload = () => {
         const now = new Date();
 
         if (period === "7d") {
-            return Array.from({ length: 7 }, (_, i) => {
+            return Array.from({length: 7}, (_, i) => {
                 const d = new Date(now);
                 d.setDate(d.getDate() - (6 - i));
                 return [
@@ -191,7 +191,7 @@ window.onload = () => {
         }
 
         if (period === "30d") {
-            return Array.from({ length: 30 }, (_, i) => {
+            return Array.from({length: 30}, (_, i) => {
                 const d = new Date(now);
                 d.setDate(d.getDate() - (29 - i));
                 return [
@@ -201,7 +201,7 @@ window.onload = () => {
             });
         }
 
-        return Array.from({ length: 6 }, (_, i) => {
+        return Array.from({length: 6}, (_, i) => {
             const d = new Date(now);
             d.setMonth(d.getMonth() - (5 - i));
             return [
@@ -273,20 +273,20 @@ window.onload = () => {
                 width: "100%",
                 height: "100%",
             },
-            legend: { textStyle: { color: "#6B7280", fontSize: 12 } },
+            legend: {textStyle: {color: "#6B7280", fontSize: 12}},
             hAxis: {
-                textStyle: { color: "#9CA3AF", fontSize: 11 },
-                gridlines: { color: "transparent" },
+                textStyle: {color: "#9CA3AF", fontSize: 11},
+                gridlines: {color: "transparent"},
                 baselineColor: "#E8ECF2",
             },
             vAxis: {
-                textStyle: { color: "#9CA3AF", fontSize: 11 },
-                gridlines: { color: "#F0F3F8" },
+                textStyle: {color: "#9CA3AF", fontSize: 11},
+                gridlines: {color: "#F0F3F8"},
                 baselineColor: "#E8ECF2",
-                minorGridlines: { color: "transparent" },
+                minorGridlines: {color: "transparent"},
             },
-            tooltip: { textStyle: { fontName: "DM Sans", fontSize: 13 } },
-            animation: { startup: true, duration: 500, easing: "out" },
+            tooltip: {textStyle: {fontName: "DM Sans", fontSize: 13}},
+            animation: {startup: true, duration: 500, easing: "out"},
         };
     }
 
@@ -331,13 +331,13 @@ window.onload = () => {
 
         const options = {
             ...baseOptions(),
-            chartArea: { left: 56, right: 24, top: 20, bottom: 40 },
+            chartArea: {left: 56, right: 24, top: 20, bottom: 40},
             colors: ["#1A56FF"],
             lineWidth: 2.5,
             pointSize: 4,
             pointShape: "circle",
             areaOpacity: 0.08,
-            legend: { position: "none" },
+            legend: {position: "none"},
             vAxis: {
                 ...baseOptions().vAxis,
                 format:
@@ -385,14 +385,14 @@ window.onload = () => {
 
         const options = {
             ...baseOptions(),
-            chartArea: { left: 48, right: 16, top: 24, bottom: 36 },
+            chartArea: {left: 48, right: 16, top: 24, bottom: 36},
             colors: ["#1A56FF", "#EF4444"],
-            bar: { groupWidth: "55%" },
+            bar: {groupWidth: "55%"},
             isStacked: false,
             legend: {
                 position: "top",
                 alignment: "end",
-                textStyle: { color: "#6B7280", fontSize: 11 },
+                textStyle: {color: "#6B7280", fontSize: 11},
             },
             vAxis: {
                 ...baseOptions().vAxis,
@@ -457,12 +457,12 @@ window.onload = () => {
             legend: {
                 position: "right",
                 alignment: "center",
-                textStyle: { color: "#6B7280", fontSize: 11 },
+                textStyle: {color: "#6B7280", fontSize: 11},
             },
             pieSliceText: "none",
             pieSliceBorderColor: "#FFFFFF",
-            tooltip: { textStyle: { fontName: "DM Sans", fontSize: 13 } },
-            animation: { startup: true, duration: 600, easing: "out" },
+            tooltip: {textStyle: {fontName: "DM Sans", fontSize: 13}},
+            animation: {startup: true, duration: 600, easing: "out"},
         };
 
         if (!donutChartInstance) {
@@ -511,7 +511,7 @@ window.onload = () => {
                 },
             },
             tooltip: {
-                textStyle: { fontName: "DM Sans", fontSize: 13 },
+                textStyle: {fontName: "DM Sans", fontSize: 13},
             },
         };
 

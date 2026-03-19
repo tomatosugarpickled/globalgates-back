@@ -29,13 +29,13 @@ public class S3Service {
         String originalFileName = file.getOriginalFilename();
         String extension = null;
 
-        if(originalFileName != null && originalFileName.contains(".")){
+        if (originalFileName != null && originalFileName.contains(".")) {
             extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         }
         return path + "/" + UUID.randomUUID() + extension;
     }
 
-//    업로드
+    //    업로드
     public String uploadFile(MultipartFile file, String path) throws IOException {
         String fileName = getFileName(file, path);
 
@@ -51,7 +51,7 @@ public class S3Service {
         return fileName;
     }
 
-//    파일 조회
+    //    파일 조회
     public String getPresignedUrl(String fileName, Duration validDuration) throws IOException {
 
 //        사용 예시
@@ -62,9 +62,9 @@ public class S3Service {
 
         GetObjectRequest request =
                 GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileName)
-                    .build();
+                        .bucket(bucketName)
+                        .key(fileName)
+                        .build();
 
 
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
@@ -75,7 +75,7 @@ public class S3Service {
         return s3Presigner.presignGetObject(presignRequest).url().toString();
     }
 
-//    파일 다운로드
+    //    파일 다운로드
     public String getPresignedDownloadUrl(String fileName, String originalFileName, Duration validDuration) throws IOException {
         GetObjectRequest request =
                 GetObjectRequest.builder()
@@ -93,8 +93,8 @@ public class S3Service {
         return s3Presigner.presignGetObject(presignRequest).url().toString();
     }
 
-//    파일 삭제
-    public void deleteFile(String fileName){
+    //    파일 삭제
+    public void deleteFile(String fileName) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(fileName)

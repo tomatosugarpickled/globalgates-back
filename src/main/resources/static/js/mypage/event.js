@@ -366,6 +366,7 @@ window.onload = function () {
     function getTextContent(el) {
         return el?.textContent.trim() ?? "";
     }
+
     function escapeHtml(value) {
         return String(value).replace(
             /[&<>"']/g,
@@ -379,6 +380,7 @@ window.onload = function () {
                 })[c] ?? c,
         );
     }
+
     function getRecentEmojis() {
         try {
             const s = window.localStorage.getItem(emojiRecentsKey);
@@ -388,6 +390,7 @@ window.onload = function () {
             return [];
         }
     }
+
     function saveRecentEmoji(emoji) {
         const r = getRecentEmojis().filter((i) => i !== emoji);
         r.unshift(emoji);
@@ -400,6 +403,7 @@ window.onload = function () {
             return;
         }
     }
+
     function clearRecentEmojis() {
         try {
             window.localStorage.removeItem(emojiRecentsKey);
@@ -407,9 +411,11 @@ window.onload = function () {
             return;
         }
     }
+
     function getEmojiSearchTerm() {
         return replyEmojiSearchInput?.value.trim().toLowerCase() ?? "";
     }
+
     function getEmojiEntriesForCategory(category) {
         if (category === "recent")
             return getRecentEmojis().map((emoji) => ({
@@ -421,6 +427,7 @@ window.onload = function () {
             keywords: [emoji, emojiCategoryMeta[category]?.label ?? ""],
         }));
     }
+
     function getFilteredEmojiEntries(category) {
         const entries = getEmojiEntriesForCategory(category);
         const term = getEmojiSearchTerm();
@@ -429,10 +436,11 @@ window.onload = function () {
             e.keywords.some((k) => k.toLowerCase().includes(term)),
         );
     }
+
     function buildEmojiSection(
         title,
         emojis,
-        { clearable = false, emptyText = "" } = {},
+        {clearable = false, emptyText = ""} = {},
     ) {
         const headerAction = clearable
             ? '<button type="button" class="tweet-modal__emoji-clear" data-action="clear-recent">모두 지우기</button>'
@@ -442,6 +450,7 @@ window.onload = function () {
             : `<p class="tweet-modal__emoji-empty">${emptyText}</p>`;
         return `<section class="tweet-modal__emoji-section"><div class="tweet-modal__emoji-section-header"><h3 class="tweet-modal__emoji-section-title">${title}</h3>${headerAction}</div>${body}</section>`;
     }
+
     function renderEmojiTabs() {
         replyEmojiTabs.forEach((tab) => {
             const cat = tab.getAttribute("data-emoji-category");
@@ -452,6 +461,7 @@ window.onload = function () {
             if (meta) tab.innerHTML = meta.icon;
         });
     }
+
     function renderEmojiPickerContent() {
         if (!replyEmojiContent) return;
         const searchTerm = getEmojiSearchTerm();
@@ -462,9 +472,9 @@ window.onload = function () {
                     return entries.length === 0
                         ? ""
                         : buildEmojiSection(
-                              emojiCategoryMeta[cat].sectionTitle,
-                              entries.map((e) => e.emoji),
-                          );
+                            emojiCategoryMeta[cat].sectionTitle,
+                            entries.map((e) => e.emoji),
+                        );
                 })
                 .join("");
             replyEmojiContent.innerHTML =
@@ -492,6 +502,7 @@ window.onload = function () {
             getEmojiEntriesForCategory(activeEmojiCategory).map((e) => e.emoji),
         );
     }
+
     function renderEmojiPicker() {
         renderEmojiTabs();
         renderEmojiPickerContent();
@@ -499,7 +510,7 @@ window.onload = function () {
 
     // ===== 4-1. User Tags =====
     function cloneTaggedUsers(users) {
-        return users.map((u) => ({ ...u }));
+        return users.map((u) => ({...u}));
     }
 
     // [마이페이지 전용] .Post-Card 기준으로 태그 가능 사용자 추출
@@ -531,14 +542,17 @@ window.onload = function () {
     function isTagModalOpen() {
         return Boolean(replyTagView && !replyTagView.hidden);
     }
+
     function getTagSearchTerm() {
         return replyTagSearchInput?.value.trim() ?? "";
     }
+
     function getTaggedUserSummary(users) {
         return users.length === 0
             ? "사용자 태그하기"
             : users.map((u) => u.name).join(", ");
     }
+
     function syncUserTagTrigger() {
         const can = isReplyImageSet();
         const label = getTaggedUserSummary(selectedTaggedUsers);
@@ -548,8 +562,9 @@ window.onload = function () {
             replyUserTagTrigger.setAttribute("aria-label", label);
         }
         if (replyUserTagLabel) replyUserTagLabel.textContent = label;
-        if (!can && isTagModalOpen()) closeTagPanel({ restoreFocus: false });
+        if (!can && isTagModalOpen()) closeTagPanel({restoreFocus: false});
     }
+
     function renderTagChipList() {
         if (!replyTagChipList) return;
         if (pendingTaggedUsers.length === 0) {
@@ -565,6 +580,7 @@ window.onload = function () {
             })
             .join("");
     }
+
     function getFilteredTagUsers(query) {
         const nq = query.trim().toLowerCase();
         if (!nq) return [];
@@ -572,6 +588,7 @@ window.onload = function () {
             .filter((u) => `${u.name} ${u.handle}`.toLowerCase().includes(nq))
             .slice(0, 6);
     }
+
     function renderTagResults(users) {
         if (!replyTagResults || !replyTagSearchInput) return;
         currentTagResults = users;
@@ -604,10 +621,12 @@ window.onload = function () {
             })
             .join("");
     }
+
     function runTagSearch() {
         const tq = getTagSearchTerm();
         renderTagResults(tq ? getFilteredTagUsers(tq) : []);
     }
+
     function openTagPanel() {
         if (!composeView || !replyTagView || !isReplyImageSet()) return;
         closeEmojiPicker();
@@ -621,7 +640,8 @@ window.onload = function () {
             replyTagSearchInput?.focus();
         });
     }
-    function closeTagPanel({ restoreFocus = true } = {}) {
+
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyTagView || replyTagView.hidden) return;
         replyTagView.hidden = true;
         composeView.hidden = false;
@@ -632,15 +652,17 @@ window.onload = function () {
         if (restoreFocus)
             window.requestAnimationFrame(() => {
                 (replyUserTagTrigger && !replyUserTagTrigger.hidden
-                    ? replyUserTagTrigger
-                    : replyEditor
+                        ? replyUserTagTrigger
+                        : replyEditor
                 )?.focus();
             });
     }
+
     function applyPendingTaggedUsers() {
         selectedTaggedUsers = cloneTaggedUsers(pendingTaggedUsers);
         syncUserTagTrigger();
     }
+
     function resetTaggedUsers() {
         selectedTaggedUsers = [];
         pendingTaggedUsers = [];
@@ -652,19 +674,23 @@ window.onload = function () {
 
     // ===== 4-2. Media Alt Editor =====
     function createDefaultReplyMediaEdit() {
-        return { alt: "" };
+        return {alt: ""};
     }
+
     function cloneReplyMediaEdits(edits) {
-        return edits.map((e) => ({ alt: e.alt }));
+        return edits.map((e) => ({alt: e.alt}));
     }
+
     function isMediaEditorOpen() {
         return Boolean(replyMediaView && !replyMediaView.hidden);
     }
+
     function getReplyMediaTriggerLabel() {
         return replyMediaEdits.some((e) => e.alt.trim().length > 0)
             ? "설명 수정"
             : "설명 추가";
     }
+
     function syncReplyMediaEditsToAttachments() {
         if (!isReplyImageSet()) {
             replyMediaEdits = [];
@@ -675,7 +701,7 @@ window.onload = function () {
         }
         replyMediaEdits = attachedReplyFiles.map((_, i) => {
             const ex = replyMediaEdits[i];
-            return ex ? { alt: ex.alt ?? "" } : createDefaultReplyMediaEdit();
+            return ex ? {alt: ex.alt ?? ""} : createDefaultReplyMediaEdit();
         });
         if (pendingReplyMediaEdits.length !== replyMediaEdits.length)
             pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
@@ -685,18 +711,22 @@ window.onload = function () {
         );
         syncMediaAltTrigger();
     }
+
     function getCurrentReplyMediaUrl() {
         return attachedReplyFileUrls[activeReplyMediaIndex] ?? "";
     }
+
     function getReplyMediaImageAlt(index) {
         return replyMediaEdits[index]?.alt ?? "";
     }
+
     function getCurrentPendingReplyMediaEdit() {
         return (
             pendingReplyMediaEdits[activeReplyMediaIndex] ??
             createDefaultReplyMediaEdit()
         );
     }
+
     function syncMediaAltTrigger() {
         const can = isReplyImageSet();
         const label = getReplyMediaTriggerLabel();
@@ -707,8 +737,9 @@ window.onload = function () {
         }
         if (replyMediaAltLabel) replyMediaAltLabel.textContent = label;
         if (!can && isMediaEditorOpen())
-            closeMediaEditor({ restoreFocus: false, discardChanges: true });
+            closeMediaEditor({restoreFocus: false, discardChanges: true});
     }
+
     function renderMediaEditor() {
         if (!replyMediaView || pendingReplyMediaEdits.length === 0) return;
         const edit = getCurrentPendingReplyMediaEdit();
@@ -729,6 +760,7 @@ window.onload = function () {
         if (replyMediaAltCount)
             replyMediaAltCount.textContent = `${alt.length} / ${maxReplyMediaAltLength.toLocaleString()}`;
     }
+
     function openMediaEditor() {
         if (!composeView || !replyMediaView || !isReplyImageSet()) return;
         closeEmojiPicker();
@@ -741,10 +773,11 @@ window.onload = function () {
             replyMediaAltInput?.focus();
         });
     }
+
     function closeMediaEditor({
-        restoreFocus = true,
-        discardChanges = true,
-    } = {}) {
+                                  restoreFocus = true,
+                                  discardChanges = true,
+                              } = {}) {
         if (!composeView || !replyMediaView || replyMediaView.hidden) return;
         if (discardChanges)
             pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
@@ -753,25 +786,28 @@ window.onload = function () {
         if (restoreFocus)
             window.requestAnimationFrame(() => {
                 (replyMediaAltTrigger && !replyMediaAltTrigger.hidden
-                    ? replyMediaAltTrigger
-                    : replyEditor
+                        ? replyMediaAltTrigger
+                        : replyEditor
                 )?.focus();
             });
     }
+
     function saveReplyMediaEdits() {
         replyMediaEdits = cloneReplyMediaEdits(pendingReplyMediaEdits);
         renderReplyAttachment();
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     // ===== 4-3. Location =====
     function isLocationModalOpen() {
         return Boolean(replyLocationView && !replyLocationView.hidden);
     }
+
     function getLocationSearchTerm() {
         return replyLocationSearchInput?.value.trim() ?? "";
     }
+
     function getFilteredLocations() {
         const term = getLocationSearchTerm();
         if (cachedLocationNames.length === 0 && replyLocationList) {
@@ -787,6 +823,7 @@ window.onload = function () {
             ? cachedLocationNames.filter((l) => l.includes(term))
             : cachedLocationNames;
     }
+
     function syncLocationUI() {
         const has = Boolean(selectedLocation);
         if (replyFooterMeta) replyFooterMeta.hidden = !has;
@@ -816,6 +853,7 @@ window.onload = function () {
         if (replyLocationCompleteButton)
             replyLocationCompleteButton.disabled = !pendingLocation;
     }
+
     function renderLocationList() {
         if (!replyLocationList) return;
         const locs = getFilteredLocations();
@@ -831,6 +869,7 @@ window.onload = function () {
             })
             .join("");
     }
+
     function openLocationPanel() {
         if (!composeView || !replyLocationView) return;
         closeEmojiPicker();
@@ -844,7 +883,8 @@ window.onload = function () {
             replyLocationSearchInput?.focus();
         });
     }
-    function closeLocationPanel({ restoreFocus = true } = {}) {
+
+    function closeLocationPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyLocationView || replyLocationView.hidden)
             return;
         replyLocationView.hidden = true;
@@ -858,11 +898,13 @@ window.onload = function () {
                 replyEditor?.focus();
             });
     }
+
     function applyLocation(loc) {
         selectedLocation = loc;
         pendingLocation = loc;
         syncLocationUI();
     }
+
     function resetLocationState() {
         selectedLocation = null;
         pendingLocation = null;
@@ -875,23 +917,27 @@ window.onload = function () {
     function hasReplyAttachment() {
         return attachedReplyFiles.length > 0;
     }
+
     function clearAttachedReplyFileUrls() {
         if (attachedReplyFileUrls.length === 0) return;
         attachedReplyFileUrls.forEach((u) => URL.revokeObjectURL(u));
         attachedReplyFileUrls = [];
     }
+
     function isReplyImageSet() {
         return (
             attachedReplyFiles.length > 0 &&
             attachedReplyFiles.every((f) => f.type.startsWith("image/"))
         );
     }
+
     function isReplyVideoSet() {
         return (
             attachedReplyFiles.length === 1 &&
             attachedReplyFiles[0].type.startsWith("video/")
         );
     }
+
     function resetReplyAttachment() {
         clearAttachedReplyFileUrls();
         attachedReplyFiles = [];
@@ -902,16 +948,19 @@ window.onload = function () {
         if (replyAttachmentMedia) replyAttachmentMedia.innerHTML = "";
         if (replyAttachmentPreview) replyAttachmentPreview.hidden = true;
     }
+
     function createReplyAttachmentUrls() {
         clearAttachedReplyFileUrls();
         attachedReplyFileUrls = attachedReplyFiles.map((f) =>
             URL.createObjectURL(f),
         );
     }
+
     function getReplyImageCell(index, url, cls) {
         const alt = getReplyMediaImageAlt(index);
         return `<div class="media-cell ${cls}"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><div class="media-bg" style="background-image: url('${url}');"></div><img alt="${escapeHtml(alt)}" draggable="false" src="${url}" class="media-img"></div><div class="media-btn-row"><button type="button" class="media-btn" data-attachment-edit-index="${index}"><span>수정</span></button></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="${index}"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div>`;
     }
+
     function renderReplyImageGrid() {
         const n = attachedReplyFiles.length,
             urls = attachedReplyFileUrls;
@@ -930,12 +979,14 @@ window.onload = function () {
         }
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--top-left")}${getReplyImageCell(2, urls[2], "media-cell--bottom-left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--top-right")}${getReplyImageCell(3, urls[3], "media-cell--bottom-right")}</div></div></div>`;
     }
+
     function renderReplyVideoAttachment() {
         if (!replyAttachmentMedia || attachedReplyFiles.length === 0) return;
         const [file] = attachedReplyFiles,
             [fileUrl] = attachedReplyFileUrls;
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer"><div class="media-cell media-cell--single"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><video class="tweet-modal__attachment-video" controls preload="metadata"><source src="${fileUrl}" type="${file.type}"></video></div><div class="media-btn-row"><button type="button" class="media-btn" data-attachment-edit-index="0"><span>수정</span></button></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="0"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div></div>`;
     }
+
     function renderReplyAttachment() {
         if (!replyAttachmentPreview || !replyAttachmentMedia) return;
         if (attachedReplyFiles.length === 0) {
@@ -990,11 +1041,13 @@ window.onload = function () {
         fp.appendChild(fn);
         replyAttachmentMedia.appendChild(fp);
     }
+
     function removeReplyAttachment(index) {
         attachedReplyFiles = attachedReplyFiles.filter((_, i) => i !== index);
         pendingAttachmentEditIndex = null;
         renderReplyAttachment();
     }
+
     function handleReplyFileChange(e) {
         const next = Array.from(e.target.files ?? []);
         if (next.length === 0) {
@@ -1018,7 +1071,7 @@ window.onload = function () {
                     ed.length === 0
                         ? [rep]
                         : ((ed[pendingAttachmentEditIndex] = rep),
-                          ed.slice(0, maxReplyImages));
+                            ed.slice(0, maxReplyImages));
             }
             pendingAttachmentEditIndex = null;
             renderReplyAttachment();
@@ -1051,11 +1104,13 @@ window.onload = function () {
             ? replyEditor.textContent.replace(/\u00a0/g, " ").trim().length > 0
             : false;
     }
+
     function togglePendingReplyFormat(fmt) {
         pendingReplyFormats.has(fmt)
             ? pendingReplyFormats.delete(fmt)
             : pendingReplyFormats.add(fmt);
     }
+
     function applyPendingReplyFormatsToContent() {
         if (
             !replyEditor ||
@@ -1087,6 +1142,7 @@ window.onload = function () {
         sel?.addRange(range);
         saveReplySelection();
     }
+
     function saveReplySelection() {
         if (!replyEditor || isInsertingReplyEmoji) return;
         const sel = window.getSelection();
@@ -1103,6 +1159,7 @@ window.onload = function () {
             end: start + range.toString().length,
         };
     }
+
     function resolveReplySelectionPosition(targetOffset) {
         if (!replyEditor) return null;
         const walker = document.createTreeWalker(
@@ -1115,7 +1172,7 @@ window.onload = function () {
         while (node) {
             lastTextNode = node;
             const length = node.textContent?.length ?? 0;
-            if (remaining <= length) return { node, offset: remaining };
+            if (remaining <= length) return {node, offset: remaining};
             remaining -= length;
             node = walker.nextNode();
         }
@@ -1124,8 +1181,9 @@ window.onload = function () {
                 node: lastTextNode,
                 offset: lastTextNode.textContent?.length ?? 0,
             };
-        return { node: replyEditor, offset: replyEditor.childNodes.length };
+        return {node: replyEditor, offset: replyEditor.childNodes.length};
     }
+
     function buildReplySelectionRangeFromOffsets(offsets) {
         if (!replyEditor || !offsets) return null;
         const startPos = resolveReplySelectionPosition(offsets.start);
@@ -1136,6 +1194,7 @@ window.onload = function () {
         range.setEnd(endPos.node, endPos.offset);
         return range;
     }
+
     function restoreReplySelection() {
         if (!replyEditor) return false;
         const sel = window.getSelection();
@@ -1148,9 +1207,11 @@ window.onload = function () {
         sel.addRange(range);
         return true;
     }
+
     function hasEmojiButtonLibrary() {
         return typeof window.EmojiButton === "function";
     }
+
     function restoreReplyEditorAfterEmojiInsert() {
         if (
             !shouldRestoreReplyEditorAfterEmojiInsert ||
@@ -1168,6 +1229,7 @@ window.onload = function () {
             syncReplyFormatButtons();
         });
     }
+
     function ensureReplyEmojiLibraryPicker() {
         if (!replyEmojiButton || !replyEditor || !hasEmojiButtonLibrary())
             return null;
@@ -1197,6 +1259,7 @@ window.onload = function () {
         if (replyEmojiPicker) replyEmojiPicker.hidden = true;
         return replyEmojiLibraryPicker;
     }
+
     function applyReplyFormat(format) {
         if (!replyEditor) return;
         replyEditor.focus();
@@ -1218,6 +1281,7 @@ window.onload = function () {
         syncReplySubmitState();
         syncReplyFormatButtons();
     }
+
     function syncReplyFormatButtons() {
         if (!replyEditor) return;
         replyFormatButtons.forEach((btn) => {
@@ -1235,6 +1299,7 @@ window.onload = function () {
                 );
         });
     }
+
     function closeEmojiPicker() {
         const libraryPicker = replyEmojiLibraryPicker;
         if (libraryPicker) {
@@ -1248,6 +1313,7 @@ window.onload = function () {
         replyEmojiButton.setAttribute("aria-expanded", "false");
         restoreReplyEditorAfterEmojiInsert();
     }
+
     function updateEmojiPickerPosition() {
         if (!replyEmojiPicker || !replyEmojiButton) return;
         const rect = replyEmojiButton.getBoundingClientRect();
@@ -1260,6 +1326,7 @@ window.onload = function () {
         replyEmojiPicker.style.top = `${top}px`;
         replyEmojiPicker.style.maxHeight = `${mh}px`;
     }
+
     function openEmojiPicker() {
         const libraryPicker = ensureReplyEmojiLibraryPicker();
         if (libraryPicker && replyEmojiButton) {
@@ -1274,6 +1341,7 @@ window.onload = function () {
         replyEmojiButton.setAttribute("aria-expanded", "true");
         updateEmojiPickerPosition();
     }
+
     function toggleEmojiPicker() {
         const libraryPicker = ensureReplyEmojiLibraryPicker();
         if (libraryPicker && replyEmojiButton) {
@@ -1290,6 +1358,7 @@ window.onload = function () {
         if (!replyEmojiPicker) return;
         replyEmojiPicker.hidden ? openEmojiPicker() : closeEmojiPicker();
     }
+
     function insertReplyEmoji(emoji) {
         if (!replyEditor) return;
         isInsertingReplyEmoji = true;
@@ -1340,6 +1409,7 @@ window.onload = function () {
         syncReplyFormatButtons();
         if (replyEmojiPicker && !replyEmojiPicker.hidden) renderEmojiPicker();
     }
+
     function syncReplySubmitState() {
         if (!replyEditor) return;
         let content = replyEditor.textContent?.replace(/\u00a0/g, " ") ?? "";
@@ -1426,7 +1496,7 @@ window.onload = function () {
         if (replyTagView) replyTagView.hidden = true;
         if (replyMediaView) replyMediaView.hidden = true;
         if (replyProductView) replyProductView.hidden = true;
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         renderDraftPanel();
         renderLocationList();
         syncLocationUI();
@@ -1454,17 +1524,17 @@ window.onload = function () {
     }
 
     function closeReplyModal(options = {}) {
-        const { skipConfirm = false, restoreFocus = true } = options;
+        const {skipConfirm = false, restoreFocus = true} = options;
         if (!replyModalOverlay || replyModalOverlay.hidden) return;
         if (!skipConfirm && !canCloseReplyModal()) return;
         shouldRestoreReplyEditorAfterEmojiInsert = false;
         replyModalOverlay.hidden = true;
         document.body.classList.remove("modal-open");
         closeEmojiPicker();
-        closeLocationPanel({ restoreFocus: false });
-        closeTagPanel({ restoreFocus: false });
-        closeMediaEditor({ restoreFocus: false, discardChanges: true });
-        closeDraftPanel({ restoreFocus: false });
+        closeLocationPanel({restoreFocus: false});
+        closeTagPanel({restoreFocus: false});
+        closeMediaEditor({restoreFocus: false, discardChanges: true});
+        closeDraftPanel({restoreFocus: false});
         if (replyProductView) replyProductView.hidden = true;
         if (replyEditor) replyEditor.textContent = "";
         savedReplySelection = null;
@@ -1566,22 +1636,27 @@ window.onload = function () {
             ? Array.from(draftList.querySelectorAll(".draft-panel__item"))
             : [];
     }
+
     function clearDraftSelection() {
         draftPanelState.selectedItems.clear();
         draftPanelState.confirmOpen = false;
     }
+
     function exitDraftEditMode() {
         draftPanelState.isEditMode = false;
         clearDraftSelection();
     }
+
     function enterDraftEditMode() {
         if (getDraftItems().length === 0) return;
         draftPanelState.isEditMode = true;
         draftPanelState.confirmOpen = false;
     }
+
     function hasDraftItem(item) {
         return item instanceof HTMLElement && getDraftItems().includes(item);
     }
+
     function toggleDraftSelection(item) {
         if (!draftPanelState.isEditMode || !hasDraftItem(item)) return;
         draftPanelState.selectedItems.has(item)
@@ -1589,6 +1664,7 @@ window.onload = function () {
             : draftPanelState.selectedItems.add(item);
         draftPanelState.confirmOpen = false;
     }
+
     function areAllDraftItemsSelected() {
         const items = getDraftItems();
         return (
@@ -1596,6 +1672,7 @@ window.onload = function () {
             items.every((i) => draftPanelState.selectedItems.has(i))
         );
     }
+
     function toggleDraftSelectAll() {
         if (!draftPanelState.isEditMode) return;
         const items = getDraftItems();
@@ -1605,16 +1682,20 @@ window.onload = function () {
             : (draftPanelState.selectedItems = new Set(items));
         draftPanelState.confirmOpen = false;
     }
+
     function hasDraftSelection() {
         return draftPanelState.selectedItems.size > 0;
     }
+
     function openDraftConfirm() {
         if (draftPanelState.isEditMode && hasDraftSelection())
             draftPanelState.confirmOpen = true;
     }
+
     function closeDraftConfirm() {
         draftPanelState.confirmOpen = false;
     }
+
     function deleteSelectedDrafts() {
         if (!hasDraftSelection()) return;
         getDraftItems().forEach((i) => {
@@ -1622,16 +1703,20 @@ window.onload = function () {
         });
         exitDraftEditMode();
     }
+
     function resetDraftPanel() {
         exitDraftEditMode();
         closeDraftConfirm();
     }
+
     function isDraftPanelOpen() {
         return Boolean(draftView && !draftView.hidden);
     }
+
     function isDraftConfirmOpen() {
         return draftPanelState.confirmOpen;
     }
+
     function buildDraftCheckbox(sel) {
         const cb = document.createElement("span");
         cb.className = `draft-panel__checkbox${sel ? " draft-panel__checkbox--checked" : ""}`;
@@ -1640,6 +1725,7 @@ window.onload = function () {
             '<svg viewBox="0 0 24 24"><g><path d="M9.86 18a1 1 0 01-.73-.31l-3.9-4.11 1.45-1.38 3.2 3.38 7.46-8.1 1.47 1.36-8.19 8.9A1 1 0 019.86 18z"></path></g></svg>';
         return cb;
     }
+
     function renderDraftItems() {
         if (!draftList) return;
         getDraftItems().forEach((item) => {
@@ -1663,6 +1749,7 @@ window.onload = function () {
                 item.prepend(buildDraftCheckbox(sel));
         });
     }
+
     function renderDraftPanel() {
         if (!draftView) return;
         const hasItems = getDraftItems().length > 0;
@@ -1698,13 +1785,15 @@ window.onload = function () {
             draftConfirmDesc.textContent =
                 "이 작업은 취소할 수 없으며 선택한 전송하지 않은 게시물이 삭제됩니다.";
     }
+
     function openDraftPanel() {
         if (!composeView || !draftView) return;
         renderDraftPanel();
         composeView.hidden = true;
         draftView.hidden = false;
     }
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+
+    function closeDraftPanel({restoreFocus = true} = {}) {
         if (!composeView || !draftView) return;
         resetDraftPanel();
         renderDraftPanel();
@@ -1712,15 +1801,17 @@ window.onload = function () {
         composeView.hidden = false;
         if (restoreFocus) draftButton?.focus();
     }
+
     function getDraftItemByElement(target) {
         return target.closest(".draft-panel__item");
     }
+
     function loadDraftIntoComposer(item) {
         if (!item || !replyEditor) return;
         replyEditor.textContent = getTextContent(
             item.querySelector(".draft-panel__text"),
         );
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         syncReplySubmitState();
         saveReplySelection();
         window.requestAnimationFrame(() => {
@@ -1758,17 +1849,20 @@ window.onload = function () {
         }
         closeProductSelectPanel();
     });
+
     function openProductSelectPanel() {
         if (!replyProductView) return;
         renderProductList();
         if (composeView) composeView.hidden = true;
         replyProductView.hidden = false;
     }
+
     function closeProductSelectPanel() {
         if (!replyProductView) return;
         replyProductView.hidden = true;
         if (composeView) composeView.hidden = false;
     }
+
     function renderProductList() {
         if (!productSelectList) return;
         const sampleProducts = [
@@ -1810,6 +1904,7 @@ window.onload = function () {
             )
             .join("");
     }
+
     productSelectList?.addEventListener("click", (e) => {
         const item = e.target.closest(".draft-panel__item");
         if (!item) return;
@@ -1835,6 +1930,7 @@ window.onload = function () {
                 ".draft-panel__item--selected",
             );
     });
+
     function renderSelectedProduct() {
         const existing = replyModalOverlay?.querySelector(
             "[data-selected-product]",
@@ -2122,7 +2218,7 @@ window.onload = function () {
         const uid = ub.getAttribute("data-tag-user-id");
         const user = currentTagResults.find((u) => u.id === uid);
         if (!user || pendingTaggedUsers.some((u) => u.id === user.id)) return;
-        pendingTaggedUsers = [...pendingTaggedUsers, { ...user }];
+        pendingTaggedUsers = [...pendingTaggedUsers, {...user}];
         renderTagChipList();
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagResults([]);
@@ -2131,7 +2227,7 @@ window.onload = function () {
     replySubmitButton?.addEventListener("click", () => {
         if (!activeReplyTrigger || replySubmitButton.disabled) return;
         updateReplyCount(activeReplyTrigger);
-        closeReplyModal({ skipConfirm: true });
+        closeReplyModal({skipConfirm: true});
     });
     document.addEventListener("click", (e) => {
         if (
@@ -2151,7 +2247,7 @@ window.onload = function () {
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
     window.addEventListener(
         "scroll",
@@ -2159,7 +2255,7 @@ window.onload = function () {
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
 
     // Draft panel events
@@ -2218,16 +2314,19 @@ window.onload = function () {
     const profileEditModalOverlay = document.querySelector(
         ".Profile-Edit-Modal-Overlay",
     );
+
     function openModal(el) {
         el?.classList.remove("off");
         modalBackDrop?.classList.remove("off");
         document.body.classList.add("modal-open");
     }
+
     function closeModal(el) {
         el?.classList.add("off");
         modalBackDrop?.classList.add("off");
         document.body.classList.remove("modal-open");
     }
+
     modalBackDrop?.addEventListener("click", () => {
         const opens = document.querySelectorAll(
             ".Profile-Edit-Modal-Overlay:not(.off), .Product-Write-Modal:not(.off)",
@@ -2284,6 +2383,7 @@ window.onload = function () {
 
     // [FIX 2] 클립보드 토스트
     const clipboardToast = document.querySelector(".Clipboard-Toast");
+
     function showClipboardToast(msg) {
         if (!clipboardToast) return;
         clipboardToast.querySelector("div").textContent =
@@ -2386,6 +2486,7 @@ window.onload = function () {
             menuTrackRaf = null;
         }
     }
+
     function trackMenuPosition() {
         if (!activeMoreMenu || !activeMenuEl) return;
         const rect = activeMoreMenu.getBoundingClientRect();
@@ -2397,6 +2498,7 @@ window.onload = function () {
         activeMenuEl.style.left = `${left}px`;
         menuTrackRaf = requestAnimationFrame(trackMenuPosition);
     }
+
     function positionMenuUnderBtn(menuEl, btnEl) {
         if (menuTrackRaf) cancelAnimationFrame(menuTrackRaf);
         menuEl.style.position = "fixed";
@@ -2405,6 +2507,7 @@ window.onload = function () {
         activeMoreMenu = btnEl;
         trackMenuPosition();
     }
+
     function openMoreMenu(menuEl, btnEl) {
         if (!menuEl) return;
         if (!menuEl.classList.contains("off") && activeMoreMenu === btnEl) {
@@ -2426,6 +2529,7 @@ window.onload = function () {
             modalBackDrop?.classList.remove("off");
         }
     }
+
     function closeSmallModal(sel) {
         document.querySelector(sel)?.classList.add("off");
         modalBackDrop?.classList.add("off");
@@ -2635,12 +2739,14 @@ window.onload = function () {
 
     // ── 공유 Chat 모달 ──
     let activeShareModal = null;
+
     function closeShareModal() {
         if (!activeShareModal) return;
         activeShareModal.remove();
         activeShareModal = null;
         document.body.classList.remove("modal-open");
     }
+
     function openShareChatModal() {
         closeShareModal();
         const users = [];
@@ -2654,21 +2760,21 @@ window.onload = function () {
                     ?.textContent.trim() || "";
             const avatar =
                 cell.querySelector(".Sidebar-User-Avatar-Img")?.src || "";
-            if (name || handle) users.push({ id: i, name, handle, avatar });
+            if (name || handle) users.push({id: i, name, handle, avatar});
         });
         const rowsHtml = users.length
             ? users
-                  .map(
-                      (u) =>
-                          `<button type="button" class="Share-Sheet-User">
+                .map(
+                    (u) =>
+                        `<button type="button" class="Share-Sheet-User">
                 <span class="Share-Sheet-User-Avatar"><img src="${escapeHtml(u.avatar)}" alt="${escapeHtml(u.name)}"></span>
                 <span class="Share-Sheet-User-Body">
                     <span class="Share-Sheet-User-Name">${escapeHtml(u.name)}</span>
                     <span class="Share-Sheet-User-Handle">${escapeHtml(u.handle)}</span>
                 </span>
             </button>`,
-                  )
-                  .join("")
+                )
+                .join("")
             : `<p class="Share-Sheet-Empty">전송할 수 있는 사용자가 없습니다.</p>`;
 
         const modal = document.createElement("div");
@@ -2824,9 +2930,10 @@ window.onload = function () {
     const categoryScroll = document.getElementById("categoryScroll");
     const scrollLeftBtn = document.getElementById("scrollLeft");
     const scrollRightBtn = document.getElementById("scrollRight");
+
     function updateScrollArrows() {
         if (!categoryScroll) return;
-        const { scrollLeft, scrollWidth, clientWidth } = categoryScroll;
+        const {scrollLeft, scrollWidth, clientWidth} = categoryScroll;
         scrollLeftBtn?.style.setProperty(
             "display",
             scrollLeft > 0 ? "flex" : "none",
@@ -2836,14 +2943,15 @@ window.onload = function () {
             scrollLeft < scrollWidth - clientWidth - 1 ? "flex" : "none",
         );
     }
+
     categoryScroll?.addEventListener("scroll", updateScrollArrows);
     window.addEventListener("resize", updateScrollArrows);
     updateScrollArrows();
     scrollLeftBtn?.addEventListener("click", () =>
-        categoryScroll.scrollBy({ left: -160, behavior: "smooth" }),
+        categoryScroll.scrollBy({left: -160, behavior: "smooth"}),
     );
     scrollRightBtn?.addEventListener("click", () =>
-        categoryScroll.scrollBy({ left: 160, behavior: "smooth" }),
+        categoryScroll.scrollBy({left: 160, behavior: "smooth"}),
     );
 
     // 태그
@@ -2869,19 +2977,21 @@ window.onload = function () {
         tagList.classList.remove("off");
         tagList.innerHTML = selectedTags
             .map(
-                ({ label }) =>
+                ({label}) =>
                     `<span class="Category-Tag" data-tag="${label}" style="cursor:pointer;" title="클릭하여 제거">${label}<button type="button" class="Tag-Remove-Btn" aria-label="태그 삭제">✕</button></span>`,
             )
             .join("");
         if (postTagsInput)
             postTagsInput.value = selectedTags.map((t) => t.label).join(",");
     }
+
     function addTag(label, chipKey) {
         const t = label.trim();
         if (!t || selectedTags.some((x) => x.chipKey === chipKey)) return;
-        selectedTags.push({ label: t, chipKey });
+        selectedTags.push({label: t, chipKey});
         renderTags();
     }
+
     function removeTagByKey(chipKey) {
         selectedTags = selectedTags.filter((t) => t.chipKey !== chipKey);
         renderTags();
@@ -2896,6 +3006,7 @@ window.onload = function () {
                     );
             });
     }
+
     // [FIX 9] 태그 클릭으로 제거
     tagList?.addEventListener("click", (e) => {
         const tagEl = e.target.closest(".Category-Tag");
@@ -2905,6 +3016,7 @@ window.onload = function () {
         const found = selectedTags.find((t) => t.label === label);
         if (found) removeTagByKey(found.chipKey);
     });
+
     function showTopChips() {
         if (!categoryScroll) return;
         chipViewState = "top";
@@ -2932,6 +3044,7 @@ window.onload = function () {
         categoryScroll.scrollLeft = 0;
         updateScrollArrows();
     }
+
     function showSubChips(parentName, subsArray, parentChipKey) {
         if (!categoryScroll) return;
         chipViewState = "sub";
@@ -2956,6 +3069,7 @@ window.onload = function () {
         categoryScroll.scrollLeft = 0;
         updateScrollArrows();
     }
+
     categoryScroll?.addEventListener("click", (e) => {
         const chip = e.target.closest(".Cat-Chip");
         if (!chip) return;

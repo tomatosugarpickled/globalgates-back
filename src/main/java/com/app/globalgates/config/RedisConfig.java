@@ -16,7 +16,7 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class RedisConfig {
-//    Redis 캐시 설정
+    //    Redis 캐시 설정
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
@@ -29,7 +29,7 @@ public class RedisConfig {
                 .cacheDefaults(redisCacheConfiguration).build();
     }
 
-//    Redis 캐시 직접 조회
+    //    Redis 캐시 직접 조회
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();

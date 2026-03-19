@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter @Getter
+@Setter
+@Getter
 @ToString
 public class Criteria {
     private int page;
@@ -23,9 +24,9 @@ public class Criteria {
         count = rowCount + 1;
         this.page = Math.max(1, page);
         offset = (page - 1) * rowCount;
-        endPage = (int)(Math.ceil(page / (double)pageCount) * pageCount);
+        endPage = (int) (Math.ceil(page / (double) pageCount) * pageCount);
         startPage = endPage - pageCount + 1;
-        realEnd = (int)(Math.ceil(total / (double)rowCount));
+        realEnd = (int) (Math.ceil(total / (double) rowCount));
         endPage = Math.min(endPage, realEnd);
         endPage = Math.max(1, endPage);
         hasMore = this.page < realEnd;

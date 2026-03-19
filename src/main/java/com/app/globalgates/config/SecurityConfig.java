@@ -45,25 +45,25 @@ public class SecurityConfig {
 //                JWT 기반 인증은 무상태(stateless) 인증 방식
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
+                                .requestMatchers(
 //                                필터 체인(인증)을 제외할 경로
-                                "/api/auth/**",
-                                "/member/join",
-                                "/member/login",
-                                "/error",
-                                "/css/**",
-                                "/js/**",
-                                "/image/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
-                        .anyRequest().authenticated()
+                                        "/api/auth/**",
+                                        "/member/join",
+                                        "/member/login",
+                                        "/error",
+                                        "/css/**",
+                                        "/js/**",
+                                        "/image/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name())
+                                .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions ->
                         exceptions.authenticationEntryPoint(authenticationHandler)
-                                    .accessDeniedHandler(authorizationHandler)
+                                .accessDeniedHandler(authorizationHandler)
                 )
                 .oauth2Login(
                         oauth -> oauth.userInfoEndpoint(
-                                userInfo -> userInfo.userService(oAuth2UserService))
+                                        userInfo -> userInfo.userService(oAuth2UserService))
                                 .successHandler(oAuth2SuccessHandler)
                 )
 

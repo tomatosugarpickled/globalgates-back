@@ -400,13 +400,19 @@ window.onload = () => {
         modal.innerHTML = `<div class="notification-dialog__backdrop"></div><div class="notification-dialog__card notification-dialog__card--small" role="alertdialog" aria-modal="true"><h2 class="notification-dialog__title">${escapeHtml(handle)} 님을 차단할까요?</h2><p class="notification-dialog__description">내 공개 게시물을 볼 수 있지만 더 이상 게시물에 참여할 수 없습니다. 또한 ${escapeHtml(handle)} 님은 나를 팔로우하거나 쪽지를 보낼 수 없으며, 이 계정과 관련된 알림도 내게 표시되지 않습니다.</p><div class="notification-dialog__actions"><button type="button" class="notification-dialog__danger notification-dialog__confirm-block">차단</button><button type="button" class="notification-dialog__secondary notification-dialog__close">취소</button></div></div>`;
         modal.addEventListener("click", (e) => {
             if (e.target.classList.contains("notification-dialog__backdrop") || e.target.closest(".notification-dialog__close")) {
-                e.preventDefault(); closeNotificationModal(); return;
+                e.preventDefault();
+                closeNotificationModal();
+                return;
             }
             if (e.target.closest(".notification-dialog__confirm-block")) {
-                e.preventDefault(); showNotificationToast(`${handle} 님을 차단했습니다`); closeNotificationModal();
+                e.preventDefault();
+                showNotificationToast(`${handle} 님을 차단했습니다`);
+                closeNotificationModal();
             }
         });
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeNotificationModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeNotificationModal = modal;
     };
 
     // 신고 모달을 열기 (Notification과 동일 — 신고 사유 목록 포함)
@@ -418,13 +424,19 @@ window.onload = () => {
         modal.innerHTML = `<div class="notification-dialog__backdrop"></div><div class="notification-dialog__card notification-dialog__card--report" role="dialog" aria-modal="true"><div class="notification-dialog__header"><button type="button" class="notification-dialog__icon-btn notification-dialog__close" aria-label="돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg></button><h2 class="notification-dialog__title">신고하기</h2></div><div class="notification-dialog__body"><p class="notification-dialog__question">이 게시물에 어떤 문제가 있나요?</p><ul class="notification-report__list">${reportReasons.map((r) => `<li><button type="button" class="notification-report__item"><span>${escapeHtml(r)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.293 6.293 10.707 4.88 17.828 12l-7.121 7.12-1.414-1.413L14.999 12z"></path></g></svg></button></li>`).join("")}</ul></div></div>`;
         modal.addEventListener("click", (e) => {
             if (e.target.classList.contains("notification-dialog__backdrop") || e.target.closest(".notification-dialog__close")) {
-                e.preventDefault(); closeNotificationModal(); return;
+                e.preventDefault();
+                closeNotificationModal();
+                return;
             }
             if (e.target.closest(".notification-report__item")) {
-                e.preventDefault(); showNotificationToast("신고가 접수되었습니다"); closeNotificationModal();
+                e.preventDefault();
+                showNotificationToast("신고가 접수되었습니다");
+                closeNotificationModal();
             }
         });
-        document.body.appendChild(modal); document.body.classList.add("modal-open"); activeNotificationModal = modal;
+        document.body.appendChild(modal);
+        document.body.classList.add("modal-open");
+        activeNotificationModal = modal;
     };
 
     // 더보기 드롭다운 항목 클릭 시 해당 액션을 처리한다 (Notification과 동일)
@@ -438,7 +450,10 @@ window.onload = () => {
             showNotificationToast(isF ? `${handle} 님 팔로우를 취소했습니다` : `${handle} 님을 팔로우했습니다`);
             return;
         }
-        if (actionClass === "menu-item--block") { openBlockModal(button); return; }
+        if (actionClass === "menu-item--block") {
+            openBlockModal(button);
+            return;
+        }
         if (actionClass === "menu-item--report") openReportModal(button);
     };
 
@@ -457,7 +472,8 @@ window.onload = () => {
         lc.addEventListener("click", (e) => {
             const item = e.target.closest(".menu-item");
             if (item) {
-                e.preventDefault(); e.stopPropagation();
+                e.preventDefault();
+                e.stopPropagation();
                 if (activeMoreButton) {
                     const ac = Array.from(item.classList).find((c) => c.startsWith("menu-item--")) ?? "";
                     handleMoreDropdownAction(activeMoreButton, ac);
@@ -508,7 +524,7 @@ window.onload = () => {
     // 답글 모달은 HTML에 이미 존재하는 [data-reply-modal] 골격을 hidden 속성으로 토글해서 재사용한다.
     // 동적 생성/삭제가 아니라 표시/숨김 전환 방식이다.
     const closeReplyModal = (options = {}) => {
-        const { skipConfirm = false, restoreFocus = true } = options;
+        const {skipConfirm = false, restoreFocus = true} = options;
         if (!replyModalOverlay || replyModalOverlay.hidden) {
             return;
         }
@@ -518,23 +534,31 @@ window.onload = () => {
         replyModalOverlay.hidden = true;
         document.body.classList.remove("modal-open");
         closeEmojiPicker();
-        closeLocationPanel({ restoreFocus: false });
-        closeTagPanel({ restoreFocus: false });
-        closeMediaEditor({ restoreFocus: false, discardChanges: true });
-        closeDraftPanel({ restoreFocus: false });
+        closeLocationPanel({restoreFocus: false});
+        closeTagPanel({restoreFocus: false});
+        closeMediaEditor({restoreFocus: false, discardChanges: true});
+        closeDraftPanel({restoreFocus: false});
         if (replyProductView) replyProductView.hidden = true;
         if (replyEditor) replyEditor.textContent = "";
 
-        savedReplySelection = null; savedReplySelectionOffsets = null; pendingReplyFormats = new Set();
-        selectedLocation = null; pendingLocation = null;
-        selectedTaggedUsers = []; pendingTaggedUsers = [];
+        savedReplySelection = null;
+        savedReplySelectionOffsets = null;
+        pendingReplyFormats = new Set();
+        selectedLocation = null;
+        pendingLocation = null;
+        selectedTaggedUsers = [];
+        pendingTaggedUsers = [];
         selectedProduct = null;
         if (replyProductButton) replyProductButton.disabled = false;
         const existingProductCard2 = replyModalOverlay?.querySelector("[data-selected-product]");
         if (existingProductCard2) existingProductCard2.remove();
-        resetReplyAttachment(); renderLocationList(); syncLocationUI();
-        syncUserTagTrigger(); syncReplyMediaEditsToAttachments();
-        syncReplySubmitState(); syncReplyFormatButtons();
+        resetReplyAttachment();
+        renderLocationList();
+        syncLocationUI();
+        syncUserTagTrigger();
+        syncReplyMediaEditsToAttachments();
+        syncReplySubmitState();
+        syncReplyFormatButtons();
 
         if (restoreFocus) activeReplyTrigger?.focus();
         activeReplyTrigger = null;
@@ -605,7 +629,7 @@ window.onload = () => {
                 getTextContent(card.querySelector(".user-handle")),
             avatar: buildAvatarDataUrl(
                 getTextContent(card.querySelector(".user-avatar")) ||
-                    getTextContent(card.querySelector(".user-name")),
+                getTextContent(card.querySelector(".user-name")),
             ),
         }));
 
@@ -617,12 +641,12 @@ window.onload = () => {
         const postId = postCard?.dataset.postId || "";
         const url = new URL(window.location.href);
         url.hash = postId ? `post-${postId}` : "";
-        return { bookmarkButton, permalink: url.toString() };
+        return {bookmarkButton, permalink: url.toString()};
     };
 
     // 링크 복사는 드롭다운을 닫은 뒤 현재 게시물의 해시 URL을 클립보드에 기록한다.
     const copyShareLink = (button) => {
-        const { permalink } = getSharePostMeta(button);
+        const {permalink} = getSharePostMeta(button);
         closeShareDropdown();
 
         if (!navigator.clipboard?.writeText) {
@@ -680,7 +704,7 @@ window.onload = () => {
 
     // --- 북마크 폴더 바텀시트 (document.body에 동적 추가) ---
     const openShareBookmarkModal = (button) => {
-        const { bookmarkButton } = getSharePostMeta(button);
+        const {bookmarkButton} = getSharePostMeta(button);
         const isBookmarked =
             bookmarkButton?.classList.contains("active") ?? false;
         closeShareDropdown();
@@ -853,8 +877,8 @@ window.onload = () => {
                 textElement.dataset.expanded = String(!isExpanded);
                 content.textContent = isExpanded
                     ? textElement.dataset.collapsedText ||
-                      textElement.dataset.fullText ||
-                      ""
+                    textElement.dataset.fullText ||
+                    ""
                     : textElement.dataset.fullText || "";
                 button.textContent = isExpanded ? "더보기" : "접기";
             });
@@ -894,9 +918,9 @@ window.onload = () => {
                             "d",
                             isActive
                                 ? path.dataset.pathActive ||
-                                      path.getAttribute("d")
+                                path.getAttribute("d")
                                 : path.dataset.pathInactive ||
-                                      path.getAttribute("d"),
+                                path.getAttribute("d"),
                         );
                     }
 
@@ -947,63 +971,123 @@ window.onload = () => {
     const emojiRecentsKey = "inquiry_reply_recent_emojis";
     const maxRecentEmojis = 18;
     const emojiCategoryMeta = {
-        recent: { label: "최근", sectionTitle: "최근", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 1.75A10.25 10.25 0 112.75 12 10.26 10.26 0 0112 1.75zm0 1.5A8.75 8.75 0 1020.75 12 8.76 8.76 0 0012 3.25zm.75 3.5v5.19l3.03 1.75-.75 1.3-3.78-2.18V6.75h1.5z"></path></g></svg>' },
-        smileys: { label: "스마일리 및 사람", sectionTitle: "스마일리 및 사람", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12S6.072 1.25 12 1.25 22.75 6.072 22.75 12 17.928 22.75 12 22.75zm0-20c-5.109 0-9.25 4.141-9.25 9.25s4.141 9.25 9.25 9.25 9.25-4.141 9.25-9.25S17.109 2.75 12 2.75zM9 11.75c-.69 0-1.25-.56-1.25-1.25S8.31 9.25 9 9.25s1.25.56 1.25 1.25S9.69 11.75 9 11.75zm6 0c-.69 0-1.25-.56-1.25-1.25S14.31 9.25 15 9.25s1.25.56 1.25 1.25S15.69 11.75 15 11.75zm-8.071 3.971c.307-.298.771-.397 1.188-.253.953.386 2.403.982 3.883.982s2.93-.596 3.883-.982c.417-.144.88-.044 1.188.253a.846.846 0 01-.149 1.34c-1.254.715-3.059 1.139-4.922 1.139s-3.668-.424-4.922-1.139a.847.847 0 01-.149-1.39z"></path></g></svg>' },
-        animals: { label: "동물 및 자연", sectionTitle: "동물 및 자연", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 3.5c3.77 0 6.75 2.86 6.75 6.41 0 3.17-1.88 4.94-4.15 6.28-.74.44-1.54.9-1.6 1.86-.02.38-.33.68-.71.68h-.6a.71.71 0 01-.71-.67c-.07-.95-.86-1.42-1.6-1.85C7.13 14.85 5.25 13.08 5.25 9.91 5.25 6.36 8.23 3.5 12 3.5zm-4.79-.97c.61 0 1.1.49 1.1 1.1 0 .32-.14.63-.39.84-.4.34-.78.78-1.08 1.3-.18.3-.49.48-.84.48-.61 0-1.1-.49-1.1-1.1 0-.14.03-.29.09-.42.47-1.04 1.17-1.93 2.02-2.63.19-.15.43-.24.7-.24zm9.58 0c.27 0 .51.09.7.24.85.7 1.55 1.6 2.02 2.63.06.13.09.28.09.42 0 .61-.49 1.1-1.1 1.1-.35 0-.66-.18-.84-.48-.3-.52-.68-.96-1.08-1.3a1.1 1.1 0 01-.39-.84c0-.61.49-1.1 1.1-1.1z"></path></g></svg>' },
-        food: { label: "음식 및 음료", sectionTitle: "음식 및 음료", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M17.5 2a5.5 5.5 0 00-5.5 5.5c0 .51.07 1.01.2 1.48L4 17.18V21h3.82l8.2-8.2c.47.13.97.2 1.48.2a5.5 5.5 0 000-11z"></path></g></svg>' },
-        activities: { label: "활동", sectionTitle: "활동", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></g></svg>' },
-        travel: { label: "여행 및 장소", sectionTitle: "여행 및 장소", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2z"></path></g></svg>' },
-        objects: { label: "사물", sectionTitle: "사물", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7zM9 21v-1h6v1a1 1 0 01-1 1h-4a1 1 0 01-1-1z"></path></g></svg>' },
-        symbols: { label: "기호", sectionTitle: "기호", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></g></svg>' },
-        flags: { label: "깃발", sectionTitle: "깃발", icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path></g></svg>' },
+        recent: {
+            label: "최근",
+            sectionTitle: "최근",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 1.75A10.25 10.25 0 112.75 12 10.26 10.26 0 0112 1.75zm0 1.5A8.75 8.75 0 1020.75 12 8.76 8.76 0 0012 3.25zm.75 3.5v5.19l3.03 1.75-.75 1.3-3.78-2.18V6.75h1.5z"></path></g></svg>'
+        },
+        smileys: {
+            label: "스마일리 및 사람",
+            sectionTitle: "스마일리 및 사람",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 22.75C6.072 22.75 1.25 17.928 1.25 12S6.072 1.25 12 1.25 22.75 6.072 22.75 12 17.928 22.75 12 22.75zm0-20c-5.109 0-9.25 4.141-9.25 9.25s4.141 9.25 9.25 9.25 9.25-4.141 9.25-9.25S17.109 2.75 12 2.75zM9 11.75c-.69 0-1.25-.56-1.25-1.25S8.31 9.25 9 9.25s1.25.56 1.25 1.25S9.69 11.75 9 11.75zm6 0c-.69 0-1.25-.56-1.25-1.25S14.31 9.25 15 9.25s1.25.56 1.25 1.25S15.69 11.75 15 11.75zm-8.071 3.971c.307-.298.771-.397 1.188-.253.953.386 2.403.982 3.883.982s2.93-.596 3.883-.982c.417-.144.88-.044 1.188.253a.846.846 0 01-.149 1.34c-1.254.715-3.059 1.139-4.922 1.139s-3.668-.424-4.922-1.139a.847.847 0 01-.149-1.39z"></path></g></svg>'
+        },
+        animals: {
+            label: "동물 및 자연",
+            sectionTitle: "동물 및 자연",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 3.5c3.77 0 6.75 2.86 6.75 6.41 0 3.17-1.88 4.94-4.15 6.28-.74.44-1.54.9-1.6 1.86-.02.38-.33.68-.71.68h-.6a.71.71 0 01-.71-.67c-.07-.95-.86-1.42-1.6-1.85C7.13 14.85 5.25 13.08 5.25 9.91 5.25 6.36 8.23 3.5 12 3.5zm-4.79-.97c.61 0 1.1.49 1.1 1.1 0 .32-.14.63-.39.84-.4.34-.78.78-1.08 1.3-.18.3-.49.48-.84.48-.61 0-1.1-.49-1.1-1.1 0-.14.03-.29.09-.42.47-1.04 1.17-1.93 2.02-2.63.19-.15.43-.24.7-.24zm9.58 0c.27 0 .51.09.7.24.85.7 1.55 1.6 2.02 2.63.06.13.09.28.09.42 0 .61-.49 1.1-1.1 1.1-.35 0-.66-.18-.84-.48-.3-.52-.68-.96-1.08-1.3a1.1 1.1 0 01-.39-.84c0-.61.49-1.1 1.1-1.1z"></path></g></svg>'
+        },
+        food: {
+            label: "음식 및 음료",
+            sectionTitle: "음식 및 음료",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M17.5 2a5.5 5.5 0 00-5.5 5.5c0 .51.07 1.01.2 1.48L4 17.18V21h3.82l8.2-8.2c.47.13.97.2 1.48.2a5.5 5.5 0 000-11z"></path></g></svg>'
+        },
+        activities: {
+            label: "활동",
+            sectionTitle: "활동",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></g></svg>'
+        },
+        travel: {
+            label: "여행 및 장소",
+            sectionTitle: "여행 및 장소",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2z"></path></g></svg>'
+        },
+        objects: {
+            label: "사물",
+            sectionTitle: "사물",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7zM9 21v-1h6v1a1 1 0 01-1 1h-4a1 1 0 01-1-1z"></path></g></svg>'
+        },
+        symbols: {
+            label: "기호",
+            sectionTitle: "기호",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></g></svg>'
+        },
+        flags: {
+            label: "깃발",
+            sectionTitle: "깃발",
+            icon: '<svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__emoji-tab-icon"><g><path d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path></g></svg>'
+        },
     };
     const emojiCategoryData = {
-        smileys: ["😀","😃","😄","😁","😆","🥹","😂","🤣","😊","😉","😍","🥰","😘","😗","😙","😚","🙂","🤗","🤩","🤔","😐","😑","😌","🙃","😏","🥳","😭","😤","😴","😵","🤯","😎","🤓","🫠","😇","🤠"],
-        animals: ["🐶","🐱","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐧","🐦","🦄","🐝","🦋","🌸","🌻","🍀","🌿","🌈","🌞","⭐","🌙"],
-        food: ["🍔","🍟","🍕","🌭","🍗","🍜","🍣","🍩","🍪","🍫","🍿","🥐","🍎","🍓","🍉","🍇","☕","🍵","🧃","🥤","🍺","🍷"],
-        activities: ["⚽","🏀","🏈","⚾","🎾","🏐","🎮","🎲","🎯","🎳","🎸","🎧","🎬","📚","🧩","🏆","🥇","🏃","🚴","🏊"],
-        travel: ["🚗","🚕","🚌","🚎","🚓","🚑","✈️","🚀","🛸","🚲","⛵","🚉","🏠","🏙️","🌋","🏝️","🗼","🗽","🎡","🌁"],
-        objects: ["💡","📱","💻","⌚","📷","🎥","🕹️","💰","💎","🔑","🪄","🎁","📌","🧸","🛒","🧴","💊","🧯","📢","🧠"],
-        symbols: ["❤️","💙","💚","💛","💜","🖤","✨","💫","💥","💯","✔️","❌","⚠️","🔔","♻️","➕","➖","➗","✖️","🔣"],
-        flags: ["🏳️","🏴","🏁","🚩","🎌","🏳️‍🌈","🇰🇷","🇺🇸","🇯🇵","🇫🇷","🇬🇧","🇩🇪","🇨🇦","🇦🇺"],
+        smileys: ["😀", "😃", "😄", "😁", "😆", "🥹", "😂", "🤣", "😊", "😉", "😍", "🥰", "😘", "😗", "😙", "😚", "🙂", "🤗", "🤩", "🤔", "😐", "😑", "😌", "🙃", "😏", "🥳", "😭", "😤", "😴", "😵", "🤯", "😎", "🤓", "🫠", "😇", "🤠"],
+        animals: ["🐶", "🐱", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐧", "🐦", "🦄", "🐝", "🦋", "🌸", "🌻", "🍀", "🌿", "🌈", "🌞", "⭐", "🌙"],
+        food: ["🍔", "🍟", "🍕", "🌭", "🍗", "🍜", "🍣", "🍩", "🍪", "🍫", "🍿", "🥐", "🍎", "🍓", "🍉", "🍇", "☕", "🍵", "🧃", "🥤", "🍺", "🍷"],
+        activities: ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🎮", "🎲", "🎯", "🎳", "🎸", "🎧", "🎬", "📚", "🧩", "🏆", "🥇", "🏃", "🚴", "🏊"],
+        travel: ["🚗", "🚕", "🚌", "🚎", "🚓", "🚑", "✈️", "🚀", "🛸", "🚲", "⛵", "🚉", "🏠", "🏙️", "🌋", "🏝️", "🗼", "🗽", "🎡", "🌁"],
+        objects: ["💡", "📱", "💻", "⌚", "📷", "🎥", "🕹️", "💰", "💎", "🔑", "🪄", "🎁", "📌", "🧸", "🛒", "🧴", "💊", "🧯", "📢", "🧠"],
+        symbols: ["❤️", "💙", "💚", "💛", "💜", "🖤", "✨", "💫", "💥", "💯", "✔️", "❌", "⚠️", "🔔", "♻️", "➕", "➖", "➗", "✖️", "🔣"],
+        flags: ["🏳️", "🏴", "🏁", "🚩", "🎌", "🏳️‍🌈", "🇰🇷", "🇺🇸", "🇯🇵", "🇫🇷", "🇬🇧", "🇩🇪", "🇨🇦", "🇦🇺"],
     };
     const formatButtonLabels = {
-        bold: { inactive: "굵게, (CTRL+B) 님", active: "굵게, 활성 상태, (CTRL+B) 님 님" },
-        italic: { inactive: "기울임꼴, (CTRL+I) 님", active: "기울임꼴, 활성 상태, (CTRL+I) 님 님" },
+        bold: {inactive: "굵게, (CTRL+B) 님", active: "굵게, 활성 상태, (CTRL+B) 님 님"},
+        italic: {inactive: "기울임꼴, (CTRL+I) 님", active: "기울임꼴, 활성 상태, (CTRL+I) 님 님"},
     };
 
     // ===== 이모지 유틸 함수 =====
     function getRecentEmojis() {
-        try { const s = window.localStorage.getItem(emojiRecentsKey); const p = s ? JSON.parse(s) : []; return Array.isArray(p) ? p : []; } catch { return []; }
+        try {
+            const s = window.localStorage.getItem(emojiRecentsKey);
+            const p = s ? JSON.parse(s) : [];
+            return Array.isArray(p) ? p : [];
+        } catch {
+            return [];
+        }
     }
+
     function saveRecentEmoji(emoji) {
         const recent = getRecentEmojis().filter((i) => i !== emoji);
         recent.unshift(emoji);
-        try { window.localStorage.setItem(emojiRecentsKey, JSON.stringify(recent.slice(0, maxRecentEmojis))); } catch { return; }
+        try {
+            window.localStorage.setItem(emojiRecentsKey, JSON.stringify(recent.slice(0, maxRecentEmojis)));
+        } catch {
+            return;
+        }
     }
+
     function clearRecentEmojis() {
-        try { window.localStorage.removeItem(emojiRecentsKey); } catch { return; }
+        try {
+            window.localStorage.removeItem(emojiRecentsKey);
+        } catch {
+            return;
+        }
     }
+
     function getEmojiSearchTerm() {
         return replyEmojiSearchInput?.value.trim().toLowerCase() ?? "";
     }
+
     function getEmojiEntriesForCategory(category) {
-        if (category === "recent") return getRecentEmojis().map((emoji) => ({ emoji, keywords: [emoji] }));
-        return (emojiCategoryData[category] ?? []).map((emoji) => ({ emoji, keywords: [emoji, emojiCategoryMeta[category]?.label ?? ""] }));
+        if (category === "recent") return getRecentEmojis().map((emoji) => ({emoji, keywords: [emoji]}));
+        return (emojiCategoryData[category] ?? []).map((emoji) => ({
+            emoji,
+            keywords: [emoji, emojiCategoryMeta[category]?.label ?? ""]
+        }));
     }
+
     function getFilteredEmojiEntries(category) {
         const entries = getEmojiEntriesForCategory(category);
         const term = getEmojiSearchTerm();
         if (!term) return entries;
         return entries.filter((e) => e.keywords.some((k) => k.toLowerCase().includes(term)));
     }
-    function buildEmojiSection(title, emojis, { clearable = false, emptyText = "" } = {}) {
+
+    function buildEmojiSection(title, emojis, {clearable = false, emptyText = ""} = {}) {
         const headerAction = clearable ? '<button type="button" class="tweet-modal__emoji-clear" data-action="clear-recent">모두 지우기</button>' : "";
         const body = emojis.length
             ? `<div class="tweet-modal__emoji-grid">${emojis.map((e) => `<button type="button" class="tweet-modal__emoji-option" data-emoji="${e}" role="menuitem">${e}</button>`).join("")}</div>`
             : `<p class="tweet-modal__emoji-empty">${emptyText}</p>`;
         return `<section class="tweet-modal__emoji-section"><div class="tweet-modal__emoji-section-header"><h3 class="tweet-modal__emoji-section-title">${title}</h3>${headerAction}</div>${body}</section>`;
     }
+
     function renderEmojiTabs() {
         replyEmojiTabs.forEach((tab) => {
             const cat = tab.getAttribute("data-emoji-category");
@@ -1014,6 +1098,7 @@ window.onload = () => {
             if (meta) tab.innerHTML = meta.icon;
         });
     }
+
     function renderEmojiPickerContent() {
         if (!replyEmojiContent) return;
         const searchTerm = getEmojiSearchTerm();
@@ -1022,16 +1107,20 @@ window.onload = () => {
                 const entries = getFilteredEmojiEntries(cat);
                 return entries.length === 0 ? "" : buildEmojiSection(emojiCategoryMeta[cat].sectionTitle, entries.map((e) => e.emoji));
             }).join("");
-            replyEmojiContent.innerHTML = sections || buildEmojiSection("검색 결과", [], { emptyText: "일치하는 이모티콘이 없습니다." });
+            replyEmojiContent.innerHTML = sections || buildEmojiSection("검색 결과", [], {emptyText: "일치하는 이모티콘이 없습니다."});
             return;
         }
         if (activeEmojiCategory === "recent") {
             const recent = getRecentEmojis();
-            replyEmojiContent.innerHTML = buildEmojiSection("최근", recent, { clearable: recent.length > 0, emptyText: "최근 사용한 이모티콘이 없습니다." }) + buildEmojiSection(emojiCategoryMeta.smileys.sectionTitle, getEmojiEntriesForCategory("smileys").map((e) => e.emoji));
+            replyEmojiContent.innerHTML = buildEmojiSection("최근", recent, {
+                clearable: recent.length > 0,
+                emptyText: "최근 사용한 이모티콘이 없습니다."
+            }) + buildEmojiSection(emojiCategoryMeta.smileys.sectionTitle, getEmojiEntriesForCategory("smileys").map((e) => e.emoji));
             return;
         }
         replyEmojiContent.innerHTML = buildEmojiSection(emojiCategoryMeta[activeEmojiCategory].sectionTitle, getEmojiEntriesForCategory(activeEmojiCategory).map((e) => e.emoji));
     }
+
     function renderEmojiPicker() {
         renderEmojiTabs();
         renderEmojiPickerContent();
@@ -1041,12 +1130,15 @@ window.onload = () => {
     function hasReplyEditorText() {
         return replyEditor ? replyEditor.textContent.replace(/\u00a0/g, " ").trim().length > 0 : false;
     }
+
     function hasReplyAttachment() {
         return attachedReplyFiles.length > 0;
     }
+
     function togglePendingReplyFormat(fmt) {
         pendingReplyFormats.has(fmt) ? pendingReplyFormats.delete(fmt) : pendingReplyFormats.add(fmt);
     }
+
     function applyPendingReplyFormatsToContent() {
         if (!replyEditor || pendingReplyFormats.size === 0 || !hasReplyEditorText()) return;
         let span;
@@ -1070,6 +1162,7 @@ window.onload = () => {
         sel?.addRange(range);
         saveReplySelection();
     }
+
     function saveReplySelection() {
         if (!replyEditor || isInsertingReplyEmoji) return;
         const sel = window.getSelection();
@@ -1079,14 +1172,16 @@ window.onload = () => {
         savedReplySelection = range.cloneRange();
         savedReplySelectionOffsets = getReplySelectionOffsets(range);
     }
+
     function getReplySelectionOffsets(range) {
         if (!replyEditor) return null;
         const pre = range.cloneRange();
         pre.selectNodeContents(replyEditor);
         pre.setEnd(range.startContainer, range.startOffset);
         const start = pre.toString().length;
-        return { start, end: start + range.toString().length };
+        return {start, end: start + range.toString().length};
     }
+
     function resolveReplySelectionPosition(targetOffset) {
         if (!replyEditor) return null;
         const walker = document.createTreeWalker(replyEditor, NodeFilter.SHOW_TEXT);
@@ -1096,13 +1191,14 @@ window.onload = () => {
         while (node) {
             lastTextNode = node;
             const length = node.textContent?.length ?? 0;
-            if (remaining <= length) return { node, offset: remaining };
+            if (remaining <= length) return {node, offset: remaining};
             remaining -= length;
             node = walker.nextNode();
         }
-        if (lastTextNode) return { node: lastTextNode, offset: lastTextNode.textContent?.length ?? 0 };
-        return { node: replyEditor, offset: replyEditor.childNodes.length };
+        if (lastTextNode) return {node: lastTextNode, offset: lastTextNode.textContent?.length ?? 0};
+        return {node: replyEditor, offset: replyEditor.childNodes.length};
     }
+
     function buildReplySelectionRangeFromOffsets(offsets) {
         if (!replyEditor || !offsets) return null;
         const startPos = resolveReplySelectionPosition(offsets.start);
@@ -1113,6 +1209,7 @@ window.onload = () => {
         range.setEnd(endPos.node, endPos.offset);
         return range;
     }
+
     function restoreReplySelection() {
         if (!replyEditor) return false;
         const sel = window.getSelection();
@@ -1123,12 +1220,14 @@ window.onload = () => {
         sel.addRange(range);
         return true;
     }
+
     function isSelectionInsideEditor() {
         if (!replyEditor) return false;
         const sel = window.getSelection();
         if (!sel || sel.rangeCount === 0) return false;
         return replyEditor.contains(sel.getRangeAt(0).commonAncestorContainer);
     }
+
     function syncReplyFormatButtons() {
         if (!replyEditor) return;
         // selection이 에디터 밖에 있으면 queryCommandState가 잘못된 결과를 반환하므로
@@ -1150,6 +1249,7 @@ window.onload = () => {
             if (labels) btn.setAttribute("aria-label", active ? labels.active : labels.inactive);
         });
     }
+
     function applyReplyFormat(format) {
         if (!replyEditor) return;
         replyEditor.focus();
@@ -1173,17 +1273,34 @@ window.onload = () => {
     }
 
     // ===== 사용자 태그 서브뷰 함수 섹션 =====
-    function cloneTaggedUsers(users) { return users.map((u) => ({ ...u })); }
-    function isTagModalOpen() { return Boolean(replyTagView && !replyTagView.hidden); }
-    function getTagSearchTerm() { return replyTagSearchInput?.value.trim() ?? ""; }
-    function getTaggedUserSummary(users) { return users.length === 0 ? "사용자 태그하기" : users.map((u) => u.name).join(", "); }
+    function cloneTaggedUsers(users) {
+        return users.map((u) => ({...u}));
+    }
+
+    function isTagModalOpen() {
+        return Boolean(replyTagView && !replyTagView.hidden);
+    }
+
+    function getTagSearchTerm() {
+        return replyTagSearchInput?.value.trim() ?? "";
+    }
+
+    function getTaggedUserSummary(users) {
+        return users.length === 0 ? "사용자 태그하기" : users.map((u) => u.name).join(", ");
+    }
+
     function syncUserTagTrigger() {
         const can = isReplyImageSet();
         const label = getTaggedUserSummary(selectedTaggedUsers);
-        if (replyUserTagTrigger) { replyUserTagTrigger.hidden = !can; replyUserTagTrigger.disabled = !can; replyUserTagTrigger.setAttribute("aria-label", label); }
+        if (replyUserTagTrigger) {
+            replyUserTagTrigger.hidden = !can;
+            replyUserTagTrigger.disabled = !can;
+            replyUserTagTrigger.setAttribute("aria-label", label);
+        }
         if (replyUserTagLabel) replyUserTagLabel.textContent = label;
-        if (!can && isTagModalOpen()) closeTagPanel({ restoreFocus: false });
+        if (!can && isTagModalOpen()) closeTagPanel({restoreFocus: false});
     }
+
     function getCurrentPageTagUsers() {
         const items = document.querySelectorAll(".postCard");
         const seen = new Set();
@@ -1193,22 +1310,28 @@ window.onload = () => {
             const avatar = item.querySelector(".postAvatar")?.getAttribute("src") ?? "";
             if (!name || !handle || seen.has(handle)) return null;
             seen.add(handle);
-            return { id: `${handle.replace("@", "") || "user"}-${i}`, name, handle, avatar };
+            return {id: `${handle.replace("@", "") || "user"}-${i}`, name, handle, avatar};
         }).filter(Boolean);
     }
+
     function getFilteredTagUsers(query) {
         const nq = query.trim().toLowerCase();
         if (!nq) return [];
         return getCurrentPageTagUsers().filter((u) => `${u.name} ${u.handle}`.toLowerCase().includes(nq)).slice(0, 6);
     }
+
     function renderTagChipList() {
         if (!replyTagChipList) return;
-        if (pendingTaggedUsers.length === 0) { replyTagChipList.innerHTML = ""; return; }
+        if (pendingTaggedUsers.length === 0) {
+            replyTagChipList.innerHTML = "";
+            return;
+        }
         replyTagChipList.innerHTML = pendingTaggedUsers.map((u) => {
             const av = u.avatar ? `<span class="tweet-modal__tag-chip-avatar"><img src="${escapeHtml(u.avatar)}" alt="${escapeHtml(u.name)}" /></span>` : '<span class="tweet-modal__tag-chip-avatar"></span>';
             return `<button type="button" class="tweet-modal__tag-chip" data-tag-remove-id="${escapeHtml(u.id)}">${av}<span class="tweet-modal__tag-chip-name">${escapeHtml(u.name)}</span><svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-modal__tag-chip-icon"><g><path d="M10.59 12 4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button>`;
         }).join("");
     }
+
     function renderTagResults(users) {
         if (!replyTagResults || !replyTagSearchInput) return;
         currentTagResults = users;
@@ -1219,7 +1342,10 @@ window.onload = () => {
             return;
         }
         replyTagSearchInput.setAttribute("aria-expanded", "true");
-        if (users.length === 0) { replyTagResults.innerHTML = '<p class="tweet-modal__tag-empty">일치하는 사용자를 찾지 못했습니다.</p>'; return; }
+        if (users.length === 0) {
+            replyTagResults.innerHTML = '<p class="tweet-modal__tag-empty">일치하는 사용자를 찾지 못했습니다.</p>';
+            return;
+        }
         replyTagResults.innerHTML = users.map((u) => {
             const sel = pendingTaggedUsers.some((t) => t.id === u.id);
             const sub = sel ? `${u.handle} 이미 태그됨` : u.handle;
@@ -1227,7 +1353,12 @@ window.onload = () => {
             return `<div role="option" class="tweet-modal__tag-option"><div role="checkbox" aria-checked="${sel}" aria-disabled="${sel}" class="tweet-modal__tag-checkbox"><button type="button" class="tweet-modal__tag-user" data-tag-user-id="${escapeHtml(u.id)}" ${sel ? "disabled" : ""}>${av}<span class="tweet-modal__tag-user-body"><span class="tweet-modal__tag-user-name">${escapeHtml(u.name)}</span><span class="tweet-modal__tag-user-handle">${escapeHtml(sub)}</span></span></button></div></div>`;
         }).join("");
     }
-    function runTagSearch() { const tq = getTagSearchTerm(); renderTagResults(tq ? getFilteredTagUsers(tq) : []); }
+
+    function runTagSearch() {
+        const tq = getTagSearchTerm();
+        renderTagResults(tq ? getFilteredTagUsers(tq) : []);
+    }
+
     function openTagPanel() {
         if (!composeView || !replyTagView || !isReplyImageSet()) return;
         closeEmojiPicker();
@@ -1237,9 +1368,12 @@ window.onload = () => {
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagChipList();
         renderTagResults([]);
-        window.requestAnimationFrame(() => { replyTagSearchInput?.focus(); });
+        window.requestAnimationFrame(() => {
+            replyTagSearchInput?.focus();
+        });
     }
-    function closeTagPanel({ restoreFocus = true } = {}) {
+
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyTagView || replyTagView.hidden) return;
         replyTagView.hidden = true;
         composeView.hidden = false;
@@ -1247,32 +1381,79 @@ window.onload = () => {
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagChipList();
         renderTagResults([]);
-        if (restoreFocus) window.requestAnimationFrame(() => { replyUserTagTrigger && !replyUserTagTrigger.hidden ? replyUserTagTrigger.focus() : replyEditor?.focus(); });
+        if (restoreFocus) window.requestAnimationFrame(() => {
+            replyUserTagTrigger && !replyUserTagTrigger.hidden ? replyUserTagTrigger.focus() : replyEditor?.focus();
+        });
     }
-    function applyPendingTaggedUsers() { selectedTaggedUsers = cloneTaggedUsers(pendingTaggedUsers); syncUserTagTrigger(); }
-    function resetTaggedUsers() { selectedTaggedUsers = []; pendingTaggedUsers = []; if (replyTagSearchInput) replyTagSearchInput.value = ""; renderTagChipList(); renderTagResults([]); syncUserTagTrigger(); }
+
+    function applyPendingTaggedUsers() {
+        selectedTaggedUsers = cloneTaggedUsers(pendingTaggedUsers);
+        syncUserTagTrigger();
+    }
+
+    function resetTaggedUsers() {
+        selectedTaggedUsers = [];
+        pendingTaggedUsers = [];
+        if (replyTagSearchInput) replyTagSearchInput.value = "";
+        renderTagChipList();
+        renderTagResults([]);
+        syncUserTagTrigger();
+    }
 
     // ===== 미디어 ALT 편집 서브뷰 함수 섹션 =====
-    function createDefaultReplyMediaEdit() { return { alt: "" }; }
-    function cloneReplyMediaEdits(edits) { return edits.map((e) => ({ alt: e.alt })); }
-    function isMediaEditorOpen() { return Boolean(replyMediaView && !replyMediaView.hidden); }
-    function getReplyMediaTriggerLabel() { return replyMediaEdits.some((e) => e.alt.trim().length > 0) ? "설명 수정" : "설명 추가"; }
+    function createDefaultReplyMediaEdit() {
+        return {alt: ""};
+    }
+
+    function cloneReplyMediaEdits(edits) {
+        return edits.map((e) => ({alt: e.alt}));
+    }
+
+    function isMediaEditorOpen() {
+        return Boolean(replyMediaView && !replyMediaView.hidden);
+    }
+
+    function getReplyMediaTriggerLabel() {
+        return replyMediaEdits.some((e) => e.alt.trim().length > 0) ? "설명 수정" : "설명 추가";
+    }
+
     function syncReplyMediaEditsToAttachments() {
-        if (!isReplyImageSet()) { replyMediaEdits = []; pendingReplyMediaEdits = []; activeReplyMediaIndex = 0; syncMediaAltTrigger(); return; }
-        replyMediaEdits = attachedReplyFiles.map((_, i) => { const ex = replyMediaEdits[i]; return ex ? { alt: ex.alt ?? "" } : createDefaultReplyMediaEdit(); });
+        if (!isReplyImageSet()) {
+            replyMediaEdits = [];
+            pendingReplyMediaEdits = [];
+            activeReplyMediaIndex = 0;
+            syncMediaAltTrigger();
+            return;
+        }
+        replyMediaEdits = attachedReplyFiles.map((_, i) => {
+            const ex = replyMediaEdits[i];
+            return ex ? {alt: ex.alt ?? ""} : createDefaultReplyMediaEdit();
+        });
         if (pendingReplyMediaEdits.length !== replyMediaEdits.length) pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
         activeReplyMediaIndex = Math.min(activeReplyMediaIndex, Math.max(replyMediaEdits.length - 1, 0));
         syncMediaAltTrigger();
     }
+
     function syncMediaAltTrigger() {
         const can = isReplyImageSet();
         const label = getReplyMediaTriggerLabel();
-        if (replyMediaAltTrigger) { replyMediaAltTrigger.hidden = !can; replyMediaAltTrigger.disabled = !can; replyMediaAltTrigger.setAttribute("aria-label", label); }
+        if (replyMediaAltTrigger) {
+            replyMediaAltTrigger.hidden = !can;
+            replyMediaAltTrigger.disabled = !can;
+            replyMediaAltTrigger.setAttribute("aria-label", label);
+        }
         if (replyMediaAltLabel) replyMediaAltLabel.textContent = label;
-        if (!can && isMediaEditorOpen()) closeMediaEditor({ restoreFocus: false, discardChanges: true });
+        if (!can && isMediaEditorOpen()) closeMediaEditor({restoreFocus: false, discardChanges: true});
     }
-    function getCurrentReplyMediaUrl() { return attachedReplyFileUrls[activeReplyMediaIndex] ?? ""; }
-    function getCurrentPendingReplyMediaEdit() { return pendingReplyMediaEdits[activeReplyMediaIndex] ?? createDefaultReplyMediaEdit(); }
+
+    function getCurrentReplyMediaUrl() {
+        return attachedReplyFileUrls[activeReplyMediaIndex] ?? "";
+    }
+
+    function getCurrentPendingReplyMediaEdit() {
+        return pendingReplyMediaEdits[activeReplyMediaIndex] ?? createDefaultReplyMediaEdit();
+    }
+
     function renderMediaEditor() {
         if (!replyMediaView || pendingReplyMediaEdits.length === 0) return;
         const edit = getCurrentPendingReplyMediaEdit();
@@ -1281,10 +1462,14 @@ window.onload = () => {
         if (replyMediaTitle) replyMediaTitle.textContent = "이미지 설명 수정";
         if (replyMediaPrevButton) replyMediaPrevButton.disabled = activeReplyMediaIndex === 0;
         if (replyMediaNextButton) replyMediaNextButton.disabled = activeReplyMediaIndex >= pendingReplyMediaEdits.length - 1;
-        replyMediaPreviewImages.forEach((img) => { img.src = url; img.alt = alt; });
+        replyMediaPreviewImages.forEach((img) => {
+            img.src = url;
+            img.alt = alt;
+        });
         if (replyMediaAltInput) replyMediaAltInput.value = alt;
         if (replyMediaAltCount) replyMediaAltCount.textContent = `${alt.length} / ${maxReplyMediaAltLength.toLocaleString()}`;
     }
+
     function openMediaEditor() {
         if (!composeView || !replyMediaView || !isReplyImageSet()) return;
         closeEmojiPicker();
@@ -1293,26 +1478,33 @@ window.onload = () => {
         composeView.hidden = true;
         replyMediaView.hidden = false;
         renderMediaEditor();
-        window.requestAnimationFrame(() => { replyMediaAltInput?.focus(); });
+        window.requestAnimationFrame(() => {
+            replyMediaAltInput?.focus();
+        });
     }
-    function closeMediaEditor({ restoreFocus = true, discardChanges = true } = {}) {
+
+    function closeMediaEditor({restoreFocus = true, discardChanges = true} = {}) {
         if (!composeView || !replyMediaView || replyMediaView.hidden) return;
         if (discardChanges) pendingReplyMediaEdits = cloneReplyMediaEdits(replyMediaEdits);
         replyMediaView.hidden = true;
         composeView.hidden = false;
-        if (restoreFocus) window.requestAnimationFrame(() => { replyMediaAltTrigger && !replyMediaAltTrigger.hidden ? replyMediaAltTrigger.focus() : replyEditor?.focus(); });
+        if (restoreFocus) window.requestAnimationFrame(() => {
+            replyMediaAltTrigger && !replyMediaAltTrigger.hidden ? replyMediaAltTrigger.focus() : replyEditor?.focus();
+        });
     }
+
     function saveReplyMediaEdits() {
         replyMediaEdits = cloneReplyMediaEdits(pendingReplyMediaEdits);
         renderReplyAttachment();
         syncMediaAltTrigger();
-        closeMediaEditor({ discardChanges: false });
+        closeMediaEditor({discardChanges: false});
     }
 
     // ===== 이모지 피커 함수 섹션 =====
     function hasEmojiButtonLibrary() {
         return typeof window.EmojiButton === "function";
     }
+
     function restoreReplyEditorAfterEmojiInsert() {
         if (!shouldRestoreReplyEditorAfterEmojiInsert || !replyEditor || replyModalOverlay?.hidden) return;
         shouldRestoreReplyEditorAfterEmojiInsert = false;
@@ -1325,6 +1517,7 @@ window.onload = () => {
             syncReplyFormatButtons();
         });
     }
+
     function ensureReplyEmojiLibraryPicker() {
         if (!replyEmojiButton || !replyEditor || !hasEmojiButtonLibrary()) return null;
         if (replyEmojiLibraryPicker) return replyEmojiLibraryPicker;
@@ -1343,12 +1536,16 @@ window.onload = () => {
         });
         replyEmojiLibraryPicker.on("hidden", () => {
             replyEmojiButton?.setAttribute("aria-expanded", "false");
-            if (shouldRestoreReplyEditorAfterEmojiInsert) { restoreReplyEditorAfterEmojiInsert(); return; }
+            if (shouldRestoreReplyEditorAfterEmojiInsert) {
+                restoreReplyEditorAfterEmojiInsert();
+                return;
+            }
             saveReplySelection();
         });
         if (replyEmojiPicker) replyEmojiPicker.hidden = true;
         return replyEmojiLibraryPicker;
     }
+
     function closeEmojiPicker() {
         const libraryPicker = replyEmojiLibraryPicker;
         if (libraryPicker) {
@@ -1362,6 +1559,7 @@ window.onload = () => {
         replyEmojiButton.setAttribute("aria-expanded", "false");
         restoreReplyEditorAfterEmojiInsert();
     }
+
     function updateEmojiPickerPosition() {
         if (!replyEmojiPicker || !replyEmojiButton) return;
         const rect = replyEmojiButton.getBoundingClientRect();
@@ -1374,6 +1572,7 @@ window.onload = () => {
         replyEmojiPicker.style.top = `${top}px`;
         replyEmojiPicker.style.maxHeight = `${mh}px`;
     }
+
     function openEmojiPicker() {
         const libraryPicker = ensureReplyEmojiLibraryPicker();
         if (libraryPicker && replyEmojiButton) {
@@ -1388,6 +1587,7 @@ window.onload = () => {
         replyEmojiButton.setAttribute("aria-expanded", "true");
         updateEmojiPickerPosition();
     }
+
     function toggleEmojiPicker() {
         const libraryPicker = ensureReplyEmojiLibraryPicker();
         if (libraryPicker && replyEmojiButton) {
@@ -1404,6 +1604,7 @@ window.onload = () => {
         if (!replyEmojiPicker) return;
         replyEmojiPicker.hidden ? openEmojiPicker() : closeEmojiPicker();
     }
+
     function insertReplyEmoji(emoji) {
         if (!replyEditor) return;
         isInsertingReplyEmoji = true;
@@ -1417,7 +1618,10 @@ window.onload = () => {
             sel?.addRange(range);
         }
         const sel = window.getSelection();
-        if (!sel) { isInsertingReplyEmoji = false; return; }
+        if (!sel) {
+            isInsertingReplyEmoji = false;
+            return;
+        }
         let range;
         if (sel.rangeCount === 0) {
             range = document.createRange();
@@ -1453,22 +1657,29 @@ window.onload = () => {
     }
 
     // ===== 첨부파일 처리 함수 섹션 =====
-    function getReplyMediaImageAlt(index) { return replyMediaEdits[index]?.alt ?? ""; }
+    function getReplyMediaImageAlt(index) {
+        return replyMediaEdits[index]?.alt ?? "";
+    }
+
     function clearAttachedReplyFileUrls() {
         if (attachedReplyFileUrls.length === 0) return;
         attachedReplyFileUrls.forEach((u) => URL.revokeObjectURL(u));
         attachedReplyFileUrls = [];
     }
+
     function createReplyAttachmentUrls() {
         clearAttachedReplyFileUrls();
         attachedReplyFileUrls = attachedReplyFiles.map((f) => URL.createObjectURL(f));
     }
+
     function isReplyImageSet() {
         return attachedReplyFiles.length > 0 && attachedReplyFiles.every((f) => f.type.startsWith("image/"));
     }
+
     function isReplyVideoSet() {
         return attachedReplyFiles.length === 1 && attachedReplyFiles[0].type.startsWith("video/");
     }
+
     function resetReplyAttachment() {
         clearAttachedReplyFileUrls();
         attachedReplyFiles = [];
@@ -1479,23 +1690,36 @@ window.onload = () => {
         resetTaggedUsers();
         syncReplyMediaEditsToAttachments();
     }
+
     function getReplyImageCell(index, url, cls) {
         const alt = getReplyMediaImageAlt(index);
         return `<div class="media-cell ${cls}"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><div class="media-bg" style="background-image: url('${url}');"></div><img alt="${escapeHtml(alt)}" draggable="false" src="${url}" class="media-img"></div><div class="media-btn-row"><button type="button" class="media-btn" data-attachment-edit-index="${index}"><span>수정</span></button></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="${index}"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div>`;
     }
+
     function renderReplyImageGrid() {
         const n = attachedReplyFiles.length, urls = attachedReplyFileUrls;
         if (!replyAttachmentMedia || n === 0) return;
-        if (n === 1) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer">${getReplyImageCell(0, urls[0], "media-cell--single")}</div>`; return; }
-        if (n === 2) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right")}</div></div></div>`; return; }
-        if (n === 3) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left-tall")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right-top")}${getReplyImageCell(2, urls[2], "media-cell--right-bottom")}</div></div></div>`; return; }
+        if (n === 1) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer">${getReplyImageCell(0, urls[0], "media-cell--single")}</div>`;
+            return;
+        }
+        if (n === 2) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right")}</div></div></div>`;
+            return;
+        }
+        if (n === 3) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left-tall")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right-top")}${getReplyImageCell(2, urls[2], "media-cell--right-bottom")}</div></div></div>`;
+            return;
+        }
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--top-left")}${getReplyImageCell(2, urls[2], "media-cell--bottom-left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--top-right")}${getReplyImageCell(3, urls[3], "media-cell--bottom-right")}</div></div></div>`;
     }
+
     function renderReplyVideoAttachment() {
         if (!replyAttachmentMedia || attachedReplyFiles.length === 0) return;
         const [file] = attachedReplyFiles, [fileUrl] = attachedReplyFileUrls;
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer"><div class="media-cell media-cell--single"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><video class="tweet-modal__attachment-video" controls preload="metadata"><source src="${fileUrl}" type="${file.type}"></video></div><div class="media-btn-row"><button type="button" class="media-btn" data-attachment-edit-index="0"><span>수정</span></button></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="0"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div></div>`;
     }
+
     function renderReplyAttachment() {
         if (!replyAttachmentPreview || !replyAttachmentMedia) return;
         if (attachedReplyFiles.length === 0) {
@@ -1509,8 +1733,14 @@ window.onload = () => {
         createReplyAttachmentUrls();
         syncReplyMediaEditsToAttachments();
         syncUserTagTrigger();
-        if (isReplyImageSet()) { renderReplyImageGrid(); return; }
-        if (isReplyVideoSet()) { renderReplyVideoAttachment(); return; }
+        if (isReplyImageSet()) {
+            renderReplyImageGrid();
+            return;
+        }
+        if (isReplyVideoSet()) {
+            renderReplyVideoAttachment();
+            return;
+        }
         replyAttachmentMedia.innerHTML = "";
         const fp = document.createElement("div");
         const fi = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1525,9 +1755,13 @@ window.onload = () => {
         fpath.setAttribute("d", "M14 2H7.75C5.68 2 4 3.68 4 5.75v12.5C4 20.32 5.68 22 7.75 22h8.5C18.32 22 20 20.32 20 18.25V8l-6-6zm0 2.12L17.88 8H14V4.12zm2.25 15.88h-8.5c-.97 0-1.75-.78-1.75-1.75V5.75C6 4.78 6.78 4 7.75 4H12v5.25c0 .41.34.75.75.75H18v8.25c0 .97-.78 1.75-1.75 1.75z");
         fn.className = "tweet-modal__attachment-file-name";
         fn.textContent = attachedReplyFiles[0]?.name ?? "";
-        fg.appendChild(fpath); fi.appendChild(fg); fp.appendChild(fi); fp.appendChild(fn);
+        fg.appendChild(fpath);
+        fi.appendChild(fg);
+        fp.appendChild(fi);
+        fp.appendChild(fn);
         replyAttachmentMedia.appendChild(fp);
     }
+
     function removeReplyAttachment(index) {
         attachedReplyFiles = attachedReplyFiles.filter((_, i) => i !== index);
         replyMediaEdits = replyMediaEdits.filter((_, i) => i !== index);
@@ -1536,16 +1770,25 @@ window.onload = () => {
         syncReplyMediaEditsToAttachments();
         syncUserTagTrigger();
     }
+
     function handleReplyFileChange(e) {
         const next = Array.from(e.target.files ?? []);
-        if (next.length === 0) { pendingAttachmentEditIndex = null; syncReplySubmitState(); return; }
+        if (next.length === 0) {
+            pendingAttachmentEditIndex = null;
+            syncReplySubmitState();
+            return;
+        }
         const rep = next[0];
         const vid = next.find((f) => f.type.startsWith("video/"));
         const imgs = next.filter((f) => f.type.startsWith("image/"));
         if (pendingAttachmentEditIndex !== null) {
-            if (!rep) { pendingAttachmentEditIndex = null; return; }
-            if (rep.type.startsWith("video/")) { attachedReplyFiles = [rep]; }
-            else {
+            if (!rep) {
+                pendingAttachmentEditIndex = null;
+                return;
+            }
+            if (rep.type.startsWith("video/")) {
+                attachedReplyFiles = [rep];
+            } else {
                 const ed = isReplyVideoSet() ? [] : [...attachedReplyFiles];
                 attachedReplyFiles = ed.length === 0 ? [rep] : ((ed[pendingAttachmentEditIndex] = rep), ed.slice(0, maxReplyImages));
             }
@@ -1554,10 +1797,17 @@ window.onload = () => {
             syncReplySubmitState();
             return;
         }
-        if (vid) { attachedReplyFiles = [vid]; renderReplyAttachment(); syncReplySubmitState(); return; }
+        if (vid) {
+            attachedReplyFiles = [vid];
+            renderReplyAttachment();
+            syncReplySubmitState();
+            return;
+        }
         if (imgs.length > 0) {
             attachedReplyFiles = [...(isReplyImageSet() ? [...attachedReplyFiles] : []), ...imgs].slice(0, maxReplyImages);
-            renderReplyAttachment(); syncReplySubmitState(); return;
+            renderReplyAttachment();
+            syncReplySubmitState();
+            return;
         }
         attachedReplyFiles = [rep];
         renderReplyAttachment();
@@ -1594,8 +1844,13 @@ window.onload = () => {
         ).filter((el) => !el.hasAttribute("hidden"));
         if (focusable.length === 0) return;
         const first = focusable[0], last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
     }
 
     // ===== 위치 선택 서브뷰 함수 섹션 =====
@@ -1646,11 +1901,13 @@ window.onload = () => {
         if (replyLocationSearchInput) replyLocationSearchInput.value = "";
         renderLocationList();
         syncLocationUI();
-        window.requestAnimationFrame(() => { replyLocationSearchInput?.focus(); });
+        window.requestAnimationFrame(() => {
+            replyLocationSearchInput?.focus();
+        });
     }
 
     // 위치 패널 닫기
-    function closeLocationPanel({ restoreFocus = true } = {}) {
+    function closeLocationPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyLocationView || replyLocationView.hidden) return;
         replyLocationView.hidden = true;
         composeView.hidden = false;
@@ -1658,7 +1915,9 @@ window.onload = () => {
         pendingLocation = selectedLocation;
         renderLocationList();
         syncLocationUI();
-        if (restoreFocus) window.requestAnimationFrame(() => { replyEditor?.focus(); });
+        if (restoreFocus) window.requestAnimationFrame(() => {
+            replyEditor?.focus();
+        });
     }
 
     function applyLocation(loc) {
@@ -1689,22 +1948,26 @@ window.onload = () => {
             ? Array.from(draftList.querySelectorAll(".draft-panel__item"))
             : [];
     }
+
     // 임시저장 선택 상태를 초기화한다
     function clearDraftSelection() {
         draftPanelState.selectedItems.clear();
         draftPanelState.confirmOpen = false;
     }
+
     // 임시저장 편집 모드를 종료한다
     function exitDraftEditMode() {
         draftPanelState.isEditMode = false;
         clearDraftSelection();
     }
+
     // 임시저장 편집 모드를 시작한다
     function enterDraftEditMode() {
         if (getDraftItems().length === 0) return;
         draftPanelState.isEditMode = true;
         draftPanelState.confirmOpen = false;
     }
+
     // 해당 요소가 유효한 임시저장 항목인지 확인한다
     function hasDraftItem(item) {
         return item instanceof HTMLElement && getDraftItems().includes(item);
@@ -1743,11 +2006,13 @@ window.onload = () => {
     function hasDraftSelection() {
         return draftPanelState.selectedItems.size > 0;
     }
+
     // 임시저장 삭제 확인 대화상자를 연다
     function openDraftConfirm() {
         if (draftPanelState.isEditMode && hasDraftSelection())
             draftPanelState.confirmOpen = true;
     }
+
     // 임시저장 삭제 확인 대화상자를 닫는다
     function closeDraftConfirm() {
         draftPanelState.confirmOpen = false;
@@ -1767,14 +2032,17 @@ window.onload = () => {
         exitDraftEditMode();
         closeDraftConfirm();
     }
+
     // 임시저장 패널이 열려 있는지 확인한다
     function isDraftPanelOpen() {
         return Boolean(draftView && !draftView.hidden);
     }
+
     // 임시저장 삭제 확인 대화상자가 열려 있는지 확인한다
     function isDraftConfirmOpen() {
         return draftPanelState.confirmOpen;
     }
+
     // 임시저장 비어있음 안내 문구를 반환한다
     function getDraftEmptyCopy() {
         return {
@@ -1782,6 +2050,7 @@ window.onload = () => {
             body: "아직 게시할 준비가 되지 않았나요? 임시저장해 두고 나중에 이어서 작성하세요.",
         };
     }
+
     // 임시저장 삭제 확인 문구를 반환한다
     function getDraftConfirmCopy() {
         return {
@@ -1867,7 +2136,7 @@ window.onload = () => {
     }
 
     // 기존 HTML 서브뷰 전환: .tweet-modal__draft-view 를 숨기고 .tweet-modal__compose-view 로 복귀한다.
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+    function closeDraftPanel({restoreFocus = true} = {}) {
         if (!composeView || !draftView) return;
         resetDraftPanel();
         renderDraftPanel();
@@ -1887,7 +2156,7 @@ window.onload = () => {
         replyEditor.textContent = getTextContent(
             item.querySelector(".draft-panel__text"),
         );
-        closeDraftPanel({ restoreFocus: false });
+        closeDraftPanel({restoreFocus: false});
         syncReplySubmitState();
         saveReplySelection();
         window.requestAnimationFrame(() => {
@@ -1951,7 +2220,8 @@ window.onload = () => {
             }
 
             replyEditor.textContent = "";
-            savedReplySelection = null; savedReplySelectionOffsets = null;
+            savedReplySelection = null;
+            savedReplySelectionOffsets = null;
             pendingReplyFormats = new Set();
             activeEmojiCategory = "recent";
             selectedLocation = null;
@@ -1971,7 +2241,7 @@ window.onload = () => {
             if (replyTagView) replyTagView.hidden = true;
             if (replyMediaView) replyMediaView.hidden = true;
             if (replyProductView) replyProductView.hidden = true;
-            closeDraftPanel({ restoreFocus: false });
+            closeDraftPanel({restoreFocus: false});
             renderDraftPanel();
             renderLocationList();
             syncLocationUI();
@@ -2045,8 +2315,16 @@ window.onload = () => {
         });
 
         // 이모지 버튼 클릭 시 이모지 피커를 토글한다
-        replyEmojiButton?.addEventListener("mousedown", (e) => { e.preventDefault(); e.stopPropagation(); saveReplySelection(); });
-        replyEmojiButton?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleEmojiPicker(); });
+        replyEmojiButton?.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            saveReplySelection();
+        });
+        replyEmojiButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleEmojiPicker();
+        });
 
         // 미디어 업로드 버튼 클릭 시 파일 선택 대화상자를 연다
         replyMediaUploadButton?.addEventListener("click", (e) => {
@@ -2092,7 +2370,10 @@ window.onload = () => {
         replyEmojiTabs.forEach((tab) => {
             tab.addEventListener("click", () => {
                 const cat = tab.getAttribute("data-emoji-category");
-                if (cat) { activeEmojiCategory = cat; renderEmojiPicker(); }
+                if (cat) {
+                    activeEmojiCategory = cat;
+                    renderEmojiPicker();
+                }
             });
         });
         // 이모지 옵션/지우기 버튼 mousedown 시 포커스 이동을 방지한다
@@ -2110,7 +2391,10 @@ window.onload = () => {
             const eb2 = e.target.closest(".tweet-modal__emoji-option");
             if (!eb2) return;
             const emoji = eb2.getAttribute("data-emoji");
-            if (emoji) { insertReplyEmoji(emoji); closeEmojiPicker(); }
+            if (emoji) {
+                insertReplyEmoji(emoji);
+                closeEmojiPicker();
+            }
         });
 
         // 위치 태그 버튼 클릭 시 위치 선택 패널을 연다
@@ -2196,9 +2480,30 @@ window.onload = () => {
             if (!productSelectList) return;
             // TODO: REST API - GET /api/products/my 로 실제 데이터 가져오기
             const sampleProducts = [
-                { id: "1", name: "상품 이름 1", price: "₩50,000", stock: "100개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#전자"] },
-                { id: "2", name: "상품 이름 2", price: "₩30,000", stock: "50개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#기계"] },
-                { id: "3", name: "상품 이름 3", price: "₩80,000", stock: "200개", image: "../../static/images/main/global-gates-logo.png", tags: ["#부품", "#소재"] },
+                {
+                    id: "1",
+                    name: "상품 이름 1",
+                    price: "₩50,000",
+                    stock: "100개",
+                    image: "../../static/images/main/global-gates-logo.png",
+                    tags: ["#부품", "#전자"]
+                },
+                {
+                    id: "2",
+                    name: "상품 이름 2",
+                    price: "₩30,000",
+                    stock: "50개",
+                    image: "../../static/images/main/global-gates-logo.png",
+                    tags: ["#부품", "#기계"]
+                },
+                {
+                    id: "3",
+                    name: "상품 이름 3",
+                    price: "₩80,000",
+                    stock: "200개",
+                    image: "../../static/images/main/global-gates-logo.png",
+                    tags: ["#부품", "#소재"]
+                },
             ];
 
             if (sampleProducts.length === 0) {
@@ -2277,9 +2582,19 @@ window.onload = () => {
         }
 
         // ===== 사용자 태그 서브뷰 =====
-        replyUserTagTrigger?.addEventListener("click", (e) => { e.preventDefault(); openTagPanel(); });
-        replyTagCloseButton?.addEventListener("click", (e) => { e.preventDefault(); closeTagPanel(); });
-        replyTagCompleteButton?.addEventListener("click", (e) => { e.preventDefault(); applyPendingTaggedUsers(); closeTagPanel(); });
+        replyUserTagTrigger?.addEventListener("click", (e) => {
+            e.preventDefault();
+            openTagPanel();
+        });
+        replyTagCloseButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            closeTagPanel();
+        });
+        replyTagCompleteButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            applyPendingTaggedUsers();
+            closeTagPanel();
+        });
         replyTagSearchForm?.addEventListener("submit", (e) => e.preventDefault());
         replyTagSearchInput?.addEventListener("input", () => runTagSearch());
         replyTagResults?.addEventListener("click", (e) => {
@@ -2289,7 +2604,7 @@ window.onload = () => {
             const uid = btn.getAttribute("data-tag-user-id");
             const user = currentTagResults.find((u) => u.id === uid);
             if (user && !pendingTaggedUsers.some((t) => t.id === uid)) {
-                pendingTaggedUsers.push({ ...user });
+                pendingTaggedUsers.push({...user});
                 renderTagChipList();
                 runTagSearch();
             }
@@ -2305,16 +2620,31 @@ window.onload = () => {
         });
 
         // ===== 미디어 ALT 편집 서브뷰 =====
-        replyMediaAltTrigger?.addEventListener("click", (e) => { e.preventDefault(); openMediaEditor(); });
-        replyMediaBackButton?.addEventListener("click", (e) => { e.preventDefault(); closeMediaEditor(); });
-        replyMediaSaveButton?.addEventListener("click", (e) => { e.preventDefault(); saveReplyMediaEdits(); });
+        replyMediaAltTrigger?.addEventListener("click", (e) => {
+            e.preventDefault();
+            openMediaEditor();
+        });
+        replyMediaBackButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            closeMediaEditor();
+        });
+        replyMediaSaveButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            saveReplyMediaEdits();
+        });
         replyMediaPrevButton?.addEventListener("click", (e) => {
             e.preventDefault();
-            if (activeReplyMediaIndex > 0) { activeReplyMediaIndex--; renderMediaEditor(); }
+            if (activeReplyMediaIndex > 0) {
+                activeReplyMediaIndex--;
+                renderMediaEditor();
+            }
         });
         replyMediaNextButton?.addEventListener("click", (e) => {
             e.preventDefault();
-            if (activeReplyMediaIndex < pendingReplyMediaEdits.length - 1) { activeReplyMediaIndex++; renderMediaEditor(); }
+            if (activeReplyMediaIndex < pendingReplyMediaEdits.length - 1) {
+                activeReplyMediaIndex++;
+                renderMediaEditor();
+            }
         });
         replyMediaAltInput?.addEventListener("input", () => {
             const edit = getCurrentPendingReplyMediaEdit();
@@ -2434,7 +2764,7 @@ window.onload = () => {
 
             const nextCount = updateCount(activeReplyTrigger, 1);
             activeReplyTrigger.setAttribute("aria-label", `답글 ${nextCount}`);
-            closeReplyModal({ skipConfirm: true });
+            closeReplyModal({skipConfirm: true});
         });
 
         // 외부 클릭으로 이모지 피커를 닫는다
@@ -2476,7 +2806,7 @@ window.onload = () => {
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
     // 스크롤 시 이모지 피커 위치를 재계산한다
     window.addEventListener(
@@ -2485,7 +2815,7 @@ window.onload = () => {
             if (replyEmojiPicker && !replyEmojiPicker.hidden)
                 updateEmojiPickerPosition();
         },
-        { passive: true },
+        {passive: true},
     );
 
     // ===== 전역 닫기 핸들러 섹션 =====

@@ -37,12 +37,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String path = "/post/list/1";
         boolean errorCreateTokens = false;
 
-        if(isExist){
+        if (isExist) {
 //            기존 SNS 회원
 
-        } else{
+        } else {
             Optional<MemberDTO> foundMember = memberDAO.findMemberByMemberEmail(email);
-            if(foundMember.isEmpty()){
+            if (foundMember.isEmpty()) {
 //            신규 회원
                 MemberDTO memberDTO = new MemberDTO();
                 memberDTO.setMemberEmail(email);
@@ -57,9 +57,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 oAuthDTO.setProfileURL(oAuth2User.getAttribute("profile"));
                 oAuthDAO.save(oAuthDTO.toOAuthVO());
 
-            }else {
+            } else {
 //            기존 회원(자동 연동)
-                if(foundMember.get().isMemberEmailVerified()){
+                if (foundMember.get().isMemberEmailVerified()) {
                     OAuthDTO oAuthDTO = new OAuthDTO();
                     oAuthDTO.setProvider(OAuthProvider.getOAuthProvider(provider));
                     oAuthDTO.setMemberId(foundMember.get().getId());
@@ -67,14 +67,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     oAuthDTO.setProfileURL(oAuth2User.getAttribute("profile"));
                     oAuthDAO.save(oAuthDTO.toOAuthVO());
 
-                }else{
+                } else {
                     path = "/member/login";
                     errorCreateTokens = true;
                 }
             }
         }
 
-        if(!errorCreateTokens) {
+        if (!errorCreateTokens) {
             jwtTokenProvider.createAccessToken(email, provider);
             jwtTokenProvider.createRefreshToken(email, provider);
         }

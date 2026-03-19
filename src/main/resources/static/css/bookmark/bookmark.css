@@ -11,9 +11,8 @@ html {
 body {
     margin: 0;
     min-height: 100vh;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-        sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
     background: #ffffff;
     color: #0f1419;
 }
@@ -131,10 +130,9 @@ input {
     border: 1px solid #cfd9de;
     border-radius: 999px;
     background: #ffffff;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background-color 0.2s ease;
+    transition: border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .search-box.is-active {
@@ -477,9 +475,8 @@ input {
     flex-direction: column;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
     overflow: hidden;
     width: max-content;
     max-width: 400px;
@@ -604,9 +601,8 @@ input {
     overflow: auto;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .bookmark-notification-dialog__card--small {
@@ -743,9 +739,8 @@ input {
     border: 1px solid rgba(207, 217, 222, 0.96);
     border-radius: 18px;
     background: #ffffff;
-    box-shadow:
-        0 4px 12px rgba(15, 20, 25, 0.12),
-        0 1px 3px rgba(15, 20, 25, 0.08);
+    box-shadow: 0 4px 12px rgba(15, 20, 25, 0.12),
+    0 1px 3px rgba(15, 20, 25, 0.08);
 }
 
 .bookmark-folder-menu-button {
@@ -799,9 +794,8 @@ input {
     overflow: hidden;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .bookmark-share-sheet-card--bookmark {
@@ -1644,16 +1638,46 @@ input {
     cursor: pointer;
 }
 
-.media-cell--top-left { border-radius: 16px 4px 4px 4px; }
-.media-cell--top-right { border-radius: 4px 16px 4px 4px; }
-.media-cell--bottom-left { border-radius: 4px 4px 4px 16px; }
-.media-cell--bottom-right { border-radius: 4px 4px 16px 4px; }
-.media-cell--single { border-radius: 16px; height: 100%; }
-.media-cell--left { border-radius: 16px 4px 4px 16px; }
-.media-cell--right { border-radius: 4px 16px 16px 4px; }
-.media-cell--left-tall { border-radius: 16px 4px 4px 16px; }
-.media-cell--right-top { border-radius: 4px 16px 4px 4px; }
-.media-cell--right-bottom { border-radius: 4px 4px 16px 4px; }
+.media-cell--top-left {
+    border-radius: 16px 4px 4px 4px;
+}
+
+.media-cell--top-right {
+    border-radius: 4px 16px 4px 4px;
+}
+
+.media-cell--bottom-left {
+    border-radius: 4px 4px 4px 16px;
+}
+
+.media-cell--bottom-right {
+    border-radius: 4px 4px 16px 4px;
+}
+
+.media-cell--single {
+    border-radius: 16px;
+    height: 100%;
+}
+
+.media-cell--left {
+    border-radius: 16px 4px 4px 16px;
+}
+
+.media-cell--right {
+    border-radius: 4px 16px 16px 4px;
+}
+
+.media-cell--left-tall {
+    border-radius: 16px 4px 4px 16px;
+}
+
+.media-cell--right-top {
+    border-radius: 4px 16px 4px 4px;
+}
+
+.media-cell--right-bottom {
+    border-radius: 4px 4px 16px 4px;
+}
 
 .media-cell-inner {
     position: absolute;
@@ -3025,9 +3049,8 @@ input {
     color: #f4212e;
     font-size: 15px;
     font-weight: 700;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .bookmark-edit-delete-button:hover {
@@ -3080,9 +3103,8 @@ input {
     border-radius: 999px;
     font-size: 17px;
     font-weight: 700;
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
+    transition: background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .bookmark-delete-modal-button--danger {
@@ -3152,9 +3174,8 @@ input {
     background: #0f1419;
     color: #ffffff;
     opacity: 1;
-    transition:
-        opacity 0.2s ease,
-        background-color 0.2s ease;
+    transition: opacity 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .bookmark-modal-submit:disabled {

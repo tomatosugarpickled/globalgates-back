@@ -180,9 +180,8 @@ img.postMediaImage {
     flex-direction: column;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
     overflow: hidden;
     max-width: 400px;
     width: max-content;
@@ -532,8 +531,14 @@ img.postMediaImage {
 }
 
 @keyframes toastFadeIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 /* ── share toast ── */
@@ -957,8 +962,14 @@ img.postMediaImage {
 }
 
 @keyframes notif-toast-in {
-    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 /* ── notification dialog (차단/신고 모달) ── */
@@ -985,9 +996,8 @@ img.postMediaImage {
     overflow: auto;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
 }
 
 .notification-dialog__card--small {

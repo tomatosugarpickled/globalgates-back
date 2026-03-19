@@ -8,14 +8,18 @@ import java.util.Optional;
 
 @Mapper
 public interface BookmarkFolderMapper {
-//    폴더 생성
+    //    폴더 생성
     public void insert(BookmarkFolderDTO bookmarkFolderDTO);
-//    폴더명 수정
+
+    //    폴더명 수정
     public void update(BookmarkFolderDTO bookmarkFolderDTO);
-//    폴더 삭제
+
+    //    폴더 삭제
     public void delete(Long id);
-//    폴더 단건 조회
+
+    //    폴더 단건 조회
     public Optional<BookmarkFolderDTO> selectById(Long id);
-//    회원의 폴더 목록 조회
+
+    //    회원의 폴더 목록 조회
     public List<BookmarkFolderDTO> selectAllByMemberId(Long memberId);
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class PostController {
     @GetMapping("list/{page}")
-    public String list(@PathVariable int page){
+    public String list(@PathVariable int page) {
         return "post/list";
     }
 }

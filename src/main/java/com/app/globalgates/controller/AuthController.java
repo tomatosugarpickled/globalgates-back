@@ -32,9 +32,9 @@ public class AuthController {
     private final RedisTemplate redisTemplate;
     private final HttpServletResponse response;
 
-//    로그인
+    //    로그인
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody MemberDTO memberDTO){
+    public ResponseEntity<?> login(@RequestBody MemberDTO memberDTO) {
         log.info("memberDTO: {}", memberDTO);
         try {
             Map<String, String> tokenMap = new HashMap<>();
@@ -79,9 +79,9 @@ public class AuthController {
         }
     }
 
-//    로그아웃
+    //    로그아웃
     @PostMapping("logout")
-    public void logout(@CookieValue(value="accessToken", required = false) String token){
+    public void logout(@CookieValue(value = "accessToken", required = false) String token) {
         String username = jwtTokenProvider.getUsername(token);
         jwtTokenProvider.deleteRefreshToken(username);
         jwtTokenProvider.addToBlacklist(token);
@@ -108,9 +108,9 @@ public class AuthController {
 //        }
     }
 
-//    정보 가져오기
+    //    정보 가져오기
     @GetMapping("info")
-    public MemberDTO getMyInfo(HttpServletRequest request){
+    public MemberDTO getMyInfo(HttpServletRequest request) {
         String token = jwtTokenProvider.parseTokenFromHeader(request);
         String memberEmail = jwtTokenProvider.getUsername(token);
         MemberDTO memberDTO = memberService.getMember(memberEmail);

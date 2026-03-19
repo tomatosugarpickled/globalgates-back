@@ -50,7 +50,7 @@ body.modal-open {
     justify-content: space-between;
     gap: 12px;
     position: relative;
-    margin-bottom : 8px;
+    margin-bottom: 8px;
 }
 
 .estimation-preview-card__email {
@@ -212,9 +212,8 @@ body.modal-open {
     min-width: 220px;
     border-radius: 16px;
     background: #fff;
-    box-shadow:
-        rgba(15, 20, 25, 0.2) 0 8px 24px,
-        rgba(15, 20, 25, 0.08) 0 2px 8px;
+    box-shadow: rgba(15, 20, 25, 0.2) 0 8px 24px,
+    rgba(15, 20, 25, 0.08) 0 2px 8px;
 }
 
 .estimation-more.is-open .estimation-dropdown-menu {
@@ -360,9 +359,8 @@ body.modal-open {
     border-radius: 24px;
     background: #ffffff;
     overflow: hidden;
-    box-shadow:
-        rgba(15, 20, 25, 0.2) 0 10px 40px,
-        rgba(15, 20, 25, 0.08) 0 2px 12px;
+    box-shadow: rgba(15, 20, 25, 0.2) 0 10px 40px,
+    rgba(15, 20, 25, 0.08) 0 2px 12px;
 }
 
 .estimation-detail-modal__header {
@@ -569,10 +567,10 @@ body.modal-open {
     padding-top: 20px;
     padding-bottom: 4px;
     background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.92) 24px,
-        #ffffff 100%
+            180deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.92) 24px,
+            #ffffff 100%
     );
 }
 
@@ -627,9 +625,8 @@ body.modal-open {
     padding: 24px;
     border-radius: 20px;
     background: #ffffff;
-    box-shadow:
-        rgba(15, 20, 25, 0.2) 0 10px 40px,
-        rgba(15, 20, 25, 0.08) 0 2px 12px;
+    box-shadow: rgba(15, 20, 25, 0.2) 0 10px 40px,
+    rgba(15, 20, 25, 0.08) 0 2px 12px;
 }
 
 .estimation-confirm-modal__title {

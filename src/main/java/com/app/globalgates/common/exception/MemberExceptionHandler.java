@@ -9,12 +9,12 @@ import org.springframework.web.servlet.view.RedirectView;
 @Slf4j
 public class MemberExceptionHandler {
     @ExceptionHandler({MemberLoginFailException.class})
-    public RedirectView handleMemberLoginFailException(MemberLoginFailException e){
+    public RedirectView handleMemberLoginFailException(MemberLoginFailException e) {
         return new RedirectView("/member/login");
     }
 
     @ExceptionHandler({MemberNotFoundException.class})
-    public RedirectView handleMemberNotFoundException(MemberNotFoundException e){
+    public RedirectView handleMemberNotFoundException(MemberNotFoundException e) {
         return new RedirectView("/member/login");
     }
 }

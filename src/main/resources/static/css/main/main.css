@@ -245,9 +245,8 @@ textarea {
     overflow: hidden auto;
     background: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
     padding: 8px 0;
 }
 
@@ -298,9 +297,8 @@ textarea {
     flex-direction: column;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
     overflow: hidden;
     max-width: 400px;
     width: max-content;
@@ -389,9 +387,8 @@ textarea {
     overflow: auto;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .notification-dialog__card--small {
@@ -642,9 +639,8 @@ a.menu-item:visited {
     overflow: hidden;
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
 }
 
 .share-sheet__card--bookmark {
@@ -1216,13 +1212,13 @@ a.menu-item:visited {
 }
 
 [data-reply-modal] .tweet-modal:has(.tweet-modal__draft-view:not([hidden]))
-    .tweet-modal__header,
+.tweet-modal__header,
 [data-reply-modal] .tweet-modal:has(.tweet-modal__location-view:not([hidden]))
-    .tweet-modal__header,
+.tweet-modal__header,
 [data-reply-modal] .tweet-modal:has(.tweet-modal__media-view:not([hidden]))
-    .tweet-modal__header,
+.tweet-modal__header,
 [data-reply-modal] .tweet-modal:has(.tweet-modal__tag-view:not([hidden]))
-    .tweet-modal__header {
+.tweet-modal__header {
     display: none;
 }
 
@@ -1892,9 +1888,8 @@ a.menu-item:visited {
     overflow: hidden auto;
     border-radius: 16px;
     background: #fff;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0 0 15px 0,
-        rgba(101, 119, 134, 0.15) 0 0 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0 0 15px 0,
+    rgba(101, 119, 134, 0.15) 0 0 3px 1px;
     scrollbar-width: thin;
     overscroll-behavior: contain;
 }
@@ -1966,7 +1961,7 @@ a.menu-item:visited {
 }
 
 .boardMenuOptionCheck {
-    color:  #536471;
+    color: #536471;
     font-size: 14px;
     font-weight: 800;
     opacity: 0;
@@ -2040,7 +2035,7 @@ a.menu-item:visited {
 }
 
 .communityMenuCheck {
-    color:  #536471;
+    color: #536471;
     font-size: 14px;
     font-weight: 800;
     opacity: 0;
@@ -2428,9 +2423,8 @@ a.menu-item:visited {
 .composerTagEditor:focus-within {
     border-color: rgba(29, 155, 240, 0.45);
     background: #ffffff;
-    box-shadow:
-        0 0 0 4px rgba(29, 155, 240, 0.12),
-        inset 0 0 0 1px rgba(29, 155, 240, 0.16);
+    box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.12),
+    inset 0 0 0 1px rgba(29, 155, 240, 0.16);
 }
 
 .composerTagField {
@@ -2693,7 +2687,7 @@ a.menu-item:visited {
 
 .tweet-modal__tool-btn--active {
     background: #1d9bf0;
-    color: #ffffff !important; 
+    color: #ffffff !important;
 }
 
 .tweet-modal__tool-btn--active:hover {
@@ -3817,9 +3811,8 @@ a.menu-item:visited {
     flex-direction: column;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow:
-        rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
-        rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px 0px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
     overflow: hidden;
     max-width: 400px;
     width: max-content;
@@ -4086,10 +4079,10 @@ img.postMediaImage {
     z-index: 30;
     padding: 4px 0 12px;
     background: linear-gradient(
-        180deg,
-        #ffffff 0%,
-        #ffffff 82%,
-        rgba(255, 255, 255, 0) 100%
+            180deg,
+            #ffffff 0%,
+            #ffffff 82%,
+            rgba(255, 255, 255, 0) 100%
     );
 }
 
@@ -4306,7 +4299,7 @@ img.postMediaImage {
 .suggestionLink:hover {
     background: var(--sidebar-card-hover);
     border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;    
+    border-bottom-right-radius: 24px;
 }
 
 .exchangeRateFeedCard {

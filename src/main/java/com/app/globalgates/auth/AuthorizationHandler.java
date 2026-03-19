@@ -16,9 +16,9 @@ public class AuthorizationHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.error("Access Denied: {}", accessDeniedException.getMessage());
-        if(request.getRequestURI().startsWith("/api/")){
+        if (request.getRequestURI().startsWith("/api/")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getMessage());
-        }else{
+        } else {
             response.sendRedirect("/member/login");
         }
     }

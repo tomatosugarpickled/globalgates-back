@@ -347,7 +347,7 @@
         url.pathname = `/${handle.replace("@", "")}/status/${postId}`;
         url.hash = "";
         url.search = "";
-        return { permalink: url.toString(), bookmarkButton, postId };
+        return {permalink: url.toString(), bookmarkButton, postId};
     }
 
     function getBookmarkMoreMeta(button) {
@@ -355,7 +355,7 @@
         const handle =
             postCard?.querySelector(".bookmark-post-handle")?.textContent?.trim() ||
             "@user";
-        return { postCard, handle };
+        return {postCard, handle};
     }
 
     function getFollowMenuIcon(isFollowing) {
@@ -379,7 +379,7 @@
     }
 
     function copyShareLink(button) {
-        const { permalink } = getSharePostMeta(button);
+        const {permalink} = getSharePostMeta(button);
         closeShareDropdown();
         if (!navigator.clipboard?.writeText) {
             showToast("링크를 복사하지 못했습니다");
@@ -432,7 +432,7 @@
     }
 
     function openShareBookmarkModal(button) {
-        const { bookmarkButton, postId } = getSharePostMeta(button);
+        const {bookmarkButton, postId} = getSharePostMeta(button);
         closeShareDropdown();
         closeShareModal();
         activeShareBookmarkButton = bookmarkButton;
@@ -659,6 +659,7 @@
         mediaPreviewImage.removeAttribute("alt");
         updateBodyScrollLock();
     }
+
     function openBookmarkDetail(folderName) {
         if (!listView || !detailView || isDetailViewOpen || currentFolderDeleted) {
             return;
@@ -672,7 +673,7 @@
         modalOpenButton?.setAttribute("hidden", "");
         detailMoreButton?.removeAttribute("hidden");
         setHeaderTitle(currentFolderName);
-        window.scrollTo({ top: 0, behavior: "auto" });
+        window.scrollTo({top: 0, behavior: "auto"});
     }
 
     function closeBookmarkDetail() {
@@ -725,7 +726,7 @@
             searchBox.classList.toggle(
                 "is-active",
                 document.activeElement === searchInput ||
-                    searchInput.value.trim().length > 0,
+                searchInput.value.trim().length > 0,
             );
         };
         searchInput.addEventListener("focus", syncSearchState);
@@ -753,7 +754,7 @@
             updateModalState();
         }
 
-        function closeModal({ reset = true } = {}) {
+        function closeModal({reset = true} = {}) {
             toggleClassModal(bookmarkModal, false);
             if (reset) {
                 resetModalForm();
@@ -772,7 +773,7 @@
         modalCloseButton.addEventListener("click", () => closeModal());
         bookmarkModal.addEventListener("click", (event) => {
             if (event.target === bookmarkModal) {
-                closeModal({ reset: false });
+                closeModal({reset: false});
             }
         });
         folderNameInput.addEventListener("input", updateModalState);
@@ -1246,7 +1247,10 @@
         const canSubmit = text.trim().length > 0 || attachedReplyFiles.length > 0;
         const progress = `${Math.min(text.length / replyMaxLength, 1) * 360}deg`;
         if (replySubmitButton) replySubmitButton.disabled = !canSubmit;
-        if (replyGauge) { replyGauge.style.setProperty("--gauge-progress", progress); replyGauge.setAttribute("aria-valuenow", String(len)); }
+        if (replyGauge) {
+            replyGauge.style.setProperty("--gauge-progress", progress);
+            replyGauge.setAttribute("aria-valuenow", String(len));
+        }
         if (replyGaugeText) replyGaugeText.textContent = String(remaining);
     }
 
@@ -1256,10 +1260,11 @@
         const selection = window.getSelection();
         return Boolean(
             selection &&
-                selection.rangeCount > 0 &&
-                replyEditor.contains(selection.getRangeAt(0).commonAncestorContainer),
+            selection.rangeCount > 0 &&
+            replyEditor.contains(selection.getRangeAt(0).commonAncestorContainer),
         );
     }
+
     function focusReplyEditorToEnd() {
         if (!replyEditor) return;
         replyEditor.focus();
@@ -1270,6 +1275,7 @@
         selection?.removeAllRanges();
         selection?.addRange(range);
     }
+
     function syncReplyFormatButtons() {
         replyFormatButtons.forEach((btn) => {
             const fmt = btn.getAttribute("data-format");
@@ -1279,6 +1285,7 @@
             btn.classList.toggle("tweet-modal__tool-btn--active", isActive);
         });
     }
+
     function applyReplyFormat(fmt) {
         if (!fmt || !replyEditor) return;
         if (!isReplyEditorSelectionActive()) focusReplyEditorToEnd();
@@ -1287,23 +1294,50 @@
     }
 
     // ── 미디어 첨부 ──
-    function isReplyImageSet() { return attachedReplyFiles.length > 0 && attachedReplyFiles.every((f) => f.type.startsWith("image/")); }
-    function isReplyVideoSet() { return attachedReplyFiles.length === 1 && attachedReplyFiles[0].type.startsWith("video/"); }
-    function getReplyMediaImageAlt(i) { return replyMediaEdits[i]?.alt ?? ""; }
-    function clearAttachedReplyFileUrls() { attachedReplyFileUrls.forEach((u) => URL.revokeObjectURL(u)); attachedReplyFileUrls = []; }
-    function createReplyAttachmentUrls() { clearAttachedReplyFileUrls(); attachedReplyFileUrls = attachedReplyFiles.map((f) => URL.createObjectURL(f)); }
+    function isReplyImageSet() {
+        return attachedReplyFiles.length > 0 && attachedReplyFiles.every((f) => f.type.startsWith("image/"));
+    }
+
+    function isReplyVideoSet() {
+        return attachedReplyFiles.length === 1 && attachedReplyFiles[0].type.startsWith("video/");
+    }
+
+    function getReplyMediaImageAlt(i) {
+        return replyMediaEdits[i]?.alt ?? "";
+    }
+
+    function clearAttachedReplyFileUrls() {
+        attachedReplyFileUrls.forEach((u) => URL.revokeObjectURL(u));
+        attachedReplyFileUrls = [];
+    }
+
+    function createReplyAttachmentUrls() {
+        clearAttachedReplyFileUrls();
+        attachedReplyFileUrls = attachedReplyFiles.map((f) => URL.createObjectURL(f));
+    }
 
     function syncReplyMediaEditsToAttachments() {
-        if (!isReplyImageSet()) { replyMediaEdits = []; pendingReplyMediaEdits = []; activeReplyMediaIndex = 0; syncMediaAltTrigger(); return; }
-        replyMediaEdits = attachedReplyFiles.map((_, i) => replyMediaEdits[i] ? { alt: replyMediaEdits[i].alt ?? "" } : { alt: "" });
-        if (pendingReplyMediaEdits.length !== replyMediaEdits.length) pendingReplyMediaEdits = replyMediaEdits.map((e) => ({ alt: e.alt }));
+        if (!isReplyImageSet()) {
+            replyMediaEdits = [];
+            pendingReplyMediaEdits = [];
+            activeReplyMediaIndex = 0;
+            syncMediaAltTrigger();
+            return;
+        }
+        replyMediaEdits = attachedReplyFiles.map((_, i) => replyMediaEdits[i] ? {alt: replyMediaEdits[i].alt ?? ""} : {alt: ""});
+        if (pendingReplyMediaEdits.length !== replyMediaEdits.length) pendingReplyMediaEdits = replyMediaEdits.map((e) => ({alt: e.alt}));
         activeReplyMediaIndex = Math.min(activeReplyMediaIndex, Math.max(replyMediaEdits.length - 1, 0));
         syncMediaAltTrigger();
     }
+
     function syncMediaAltTrigger() {
         const can = isReplyImageSet();
         const label = replyMediaEdits.some((e) => e.alt.trim()) ? "설명 수정" : "설명 추가";
-        if (replyMediaAltTrigger) { replyMediaAltTrigger.hidden = !can; replyMediaAltTrigger.disabled = !can; replyMediaAltTrigger.setAttribute("aria-label", label); }
+        if (replyMediaAltTrigger) {
+            replyMediaAltTrigger.hidden = !can;
+            replyMediaAltTrigger.disabled = !can;
+            replyMediaAltTrigger.setAttribute("aria-label", label);
+        }
         if (replyMediaAltLabel) replyMediaAltLabel.textContent = label;
     }
 
@@ -1311,79 +1345,151 @@
         const alt = getReplyMediaImageAlt(index);
         return `<div class="media-cell ${cls}"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><div class="media-bg" style="background-image: url('${url}');"></div><img alt="${escapeHtml(alt)}" draggable="false" src="${url}" class="media-img"></div><div class="media-btn-row"><button type="button" class="media-btn" data-attachment-edit-index="${index}"><span>수정</span></button></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="${index}"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div>`;
     }
+
     function renderReplyImageGrid() {
         const n = attachedReplyFiles.length, urls = attachedReplyFileUrls;
         if (!replyAttachmentMedia || n === 0) return;
-        if (n === 1) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer">${getReplyImageCell(0, urls[0], "media-cell--single")}</div>`; return; }
-        if (n === 2) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right")}</div></div></div>`; return; }
-        if (n === 3) { replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left-tall")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right-top")}${getReplyImageCell(2, urls[2], "media-cell--right-bottom")}</div></div></div>`; return; }
+        if (n === 1) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer">${getReplyImageCell(0, urls[0], "media-cell--single")}</div>`;
+            return;
+        }
+        if (n === 2) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right")}</div></div></div>`;
+            return;
+        }
+        if (n === 3) {
+            replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--left-tall")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--right-top")}${getReplyImageCell(2, urls[2], "media-cell--right-bottom")}</div></div></div>`;
+            return;
+        }
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio"></div><div class="media-absolute-layer"><div class="media-row"><div class="media-col">${getReplyImageCell(0, urls[0], "media-cell--top-left")}${getReplyImageCell(2, urls[2], "media-cell--bottom-left")}</div><div class="media-col">${getReplyImageCell(1, urls[1], "media-cell--top-right")}${getReplyImageCell(3, urls[3], "media-cell--bottom-right")}</div></div></div>`;
     }
+
     function renderReplyVideoAttachment() {
         if (!replyAttachmentMedia || attachedReplyFiles.length === 0) return;
         const [file] = attachedReplyFiles, [fileUrl] = attachedReplyFileUrls;
         replyAttachmentMedia.innerHTML = `<div class="media-aspect-ratio media-aspect-ratio--single"></div><div class="media-absolute-layer"><div class="media-cell media-cell--single"><div class="media-cell-inner"><div class="media-img-container" aria-label="미디어" role="group"><video class="tweet-modal__attachment-video" controls preload="metadata"><source src="${fileUrl}" type="${file.type}"></video></div><button type="button" class="media-btn-delete" aria-label="미디어 삭제하기" data-attachment-remove-index="0"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div></div></div>`;
     }
+
     function renderReplyAttachment() {
         if (!replyAttachmentPreview || !replyAttachmentMedia) return;
-        if (attachedReplyFiles.length === 0) { replyAttachmentMedia.innerHTML = ""; replyAttachmentPreview.hidden = true; syncReplyMediaEditsToAttachments(); return; }
+        if (attachedReplyFiles.length === 0) {
+            replyAttachmentMedia.innerHTML = "";
+            replyAttachmentPreview.hidden = true;
+            syncReplyMediaEditsToAttachments();
+            return;
+        }
         replyAttachmentPreview.hidden = false;
         createReplyAttachmentUrls();
-        if (isReplyImageSet()) { syncReplyMediaEditsToAttachments(); syncUserTagTrigger(); renderReplyImageGrid(); return; }
-        if (isReplyVideoSet()) { syncReplyMediaEditsToAttachments(); renderReplyVideoAttachment(); return; }
+        if (isReplyImageSet()) {
+            syncReplyMediaEditsToAttachments();
+            syncUserTagTrigger();
+            renderReplyImageGrid();
+            return;
+        }
+        if (isReplyVideoSet()) {
+            syncReplyMediaEditsToAttachments();
+            renderReplyVideoAttachment();
+            return;
+        }
         syncReplyMediaEditsToAttachments();
         replyAttachmentMedia.innerHTML = "";
-        const fp = document.createElement("div"), fi = document.createElementNS("http://www.w3.org/2000/svg", "svg"), fg = document.createElementNS("http://www.w3.org/2000/svg", "g"), fpath = document.createElementNS("http://www.w3.org/2000/svg", "path"), fn = document.createElement("span");
-        fp.className = "tweet-modal__attachment-file"; fi.setAttribute("viewBox", "0 0 24 24"); fi.setAttribute("width", "22"); fi.setAttribute("height", "22"); fi.setAttribute("aria-hidden", "true");
+        const fp = document.createElement("div"), fi = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
+            fg = document.createElementNS("http://www.w3.org/2000/svg", "g"),
+            fpath = document.createElementNS("http://www.w3.org/2000/svg", "path"), fn = document.createElement("span");
+        fp.className = "tweet-modal__attachment-file";
+        fi.setAttribute("viewBox", "0 0 24 24");
+        fi.setAttribute("width", "22");
+        fi.setAttribute("height", "22");
+        fi.setAttribute("aria-hidden", "true");
         fpath.setAttribute("d", "M14 2H7.75C5.68 2 4 3.68 4 5.75v12.5C4 20.32 5.68 22 7.75 22h8.5C18.32 22 20 20.32 20 18.25V8l-6-6zm0 2.12L17.88 8H14V4.12zm2.25 15.88h-8.5c-.97 0-1.75-.78-1.75-1.75V5.75C6 4.78 6.78 4 7.75 4H12v5.25c0 .41.34.75.75.75H18v8.25c0 .97-.78 1.75-1.75 1.75z");
-        fn.className = "tweet-modal__attachment-file-name"; fn.textContent = attachedReplyFiles[0]?.name ?? "";
-        fg.appendChild(fpath); fi.appendChild(fg); fp.appendChild(fi); fp.appendChild(fn); replyAttachmentMedia.appendChild(fp);
+        fn.className = "tweet-modal__attachment-file-name";
+        fn.textContent = attachedReplyFiles[0]?.name ?? "";
+        fg.appendChild(fpath);
+        fi.appendChild(fg);
+        fp.appendChild(fi);
+        fp.appendChild(fn);
+        replyAttachmentMedia.appendChild(fp);
     }
-    function removeReplyAttachment(index) { attachedReplyFiles = attachedReplyFiles.filter((_, i) => i !== index); pendingAttachmentEditIndex = null; renderReplyAttachment(); syncReplySubmitState(); }
+
+    function removeReplyAttachment(index) {
+        attachedReplyFiles = attachedReplyFiles.filter((_, i) => i !== index);
+        pendingAttachmentEditIndex = null;
+        renderReplyAttachment();
+        syncReplySubmitState();
+    }
 
     // ── 태그 서브뷰 ──
-    function cloneTaggedUsers(users) { return users.map((u) => ({ ...u })); }
-    function getTaggedUserSummary(users) { return users.length === 0 ? "사용자 태그하기" : users.map((u) => u.name).join(", "); }
+    function cloneTaggedUsers(users) {
+        return users.map((u) => ({...u}));
+    }
+
+    function getTaggedUserSummary(users) {
+        return users.length === 0 ? "사용자 태그하기" : users.map((u) => u.name).join(", ");
+    }
+
     function syncUserTagTrigger() {
         const can = isReplyImageSet();
-        if (replyUserTagTrigger) { replyUserTagTrigger.hidden = !can; replyUserTagTrigger.disabled = !can; }
+        if (replyUserTagTrigger) {
+            replyUserTagTrigger.hidden = !can;
+            replyUserTagTrigger.disabled = !can;
+        }
         if (replyUserTagLabel) replyUserTagLabel.textContent = getTaggedUserSummary(selectedTaggedUsers);
     }
+
     function renderTagChipList() {
         if (!replyTagChipList) return;
         replyTagChipList.innerHTML = pendingTaggedUsers.map((u) => `<button type="button" class="tweet-modal__tag-chip" data-tag-remove-id="${escapeHtml(u.id)}"><span class="tweet-modal__tag-chip-avatar">${u.avatar ? `<img src="${escapeHtml(u.avatar)}" alt="${escapeHtml(u.name)}" />` : ""}</span><span class="tweet-modal__tag-chip-name">${escapeHtml(u.name)}</span></button>`).join("");
     }
+
     function openTagPanel() {
         if (!composeView || !replyTagView || !isReplyImageSet()) return;
         closeEmojiPicker();
         pendingTaggedUsers = cloneTaggedUsers(selectedTaggedUsers);
-        composeView.hidden = true; replyTagView.hidden = false;
+        composeView.hidden = true;
+        replyTagView.hidden = false;
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagChipList();
         if (replyTagResults) replyTagResults.innerHTML = "";
         window.requestAnimationFrame(() => replyTagSearchInput?.focus());
     }
-    function closeTagPanel({ restoreFocus = true } = {}) {
+
+    function closeTagPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyTagView || replyTagView.hidden) return;
-        replyTagView.hidden = true; composeView.hidden = false;
+        replyTagView.hidden = true;
+        composeView.hidden = false;
         pendingTaggedUsers = cloneTaggedUsers(selectedTaggedUsers);
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         renderTagChipList();
         if (replyTagResults) replyTagResults.innerHTML = "";
         if (restoreFocus) window.requestAnimationFrame(() => replyEditor?.focus());
     }
-    function applyPendingTaggedUsers() { selectedTaggedUsers = cloneTaggedUsers(pendingTaggedUsers); syncUserTagTrigger(); }
-    function resetTaggedUsers() { selectedTaggedUsers = []; pendingTaggedUsers = []; if (replyTagResults) replyTagResults.innerHTML = ""; if (replyTagSearchInput) replyTagSearchInput.value = ""; renderTagChipList(); syncUserTagTrigger(); }
+
+    function applyPendingTaggedUsers() {
+        selectedTaggedUsers = cloneTaggedUsers(pendingTaggedUsers);
+        syncUserTagTrigger();
+    }
+
+    function resetTaggedUsers() {
+        selectedTaggedUsers = [];
+        pendingTaggedUsers = [];
+        if (replyTagResults) replyTagResults.innerHTML = "";
+        if (replyTagSearchInput) replyTagSearchInput.value = "";
+        renderTagChipList();
+        syncUserTagTrigger();
+    }
 
     // ── 위치 서브뷰 ──
     function syncLocationUI() {
         const has = Boolean(selectedLocation);
         if (replyFooterMeta) replyFooterMeta.hidden = !has;
         if (replyLocationName) replyLocationName.textContent = selectedLocation ?? "";
-        if (replyLocationDisplayButton) { replyLocationDisplayButton.hidden = !has; }
+        if (replyLocationDisplayButton) {
+            replyLocationDisplayButton.hidden = !has;
+        }
         if (replyLocationDeleteButton) replyLocationDeleteButton.hidden = !has;
         if (replyLocationCompleteButton) replyLocationCompleteButton.disabled = !pendingLocation;
     }
+
     function renderLocationList() {
         if (!replyLocationList) return;
         const term = replyLocationSearchInput?.value.trim() ?? "";
@@ -1391,67 +1497,102 @@
             cachedLocationNames = Array.from(replyLocationList.querySelectorAll(".tweet-modal__location-item-label")).map((i) => i.textContent.trim()).filter(Boolean);
         }
         const locs = term ? cachedLocationNames.filter((l) => l.includes(term)) : cachedLocationNames;
-        if (locs.length === 0) { replyLocationList.innerHTML = '<p class="tweet-modal__location-empty">일치하는 위치를 찾지 못했습니다.</p>'; return; }
+        if (locs.length === 0) {
+            replyLocationList.innerHTML = '<p class="tweet-modal__location-empty">일치하는 위치를 찾지 못했습니다.</p>';
+            return;
+        }
         replyLocationList.innerHTML = locs.map((loc) => {
             const sel = pendingLocation === loc;
             return `<button type="button" class="tweet-modal__location-item" role="menuitem"><span class="tweet-modal__location-item-label">${loc}</span><span class="tweet-modal__location-item-check">${sel ? '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path></g></svg>' : ""}</span></button>`;
         }).join("");
     }
+
     function openLocationPanel() {
         if (!composeView || !replyLocationView) return;
         closeEmojiPicker();
         pendingLocation = selectedLocation;
-        composeView.hidden = true; replyLocationView.hidden = false;
+        composeView.hidden = true;
+        replyLocationView.hidden = false;
         if (replyLocationSearchInput) replyLocationSearchInput.value = "";
-        renderLocationList(); syncLocationUI();
+        renderLocationList();
+        syncLocationUI();
         window.requestAnimationFrame(() => replyLocationSearchInput?.focus());
     }
-    function closeLocationPanel({ restoreFocus = true } = {}) {
+
+    function closeLocationPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyLocationView || replyLocationView.hidden) return;
-        replyLocationView.hidden = true; composeView.hidden = false;
+        replyLocationView.hidden = true;
+        composeView.hidden = false;
         if (replyLocationSearchInput) replyLocationSearchInput.value = "";
-        pendingLocation = selectedLocation; renderLocationList(); syncLocationUI();
+        pendingLocation = selectedLocation;
+        renderLocationList();
+        syncLocationUI();
         if (restoreFocus) window.requestAnimationFrame(() => replyEditor?.focus());
     }
-    function resetLocationState() { selectedLocation = null; pendingLocation = null; if (replyLocationSearchInput) replyLocationSearchInput.value = ""; renderLocationList(); syncLocationUI(); }
+
+    function resetLocationState() {
+        selectedLocation = null;
+        pendingLocation = null;
+        if (replyLocationSearchInput) replyLocationSearchInput.value = "";
+        renderLocationList();
+        syncLocationUI();
+    }
 
     // ── 미디어 ALT 서브뷰 ──
     function renderMediaEditor() {
         if (!replyMediaView || pendingReplyMediaEdits.length === 0) return;
-        const edit = pendingReplyMediaEdits[activeReplyMediaIndex] ?? { alt: "" };
+        const edit = pendingReplyMediaEdits[activeReplyMediaIndex] ?? {alt: ""};
         const url = attachedReplyFileUrls[activeReplyMediaIndex] ?? "";
         const alt = edit.alt ?? "";
         if (replyMediaTitle) replyMediaTitle.textContent = "이미지 설명 수정";
         if (replyMediaPrevButton) replyMediaPrevButton.disabled = activeReplyMediaIndex === 0;
         if (replyMediaNextButton) replyMediaNextButton.disabled = activeReplyMediaIndex >= pendingReplyMediaEdits.length - 1;
-        replyMediaPreviewImages.forEach((img) => { img.src = url; img.alt = alt; });
+        replyMediaPreviewImages.forEach((img) => {
+            img.src = url;
+            img.alt = alt;
+        });
         if (replyMediaAltInput) replyMediaAltInput.value = alt;
         if (replyMediaAltCount) replyMediaAltCount.textContent = `${alt.length} / ${maxReplyMediaAltLength.toLocaleString()}`;
     }
+
     function openMediaEditor() {
         if (!composeView || !replyMediaView || !isReplyImageSet()) return;
         closeEmojiPicker();
-        pendingReplyMediaEdits = replyMediaEdits.map((e) => ({ alt: e.alt }));
-        activeReplyMediaIndex = 0; composeView.hidden = true; replyMediaView.hidden = false;
-        renderMediaEditor(); window.requestAnimationFrame(() => replyMediaAltInput?.focus());
+        pendingReplyMediaEdits = replyMediaEdits.map((e) => ({alt: e.alt}));
+        activeReplyMediaIndex = 0;
+        composeView.hidden = true;
+        replyMediaView.hidden = false;
+        renderMediaEditor();
+        window.requestAnimationFrame(() => replyMediaAltInput?.focus());
     }
-    function closeMediaEditor({ restoreFocus = true, discardChanges = true } = {}) {
+
+    function closeMediaEditor({restoreFocus = true, discardChanges = true} = {}) {
         if (!composeView || !replyMediaView || replyMediaView.hidden) return;
-        if (discardChanges) pendingReplyMediaEdits = replyMediaEdits.map((e) => ({ alt: e.alt }));
-        replyMediaView.hidden = true; composeView.hidden = false;
+        if (discardChanges) pendingReplyMediaEdits = replyMediaEdits.map((e) => ({alt: e.alt}));
+        replyMediaView.hidden = true;
+        composeView.hidden = false;
         if (restoreFocus) window.requestAnimationFrame(() => replyEditor?.focus());
     }
-    function saveReplyMediaEdits() { replyMediaEdits = pendingReplyMediaEdits.map((e) => ({ alt: e.alt })); renderReplyAttachment(); syncMediaAltTrigger(); closeMediaEditor({ discardChanges: false }); }
+
+    function saveReplyMediaEdits() {
+        replyMediaEdits = pendingReplyMediaEdits.map((e) => ({alt: e.alt}));
+        renderReplyAttachment();
+        syncMediaAltTrigger();
+        closeMediaEditor({discardChanges: false});
+    }
 
     // ── 임시저장 서브뷰 ──
     function openDraftPanel() {
         if (!composeView || !replyDraftView) return;
         closeEmojiPicker();
-        composeView.hidden = true; replyDraftView.hidden = false;
+        composeView.hidden = true;
+        replyDraftView.hidden = false;
     }
-    function closeDraftPanel({ restoreFocus = true } = {}) {
+
+    function closeDraftPanel({restoreFocus = true} = {}) {
         if (!composeView || !replyDraftView || replyDraftView.hidden) return;
-        replyDraftView.hidden = true; composeView.hidden = false;
+        replyDraftView.hidden = true;
+        composeView.hidden = false;
         if (restoreFocus) window.requestAnimationFrame(() => replyEditor?.focus());
     }
 
@@ -1459,13 +1600,17 @@
     function openProductView() {
         if (!composeView || !replyProductView) return;
         closeEmojiPicker();
-        composeView.hidden = true; replyProductView.hidden = false;
+        composeView.hidden = true;
+        replyProductView.hidden = false;
     }
-    function closeProductView({ restoreFocus = true } = {}) {
+
+    function closeProductView({restoreFocus = true} = {}) {
         if (!composeView || !replyProductView || replyProductView.hidden) return;
-        replyProductView.hidden = true; composeView.hidden = false;
+        replyProductView.hidden = true;
+        composeView.hidden = false;
         if (restoreFocus) window.requestAnimationFrame(() => replyEditor?.focus());
     }
+
     function renderSelectedProduct() {
         q("[data-selected-product]")?.remove();
         if (!selectedProduct || !replyEditor) return;
@@ -1473,7 +1618,10 @@
         card.setAttribute("data-selected-product", "");
         card.className = "tweet-modal__selected-product";
         card.innerHTML = `<div class="selected-product__card"><img class="selected-product__image" src="${escapeHtml(selectedProduct.image)}" alt="${escapeHtml(selectedProduct.name)}"><div class="selected-product__info"><strong class="selected-product__name">${escapeHtml(selectedProduct.name)}</strong><span class="selected-product__price">${escapeHtml(selectedProduct.price)}</span></div><button type="button" class="selected-product__remove" aria-label="판매글 제거"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button></div>`;
-        card.querySelector(".selected-product__remove")?.addEventListener("click", () => { selectedProduct = null; card.remove(); });
+        card.querySelector(".selected-product__remove")?.addEventListener("click", () => {
+            selectedProduct = null;
+            card.remove();
+        });
         replyEditor.parentElement?.appendChild(card);
     }
 
@@ -1559,7 +1707,10 @@
         if (e.target === replyModalOverlay) closeBookmarkReplyModal();
     });
 
-    replyEditor?.addEventListener("input", () => { syncReplySubmitState(); syncReplyFormatButtons(); });
+    replyEditor?.addEventListener("input", () => {
+        syncReplySubmitState();
+        syncReplyFormatButtons();
+    });
     replyEditor?.addEventListener("keyup", syncReplyFormatButtons);
     replyEditor?.addEventListener("mouseup", syncReplyFormatButtons);
     replyEditor?.addEventListener("focus", syncReplyFormatButtons);
@@ -1572,26 +1723,48 @@
     replyMediaUploadButton?.addEventListener("click", () => replyFileInput?.click());
     replyFileInput?.addEventListener("change", (e) => {
         const next = Array.from(e.target.files ?? []);
-        if (!next.length) { pendingAttachmentEditIndex = null; syncReplySubmitState(); return; }
+        if (!next.length) {
+            pendingAttachmentEditIndex = null;
+            syncReplySubmitState();
+            return;
+        }
         const vid = next.find((f) => f.type.startsWith("video/"));
         const imgs = next.filter((f) => f.type.startsWith("image/"));
         if (pendingAttachmentEditIndex !== null) {
             const rep = next[0];
-            if (rep.type.startsWith("video/")) { attachedReplyFiles = [rep]; }
-            else { const ed = isReplyVideoSet() ? [] : [...attachedReplyFiles]; if (ed.length === 0) attachedReplyFiles = [rep]; else { ed[pendingAttachmentEditIndex] = rep; attachedReplyFiles = ed.slice(0, maxReplyImages); } }
+            if (rep.type.startsWith("video/")) {
+                attachedReplyFiles = [rep];
+            } else {
+                const ed = isReplyVideoSet() ? [] : [...attachedReplyFiles];
+                if (ed.length === 0) attachedReplyFiles = [rep]; else {
+                    ed[pendingAttachmentEditIndex] = rep;
+                    attachedReplyFiles = ed.slice(0, maxReplyImages);
+                }
+            }
             pendingAttachmentEditIndex = null;
-        } else if (vid) { attachedReplyFiles = [vid]; }
-        else if (imgs.length > 0) { attachedReplyFiles = [...(isReplyImageSet() ? attachedReplyFiles : []), ...imgs].slice(0, maxReplyImages); }
-        else { attachedReplyFiles = [next[0]]; }
+        } else if (vid) {
+            attachedReplyFiles = [vid];
+        } else if (imgs.length > 0) {
+            attachedReplyFiles = [...(isReplyImageSet() ? attachedReplyFiles : []), ...imgs].slice(0, maxReplyImages);
+        } else {
+            attachedReplyFiles = [next[0]];
+        }
         if (replyFileInput) replyFileInput.value = "";
-        renderReplyAttachment(); syncReplySubmitState();
+        renderReplyAttachment();
+        syncReplySubmitState();
     });
 
     replyAttachmentMedia?.addEventListener("click", (e) => {
         const removeBtn = e.target.closest("[data-attachment-remove-index]");
-        if (removeBtn) { removeReplyAttachment(Number(removeBtn.dataset.attachmentRemoveIndex)); return; }
+        if (removeBtn) {
+            removeReplyAttachment(Number(removeBtn.dataset.attachmentRemoveIndex));
+            return;
+        }
         const editBtn = e.target.closest("[data-attachment-edit-index]");
-        if (editBtn) { pendingAttachmentEditIndex = Number(editBtn.dataset.attachmentEditIndex); replyFileInput?.click(); }
+        if (editBtn) {
+            pendingAttachmentEditIndex = Number(editBtn.dataset.attachmentEditIndex);
+            replyFileInput?.click();
+        }
     });
 
     replyEmojiButton?.addEventListener("mousedown", (e) => {
@@ -1610,8 +1783,17 @@
     });
     replyLocationDisplayButton?.addEventListener("click", openLocationPanel);
     replyLocationCloseButton?.addEventListener("click", () => closeLocationPanel());
-    replyLocationDeleteButton?.addEventListener("click", () => { selectedLocation = null; pendingLocation = null; syncLocationUI(); closeLocationPanel(); });
-    replyLocationCompleteButton?.addEventListener("click", () => { selectedLocation = pendingLocation; syncLocationUI(); closeLocationPanel(); });
+    replyLocationDeleteButton?.addEventListener("click", () => {
+        selectedLocation = null;
+        pendingLocation = null;
+        syncLocationUI();
+        closeLocationPanel();
+    });
+    replyLocationCompleteButton?.addEventListener("click", () => {
+        selectedLocation = pendingLocation;
+        syncLocationUI();
+        closeLocationPanel();
+    });
     replyLocationSearchInput?.addEventListener("input", renderLocationList);
     replyLocationList?.addEventListener("click", (e) => {
         const item = e.target.closest(".tweet-modal__location-item");
@@ -1627,15 +1809,21 @@
         else openTagPanel();
     });
     replyTagCloseButton?.addEventListener("click", () => closeTagPanel());
-    replyTagCompleteButton?.addEventListener("click", () => { applyPendingTaggedUsers(); closeTagPanel(); });
+    replyTagCompleteButton?.addEventListener("click", () => {
+        applyPendingTaggedUsers();
+        closeTagPanel();
+    });
     replyTagSearchInput?.addEventListener("input", () => {
         const query = replyTagSearchInput.value.trim().toLowerCase();
-        if (!query) { if (replyTagResults) replyTagResults.innerHTML = ""; return; }
+        if (!query) {
+            if (replyTagResults) replyTagResults.innerHTML = "";
+            return;
+        }
         const users = Array.from(document.querySelectorAll(".bookmark-post")).map((card, i) => {
             const name = card.querySelector(".bookmark-post-name")?.textContent?.trim() || "";
             const handle = card.querySelector(".bookmark-post-handle")?.textContent?.trim() || "";
             const avatar = card.querySelector(".bookmark-post-avatar img")?.getAttribute("src") || "";
-            return name && handle ? { id: `${handle}-${i}`, name, handle, avatar } : null;
+            return name && handle ? {id: `${handle}-${i}`, name, handle, avatar} : null;
         }).filter(Boolean).filter((u) => `${u.name} ${u.handle}`.toLowerCase().includes(query)).slice(0, 6);
         if (!replyTagResults) return;
         replyTagResults.innerHTML = users.map((u) => {
@@ -1650,7 +1838,9 @@
         const name = btn.querySelector(".tweet-modal__tag-user-name")?.textContent.trim() || "";
         const handle = btn.querySelector(".tweet-modal__tag-user-handle")?.textContent.trim() || "";
         const avatar = btn.querySelector("img")?.getAttribute("src") || "";
-        if (!pendingTaggedUsers.some((u) => u.id === id)) { pendingTaggedUsers.push({ id, name, handle, avatar }); }
+        if (!pendingTaggedUsers.some((u) => u.id === id)) {
+            pendingTaggedUsers.push({id, name, handle, avatar});
+        }
         if (replyTagSearchInput) replyTagSearchInput.value = "";
         if (replyTagResults) replyTagResults.innerHTML = "";
         renderTagChipList();
@@ -1669,8 +1859,18 @@
     });
     replyMediaBackButton?.addEventListener("click", () => closeMediaEditor());
     replyMediaSaveButton?.addEventListener("click", saveReplyMediaEdits);
-    replyMediaPrevButton?.addEventListener("click", () => { if (activeReplyMediaIndex > 0) { activeReplyMediaIndex--; renderMediaEditor(); } });
-    replyMediaNextButton?.addEventListener("click", () => { if (activeReplyMediaIndex < pendingReplyMediaEdits.length - 1) { activeReplyMediaIndex++; renderMediaEditor(); } });
+    replyMediaPrevButton?.addEventListener("click", () => {
+        if (activeReplyMediaIndex > 0) {
+            activeReplyMediaIndex--;
+            renderMediaEditor();
+        }
+    });
+    replyMediaNextButton?.addEventListener("click", () => {
+        if (activeReplyMediaIndex < pendingReplyMediaEdits.length - 1) {
+            activeReplyMediaIndex++;
+            renderMediaEditor();
+        }
+    });
     replyMediaAltInput?.addEventListener("input", () => {
         if (pendingReplyMediaEdits[activeReplyMediaIndex]) pendingReplyMediaEdits[activeReplyMediaIndex].alt = replyMediaAltInput.value.slice(0, maxReplyMediaAltLength);
         if (replyMediaAltCount) replyMediaAltCount.textContent = `${replyMediaAltInput.value.length} / ${maxReplyMediaAltLength.toLocaleString()}`;
@@ -1681,9 +1881,14 @@
         else openDraftPanel();
     });
     replyDraftView?.addEventListener("click", (e) => {
-        if (e.target.closest(".draft-panel__back")) { closeDraftPanel(); return; }
+        if (e.target.closest(".draft-panel__back")) {
+            closeDraftPanel();
+            return;
+        }
         const item = e.target.closest(".draft-panel__item");
-        if (item) { closeDraftPanel(); }
+        if (item) {
+            closeDraftPanel();
+        }
     });
 
     replyProductButton?.addEventListener("click", () => {

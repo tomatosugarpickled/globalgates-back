@@ -371,7 +371,7 @@ window.onload = () => {
             () => {
                 menu.classList.remove("off");
             },
-            { passive: true },
+            {passive: true},
         );
 
         c.addEventListener("mouseleave", () => {
@@ -449,7 +449,7 @@ window.onload = () => {
                     updateMenuPosition();
                 }
             },
-            { passive: true },
+            {passive: true},
         );
     }
 
@@ -498,10 +498,10 @@ window.onload = () => {
                         targetChat?.classList.contains("Reply");
                     const userName = isLeft
                         ? (chatDiv
-                              .querySelector(
-                                  ".ChatPage-UserInfo .UserName-Text",
-                              )
-                              ?.textContent.trim() ?? "상대방")
+                            .querySelector(
+                                ".ChatPage-UserInfo .UserName-Text",
+                            )
+                            ?.textContent.trim() ?? "상대방")
                         : "나";
                     const content =
                         targetChat
@@ -556,7 +556,7 @@ window.onload = () => {
             );
             if (!targetLi) return;
 
-            targetLi.scrollIntoView({ behavior: "smooth", block: "center" });
+            targetLi.scrollIntoView({behavior: "smooth", block: "center"});
 
             setTimeout(() => {
                 const messageContainer = targetLi.closest(".Each-Main-Content");
@@ -577,7 +577,7 @@ window.onload = () => {
                     () => {
                         messageContainer.classList.remove(animClass);
                     },
-                    { once: true },
+                    {once: true},
                 );
             }, 400);
         });
@@ -860,7 +860,7 @@ window.onload = () => {
                         modalBackDrop.classList.add("off");
                     }
                 },
-                { once: true },
+                {once: true},
             );
         } else if (modal.classList.contains("Small-Modal")) {
             modal.classList.remove("on");

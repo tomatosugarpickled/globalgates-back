@@ -13,27 +13,27 @@ import java.util.Optional;
 public class BookmarkFolderDAO {
     private final BookmarkFolderMapper bookmarkFolderMapper;
 
-//    저장
+    //    저장
     public void save(BookmarkFolderDTO bookmarkFolderDTO) {
         bookmarkFolderMapper.insert(bookmarkFolderDTO);
     }
 
-//    수정
+    //    수정
     public void update(BookmarkFolderDTO bookmarkFolderDTO) {
         bookmarkFolderMapper.update(bookmarkFolderDTO);
     }
 
-//    삭제
+    //    삭제
     public void delete(Long id) {
         bookmarkFolderMapper.delete(id);
     }
 
-//    단건 조회
+    //    단건 조회
     public Optional<BookmarkFolderDTO> findById(Long id) {
         return bookmarkFolderMapper.selectById(id);
     }
 
-//    회원 폴더 목록 조회
+    //    회원 폴더 목록 조회
     public List<BookmarkFolderDTO> findAllByMemberId(Long memberId) {
         return bookmarkFolderMapper.selectAllByMemberId(memberId);
     }

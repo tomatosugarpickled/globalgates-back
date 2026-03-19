@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
 }
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: #ffffff;
@@ -11,6 +12,7 @@ body {
     font-size: 15px;
     line-height: 22.5px;
 }
+
 /* ===== 최상위 컬럼 컨테이너 ===== */
 .Primary-Column-Container {
     display: flex;
@@ -24,6 +26,7 @@ body {
     border-right: 1px solid rgb(239, 243, 244);
     min-height: 100vh;
 }
+
 /* ===== Sticky 헤더 wrapper ===== */
 .Header-Sticky-Wrapper {
     position: sticky;
@@ -32,6 +35,7 @@ body {
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
 }
+
 /* ===== 헤더 바 (뒤로가기 + 제목) ===== */
 .Header-Bar-Row {
     display: flex;
@@ -42,6 +46,7 @@ body {
     height: 53px;
     position: relative;
 }
+
 /* ===== 뒤로가기 버튼 ===== */
 .Header-Back-Button {
     display: flex;
@@ -60,14 +65,17 @@ body {
     color: rgb(15, 20, 26);
     transition: background-color 0.2s;
 }
+
 .Header-Back-Button:hover {
     background-color: rgba(15, 20, 26, 0.1);
 }
+
 .Header-Back-Button svg {
     width: 20px;
     height: 20px;
     fill: currentColor;
 }
+
 /* ===== 헤더 제목 (이 계정에 대해) ===== */
 .Header-Title-Text {
     flex: 1;
@@ -80,12 +88,14 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 /* ===== 프로필 섹션 전체 wrapper ===== */
 .Profile-Section-Wrapper {
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
+
 /* ===== 프로필 중앙 컨테이너 (아바타 + 이름 + 핸들) ===== */
 .Profile-Center-Container {
     display: flex;
@@ -94,12 +104,14 @@ body {
     justify-content: space-between;
     margin: 20px;
 }
+
 /* ===== 아바타 외부 wrapper ===== */
 .Profile-Avatar-Outer-Wrapper {
     position: relative;
     width: 68px;
     height: 68px;
 }
+
 /* ===== 아바타 이미지 컨테이너 ===== */
 .Profile-Avatar-Image-Container {
     width: 64px;
@@ -109,6 +121,7 @@ body {
     background-color: #ffffff;
     border: 2px solid #ffffff;
 }
+
 /* ===== 아바타 이미지 ===== */
 .Profile-Avatar-Image {
     display: block;
@@ -118,6 +131,7 @@ body {
     border-radius: 50%;
     background-color: #ccc;
 }
+
 /* ===== 이름 + 인증뱃지 행 ===== */
 .Profile-Name-Badge-Row {
     display: flex;
@@ -125,6 +139,7 @@ body {
     align-items: center;
     gap: 4px;
 }
+
 /* ===== 이름 텍스트 ===== */
 .Profile-Name-Text {
     display: block;
@@ -136,12 +151,14 @@ body {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 /* ===== 인증 뱃지 이미지 ===== */
 .Profile-Verified-Badge {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
+
 /* ===== 핸들(@아이디) 텍스트 ===== */
 .Profile-Handle-Text {
     font-size: 15px;
@@ -149,11 +166,13 @@ body {
     line-height: 20px;
     color: rgb(83, 100, 113);
 }
+
 /* ===== 정보 탭 리스트 컨테이너 ===== */
 .Info-Tab-List-Container {
     display: flex;
     flex-direction: column;
 }
+
 /* ===== 개별 정보 탭 아이템 ===== */
 .Info-Tab-Item {
     display: flex;
@@ -167,9 +186,11 @@ body {
     cursor: default;
     transition: background-color 0.2s;
 }
+
 .Info-Tab-Item:hover {
     background-color: rgba(0, 0, 0, 0.03);
 }
+
 /* ===== 탭 아이템 내부 행 (아이콘 + 텍스트 + 오른쪽 액션) ===== */
 .Info-Tab-Item-Inner-Row {
     display: flex;
@@ -177,6 +198,7 @@ body {
     align-items: center;
     height: 40px;
 }
+
 /* ===== 탭 아이콘 컨테이너 ===== */
 .Info-Tab-Icon-Container {
     display: flex;
@@ -189,11 +211,13 @@ body {
     flex-shrink: 0;
     color: rgb(83, 100, 113);
 }
+
 .Info-Tab-Icon-Container svg {
     width: 18.75px;
     height: 18.75px;
     fill: currentColor;
 }
+
 /* ===== 탭 텍스트 블록 (레이블 + 값) ===== */
 .Info-Tab-Text-Block {
     display: flex;
@@ -201,6 +225,7 @@ body {
     flex: 1;
     overflow: hidden;
 }
+
 /* ===== 탭 레이블 (항목명) ===== */
 .Info-Tab-Label-Text {
     font-size: 15px;
@@ -211,6 +236,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 /* ===== 탭 값 (내용) ===== */
 .Info-Tab-Value-Text {
     font-size: 15px;
@@ -221,6 +247,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 /* ===== 오른쪽 Chevron(>) 아이콘 컨테이너 ===== */
 .Info-Tab-Chevron-Container {
     display: flex;
@@ -232,11 +259,13 @@ body {
     flex-shrink: 0;
     color: rgb(83, 100, 113);
 }
+
 .Info-Tab-Chevron-Container svg {
     width: 18px;
     height: 18px;
     fill: currentColor;
 }
+
 /* ===== ⓘ 정보 버튼 ===== */
 .Info-Tab-Info-Button {
     display: flex;
@@ -253,9 +282,11 @@ body {
     flex-shrink: 0;
     transition: background-color 0.2s;
 }
+
 .Info-Tab-Info-Button:hover {
     background-color: rgba(29, 155, 240, 0.1);
 }
+
 .Info-Tab-Info-Button svg {
     width: 18px;
     height: 18px;

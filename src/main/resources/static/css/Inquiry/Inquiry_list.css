@@ -10,9 +10,8 @@ html {
 }
 
 body {
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-        sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
     background: #fff;
     color: #0f1419;
     line-height: 1.4;
@@ -569,7 +568,7 @@ button {
 .connect-btn.disconnect {
     border-color: #f4212e;
     color: #f4212e;
-    background: rgba(244,33,46,.1);
+    background: rgba(244, 33, 46, .1);
 }
 
 .connect-btn.disconnect:hover {
@@ -596,7 +595,7 @@ button {
 .connect-btn-sm.disconnect {
     border-color: #f4212e;
     color: #f4212e;
-    background: rgba(244,33,46,.1);
+    background: rgba(244, 33, 46, .1);
 }
 
 .connect-btn-sm.disconnect:hover {

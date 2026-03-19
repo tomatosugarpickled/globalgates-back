@@ -7,28 +7,43 @@
     </insert>
 
     <select id="selectMemberForLogin">
-        select
-            m.id, m.member_nickname as member_name, m.member_email, false as member_email_verified,
-            m.member_status, m.member_role, m.created_datetime, m.updated_datetime,
-            o.provider_id, o.provider, o.profile_url
-        from tbl_member m join tbl_oauth o
-        on m.id = o.member_id
-        where m.member_email = #{memberEmail} and
-              m.member_password = #{memberPassword} and
-              m.member_status = 'active' and
-              o.provider = #{provider}
+        select m.id,
+               m.member_nickname as member_name,
+               m.member_email,
+               false             as member_email_verified,
+               m.member_status,
+               m.member_role,
+               m.created_datetime,
+               m.updated_datetime,
+               o.provider_id,
+               o.provider,
+               o.profile_url
+        from tbl_member m
+                 join tbl_oauth o
+                      on m.id = o.member_id
+        where m.member_email = #{memberEmail}
+          and m.member_password = #{memberPassword}
+          and m.member_status = 'active'
+          and o.provider = #{provider}
     </select>
 
     <select id="selectMemberByMemberEmail">
-        select
-            m.id, m.member_nickname as member_name, m.member_email, false as member_email_verified,
-            m.member_status,
-            m.member_role, m.created_datetime, m.updated_datetime,
-            o.provider_id, o.provider, o.profile_url
-        from tbl_member m join tbl_oauth o
-        on m.id = o.member_id
-        where m.member_email = #{memberEmail} and
-              m.member_status = 'active' and
-              o.provider = #{provider}
+        select m.id,
+               m.member_nickname as member_name,
+               m.member_email,
+               false             as member_email_verified,
+               m.member_status,
+               m.member_role,
+               m.created_datetime,
+               m.updated_datetime,
+               o.provider_id,
+               o.provider,
+               o.profile_url
+        from tbl_member m
+                 join tbl_oauth o
+                      on m.id = o.member_id
+        where m.member_email = #{memberEmail}
+          and m.member_status = 'active'
+          and o.provider = #{provider}
     </select>
 </mapper>

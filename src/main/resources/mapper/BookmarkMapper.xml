@@ -8,13 +8,16 @@
     </insert>
 
     <delete id="delete">
-        delete from tbl_bookmark
+        delete
+        from tbl_bookmark
         where id = #{id}
     </delete>
 
     <delete id="deleteByMemberIdAndPostId">
-        delete from tbl_bookmark
-        where member_id = #{memberId} and post_id = #{postId}
+        delete
+        from tbl_bookmark
+        where member_id = #{memberId}
+          and post_id = #{postId}
     </delete>
 
     <update id="clearFolderId">
@@ -38,38 +41,56 @@
     <select id="selectByMemberIdAndPostId">
         select b.id, b.member_id, b.post_id, b.folder_id, b.created_datetime
         from tbl_bookmark b
-        where b.member_id = #{memberId} and b.post_id = #{postId}
+        where b.member_id = #{memberId}
+          and b.post_id = #{postId}
     </select>
 
     <select id="selectAllByMemberId">
-        select b.id, b.member_id, b.post_id, b.folder_id, b.created_datetime,
-               p.title as postTitle, p.content as postContent
+        select b.id,
+               b.member_id,
+               b.post_id,
+               b.folder_id,
+               b.created_datetime,
+               p.title   as postTitle,
+               p.content as postContent
         from tbl_bookmark b
-        join tbl_post p on b.post_id = p.id
+                 join tbl_post p on b.post_id = p.id
         where b.member_id = #{memberId}
         order by b.created_datetime desc
     </select>
 
     <select id="selectAllByFolderId">
-        select b.id, b.member_id, b.post_id, b.folder_id, b.created_datetime,
-               p.title as postTitle, p.content as postContent
+        select b.id,
+               b.member_id,
+               b.post_id,
+               b.folder_id,
+               b.created_datetime,
+               p.title   as postTitle,
+               p.content as postContent
         from tbl_bookmark b
-        join tbl_post p on b.post_id = p.id
+                 join tbl_post p on b.post_id = p.id
         where b.folder_id = #{folderId}
         order by b.created_datetime desc
     </select>
 
     <select id="selectAllUncategorizedByMemberId">
-        select b.id, b.member_id, b.post_id, b.folder_id, b.created_datetime,
-               p.title as postTitle, p.content as postContent
+        select b.id,
+               b.member_id,
+               b.post_id,
+               b.folder_id,
+               b.created_datetime,
+               p.title   as postTitle,
+               p.content as postContent
         from tbl_bookmark b
-        join tbl_post p on b.post_id = p.id
-        where b.member_id = #{memberId} and b.folder_id is null
+                 join tbl_post p on b.post_id = p.id
+        where b.member_id = #{memberId}
+          and b.folder_id is null
         order by b.created_datetime desc
     </select>
 
     <select id="selectCountByMemberId" resultType="int">
-        select count(*) from tbl_bookmark
+        select count(*)
+        from tbl_bookmark
         where member_id = #{memberId}
     </select>
 

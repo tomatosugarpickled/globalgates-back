@@ -11,50 +11,56 @@ window.onload = () => {
 
     if (tabProducts && tabTrending && tabNews && productsSection && trendingSection && newsSection) {
 
-    // 3. 탭 전환 함수
-    function showProductsTab() {
-        tabProducts.classList.add("isActive");
-        tabProducts.setAttribute("aria-current", "page");
-        tabTrending.classList.remove("isActive");
-        tabTrending.removeAttribute("aria-current");
-        tabNews.classList.remove("isActive");
-        tabNews.removeAttribute("aria-current");
+        // 3. 탭 전환 함수
+        function showProductsTab() {
+            tabProducts.classList.add("isActive");
+            tabProducts.setAttribute("aria-current", "page");
+            tabTrending.classList.remove("isActive");
+            tabTrending.removeAttribute("aria-current");
+            tabNews.classList.remove("isActive");
+            tabNews.removeAttribute("aria-current");
 
-        productsSection.hidden = false;
-        trendingSection.hidden = true;
-        newsSection.hidden = true;
-    }
+            productsSection.hidden = false;
+            trendingSection.hidden = true;
+            newsSection.hidden = true;
+        }
 
-    function showTrendingTab() {
-        tabTrending.classList.add("isActive");
-        tabTrending.setAttribute("aria-current", "page");
-        tabProducts.classList.remove("isActive");
-        tabProducts.removeAttribute("aria-current");
-        tabNews.classList.remove("isActive");
-        tabNews.removeAttribute("aria-current");
+        function showTrendingTab() {
+            tabTrending.classList.add("isActive");
+            tabTrending.setAttribute("aria-current", "page");
+            tabProducts.classList.remove("isActive");
+            tabProducts.removeAttribute("aria-current");
+            tabNews.classList.remove("isActive");
+            tabNews.removeAttribute("aria-current");
 
-        productsSection.hidden = true;
-        trendingSection.hidden = false;
-        newsSection.hidden = true;
-    }
+            productsSection.hidden = true;
+            trendingSection.hidden = false;
+            newsSection.hidden = true;
+        }
 
-    function showNewsTab() {
-        tabNews.classList.add("isActive");
-        tabNews.setAttribute("aria-current", "page");
-        tabProducts.classList.remove("isActive");
-        tabProducts.removeAttribute("aria-current");
-        tabTrending.classList.remove("isActive");
-        tabTrending.removeAttribute("aria-current");
+        function showNewsTab() {
+            tabNews.classList.add("isActive");
+            tabNews.setAttribute("aria-current", "page");
+            tabProducts.classList.remove("isActive");
+            tabProducts.removeAttribute("aria-current");
+            tabTrending.classList.remove("isActive");
+            tabTrending.removeAttribute("aria-current");
 
-        productsSection.hidden = true;
-        trendingSection.hidden = true;
-        newsSection.hidden = false;
-    }
+            productsSection.hidden = true;
+            trendingSection.hidden = true;
+            newsSection.hidden = false;
+        }
 
-    // 4. 이벤트 바인딩
-    tabProducts.addEventListener("click", (e) => { showProductsTab(); });
-    tabTrending.addEventListener("click", (e) => { showTrendingTab(); });
-    tabNews.addEventListener("click", (e) => { showNewsTab(); });
+        // 4. 이벤트 바인딩
+        tabProducts.addEventListener("click", (e) => {
+            showProductsTab();
+        });
+        tabTrending.addEventListener("click", (e) => {
+            showTrendingTab();
+        });
+        tabNews.addEventListener("click", (e) => {
+            showNewsTab();
+        });
     }
 
     // 5. Trending 서브탭
@@ -63,7 +69,9 @@ window.onload = () => {
         trendingSubtabs.forEach((tab) => {
             tab.addEventListener("click", (e) => {
                 e.preventDefault();
-                trendingSubtabs.forEach((t) => { t.classList.remove("isActive"); });
+                trendingSubtabs.forEach((t) => {
+                    t.classList.remove("isActive");
+                });
                 tab.classList.add("isActive");
             });
         });
@@ -89,7 +97,7 @@ window.onload = () => {
                 activeBtn = btn;
                 const rect = btn.getBoundingClientRect();
 
-                trendReportMenu.style.top  = rect.bottom + "px";
+                trendReportMenu.style.top = rect.bottom + "px";
                 trendReportMenu.style.left = (rect.right - 284) + "px";
                 trendReportMenu.hidden = false;
 
@@ -111,14 +119,14 @@ window.onload = () => {
                         dismissed.setAttribute("role", "article");
                         dismissed.innerHTML =
                             '<div class="trend-dismissed__wrapper">' +
-                                '<div class="trend-dismissed__spacer"></div>' +
-                                '<div class="trend-dismissed__body">' +
-                                    '<div class="trend-dismissed__box">' +
-                                        '<div class="trend-dismissed__text">' +
-                                            '<span>감사합니다. 이 트렌드를 업데이트하려면 페이지를 새로고침해 주세요.</span>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
+                            '<div class="trend-dismissed__spacer"></div>' +
+                            '<div class="trend-dismissed__body">' +
+                            '<div class="trend-dismissed__box">' +
+                            '<div class="trend-dismissed__text">' +
+                            '<span>감사합니다. 이 트렌드를 업데이트하려면 페이지를 새로고침해 주세요.</span>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
                             '</div>';
                         trendingItem.replaceWith(dismissed);
                     }
@@ -142,104 +150,117 @@ window.onload = () => {
                 trendReportMenu.hidden = true;
                 activeBtn = null;
             }
-        }, { passive: true });
+        }, {passive: true});
     }
 
 // 7. Post-Card 인터랙션 (Like / Bookmark / 이미지 프리뷰)
-(function () {
-    // Toast 알림
-    function showToast(message, extraClass) {
-        const toast = document.createElement("div");
-        toast.className = "toast";
-        if (extraClass) {
-            toast.classList.add(extraClass);
+    (function () {
+        // Toast 알림
+        function showToast(message, extraClass) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            if (extraClass) {
+                toast.classList.add(extraClass);
+            }
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function () {
+                toast.remove();
+            }, 2500);
         }
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function () { toast.remove(); }, 2500);
-    }
 
-    // Like 토글
-    function handleLike(btn) {
-        const isLiked = btn.classList.contains("liked");
-        btn.classList.toggle("liked", !isLiked);
-        const path = btn.querySelector("svg path");
-        if (path) {
-            path.setAttribute("d", isLiked ? path.getAttribute("data-path-inactive") : path.getAttribute("data-path-active"));
+        // Like 토글
+        function handleLike(btn) {
+            const isLiked = btn.classList.contains("liked");
+            btn.classList.toggle("liked", !isLiked);
+            const path = btn.querySelector("svg path");
+            if (path) {
+                path.setAttribute("d", isLiked ? path.getAttribute("data-path-inactive") : path.getAttribute("data-path-active"));
+            }
+            const countEl = btn.querySelector(".Post-Action-Count");
+            if (countEl) {
+                const cur = parseInt(countEl.textContent.replace(/[^0-9]/g, ""), 10) || 0;
+                countEl.textContent = isLiked ? cur - 1 : cur + 1;
+            }
+            showToast(isLiked ? "좋아요를 취소했습니다." : "좋아요를 눌렀습니다.", "toast--like");
         }
-        const countEl = btn.querySelector(".Post-Action-Count");
-        if (countEl) {
-            const cur = parseInt(countEl.textContent.replace(/[^0-9]/g, ""), 10) || 0;
-            countEl.textContent = isLiked ? cur - 1 : cur + 1;
+
+        // Bookmark 토글
+        function handleBookmark(btn) {
+            const isBookmarked = btn.classList.contains("bookmarked");
+            btn.classList.toggle("bookmarked", !isBookmarked);
+            const path = btn.querySelector("svg path");
+            if (path) {
+                path.setAttribute("d", isBookmarked ? path.getAttribute("data-path-inactive") : path.getAttribute("data-path-active"));
+            }
+            showToast(isBookmarked ? "북마크가 해제되었습니다." : "북마크에 저장되었습니다.");
         }
-        showToast(isLiked ? "좋아요를 취소했습니다." : "좋아요를 눌렀습니다.", "toast--like");
-    }
 
-    // Bookmark 토글
-    function handleBookmark(btn) {
-        const isBookmarked = btn.classList.contains("bookmarked");
-        btn.classList.toggle("bookmarked", !isBookmarked);
-        const path = btn.querySelector("svg path");
-        if (path) {
-            path.setAttribute("d", isBookmarked ? path.getAttribute("data-path-inactive") : path.getAttribute("data-path-active"));
+        // 이미지 프리뷰
+        const previewOverlay = document.getElementById("postMediaPreviewOverlay");
+        const previewImg = document.getElementById("postMediaPreviewImage");
+        const previewClose = document.getElementById("postMediaPreviewClose");
+
+        function openPreview(src, alt) {
+            if (!previewOverlay || !src) return;
+            previewImg.src = src;
+            previewImg.alt = alt || "";
+            previewOverlay.classList.remove("off");
+            document.body.style.overflow = "hidden";
         }
-        showToast(isBookmarked ? "북마크가 해제되었습니다." : "북마크에 저장되었습니다.");
-    }
 
-    // 이미지 프리뷰
-    const previewOverlay = document.getElementById("postMediaPreviewOverlay");
-    const previewImg = document.getElementById("postMediaPreviewImage");
-    const previewClose = document.getElementById("postMediaPreviewClose");
+        function closePreview() {
+            if (!previewOverlay) return;
+            previewOverlay.classList.add("off");
+            previewImg.src = "";
+            document.body.style.overflow = "";
+        }
 
-    function openPreview(src, alt) {
-        if (!previewOverlay || !src) return;
-        previewImg.src = src;
-        previewImg.alt = alt || "";
-        previewOverlay.classList.remove("off");
-        document.body.style.overflow = "hidden";
-    }
-    
-    function closePreview() {
-        if (!previewOverlay) return;
-        previewOverlay.classList.add("off");
-        previewImg.src = "";
-        document.body.style.overflow = "";
-    }
-
-    if (previewClose) previewClose.addEventListener("click", (e) => { closePreview(); });
-    if (previewOverlay) {
-        previewOverlay.addEventListener("click", (e) => {
-            if (e.target === previewOverlay) closePreview();
-        });
-    }
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && previewOverlay && !previewOverlay.classList.contains("off")) {
+        if (previewClose) previewClose.addEventListener("click", (e) => {
             closePreview();
-        }
-    });
-
-    // 이벤트 위임 (productsSection)
-    if (productsSection) {
-        productsSection.addEventListener("click", (e) => {
-            const likeBtn     = e.target.closest(".Post-Action-Btn.Like");
-            const bookmarkBtn = e.target.closest(".Post-Action-Btn.Bookmark");
-            const mediaImg    = e.target.closest(".Post-Media-Img");
-
-            if (likeBtn)     { handleLike(likeBtn); return; }
-            if (bookmarkBtn) { handleBookmark(bookmarkBtn); return; }
-            if (mediaImg)    { openPreview(mediaImg.src, mediaImg.alt); return; }
         });
-    }
-})();
+        if (previewOverlay) {
+            previewOverlay.addEventListener("click", (e) => {
+                if (e.target === previewOverlay) closePreview();
+            });
+        }
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && previewOverlay && !previewOverlay.classList.contains("off")) {
+                closePreview();
+            }
+        });
+
+        // 이벤트 위임 (productsSection)
+        if (productsSection) {
+            productsSection.addEventListener("click", (e) => {
+                const likeBtn = e.target.closest(".Post-Action-Btn.Like");
+                const bookmarkBtn = e.target.closest(".Post-Action-Btn.Bookmark");
+                const mediaImg = e.target.closest(".Post-Media-Img");
+
+                if (likeBtn) {
+                    handleLike(likeBtn);
+                    return;
+                }
+                if (bookmarkBtn) {
+                    handleBookmark(bookmarkBtn);
+                    return;
+                }
+                if (mediaImg) {
+                    openPreview(mediaImg.src, mediaImg.alt);
+                    return;
+                }
+            });
+        }
+    })();
 
 // 8. 검색창 포커스 드롭다운 + 최근검색 삭제
-    const searchForm        = document.getElementById("searchForm");
-    const searchInput       = document.getElementById("searchInput");
-    const searchClearBtn    = document.getElementById("searchClearBtn");
-    const searchPanel       = document.getElementById("searchPanel");
-    const searchPanelEmpty  = document.getElementById("searchPanelEmpty");
-    const searchRecentSec   = document.getElementById("searchRecentSection");
-    const searchResultsEl   = document.getElementById("searchResults");
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const searchClearBtn = document.getElementById("searchClearBtn");
+    const searchPanel = document.getElementById("searchPanel");
+    const searchPanelEmpty = document.getElementById("searchPanelEmpty");
+    const searchRecentSec = document.getElementById("searchRecentSection");
+    const searchResultsEl = document.getElementById("searchResults");
     const searchResultTopic = document.getElementById("searchResultTopic");
     const searchResultLabel = document.getElementById("searchResultLabel");
 
@@ -253,23 +274,23 @@ window.onload = () => {
         // 케이스 1: 입력 없음 + 최근검색 없음
         function showEmpty() {
             if (searchPanelEmpty) searchPanelEmpty.hidden = false;
-            if (searchRecentSec)  searchRecentSec.hidden  = true;
-            if (searchResultsEl)  searchResultsEl.hidden  = true;
+            if (searchRecentSec) searchRecentSec.hidden = true;
+            if (searchResultsEl) searchResultsEl.hidden = true;
         }
 
         // 케이스 2: 입력 없음 + 최근검색 있음
         function showRecent() {
             if (searchPanelEmpty) searchPanelEmpty.hidden = true;
-            if (searchRecentSec)  searchRecentSec.hidden  = false;
-            if (searchResultsEl)  searchResultsEl.hidden  = true;
+            if (searchRecentSec) searchRecentSec.hidden = false;
+            if (searchResultsEl) searchResultsEl.hidden = true;
         }
 
         // 케이스 3: 입력 있음
         function showResults(val) {
             if (searchResultLabel) searchResultLabel.textContent = val;
             if (searchPanelEmpty) searchPanelEmpty.hidden = true;
-            if (searchRecentSec)  searchRecentSec.hidden  = true;
-            if (searchResultsEl)  searchResultsEl.hidden  = false;
+            if (searchRecentSec) searchRecentSec.hidden = true;
+            if (searchResultsEl) searchResultsEl.hidden = false;
         }
 
         function updateSearchClearButton() {
@@ -317,7 +338,9 @@ window.onload = () => {
         }
 
         searchInput.addEventListener("blur", (e) => {
-            if (!document.hasFocus()) { return; }
+            if (!document.hasFocus()) {
+                return;
+            }
             searchForm.classList.remove("isFocused");
             searchPanel.hidden = true;
         });

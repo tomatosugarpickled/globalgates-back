@@ -11,11 +11,13 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class MemberDTO implements Serializable {
-//    버전 올려야 할 때
+    //    버전 올려야 할 때
 //    필드 자료형 변경
 //    핵심 비즈니스(인증체제, 다중권한 변경 등) 로직 변경
     @Serial
@@ -39,7 +41,7 @@ public class MemberDTO implements Serializable {
     private String createdDatetime;
     private String updatedDatetime;
 
-    public MemberVO toMemberVO(){
+    public MemberVO toMemberVO() {
         return MemberVO.builder()
                 .id(id)
                 .memberEmail(memberEmail)

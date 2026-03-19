@@ -15,20 +15,20 @@ public class MemberService {
     private final MemberDAO memberDAO;
     private final PasswordEncoder passwordEncoder;
 
-//    회원가입
-    public void join(MemberDTO memberDTO){
+    //    회원가입
+    public void join(MemberDTO memberDTO) {
         memberDTO.setMemberPassword(passwordEncoder.encode(memberDTO.getMemberPassword()));
         memberDAO.save(memberDTO);
     }
 
-//    로그인
-    public MemberDTO login(MemberDTO memberDTO){
+    //    로그인
+    public MemberDTO login(MemberDTO memberDTO) {
         return memberDAO.findMemberForLogin(memberDTO.toMemberVO()).orElseThrow(MemberLoginFailException::new);
     }
 
-//    회원정보 조회
-    @Cacheable(value="member", key="#memberEmail")
-    public MemberDTO getMember(String memberEmail){
+    //    회원정보 조회
+    @Cacheable(value = "member", key = "#memberEmail")
+    public MemberDTO getMember(String memberEmail) {
         return memberDAO.findMemberByMemberEmail(memberEmail).orElseThrow(MemberNotFoundException::new);
     }
 }

@@ -1,7 +1,6 @@
 :root {
-    --settings-font-family:
-        TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
+    --settings-font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
     --settings-text-primary: rgb(15, 20, 25);
     --settings-text-secondary: rgb(83, 100, 113);
     --settings-border: rgb(239, 243, 244);
@@ -146,9 +145,8 @@ a {
     margin-right: -4px;
     border-radius: 9999px;
     color: var(--settings-text-primary);
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .panel-header__action:hover {
@@ -197,10 +195,9 @@ a {
     border: 1px solid rgb(207, 217, 222);
     border-radius: 9999px;
     background: var(--settings-surface);
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .search-field:focus-within {
@@ -263,9 +260,8 @@ a {
     width: 100%;
     min-height: 44px;
     padding: 11px 14px;
-    transition:
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .navigation-entry__link:hover,
@@ -837,10 +833,9 @@ a {
     border-radius: 6px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .language-selection__item-box svg {
@@ -874,7 +869,7 @@ a {
 }
 
 .language-selection__item-checkbox:checked
-    + .language-selection__item-box--radio {
++ .language-selection__item-box--radio {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
@@ -1137,9 +1132,8 @@ a {
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 16px;
     background: #ffffff;
-    box-shadow:
-        0 12px 24px rgba(15, 20, 25, 0.12),
-        0 2px 8px rgba(15, 20, 25, 0.08);
+    box-shadow: 0 12px 24px rgba(15, 20, 25, 0.12),
+    0 2px 8px rgba(15, 20, 25, 0.08);
 }
 
 .phone-modal__help-menu-title {
@@ -1198,11 +1192,10 @@ a {
     border-radius: 6px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .phone-modal__check-box svg {
@@ -1439,9 +1432,8 @@ a {
     border: 1px solid var(--settings-border);
     border-radius: 16px;
     text-align: left;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .appearance-chip--active,
@@ -1545,9 +1537,8 @@ a {
     border: 2px solid rgb(207, 217, 222);
     border-radius: 6px;
     background: var(--appearance-panel);
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .username-field--active {
@@ -1635,9 +1626,8 @@ a {
     font-size: 18px;
     line-height: 22px;
     font-weight: 700;
-    transition:
-        opacity 0.2s ease,
-        background-color 0.2s ease;
+    transition: opacity 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .username-action__button:disabled {
@@ -1861,10 +1851,9 @@ a {
     border-radius: 6px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .notification-filter-editor__checkbox-box svg {
@@ -1874,19 +1863,19 @@ a {
 }
 
 .notification-filter-editor__quality:hover
-    .notification-filter-editor__checkbox-box {
+.notification-filter-editor__checkbox-box {
     border-color: var(--settings-accent);
 }
 
 .notification-filter-editor__checkbox:checked
-    + .notification-filter-editor__checkbox-box {
++ .notification-filter-editor__checkbox-box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
 }
 
 .notification-filter-editor__checkbox:focus-visible
-    + .notification-filter-editor__checkbox-box {
++ .notification-filter-editor__checkbox-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -2082,10 +2071,9 @@ a {
     height: 20px;
     margin: 2px;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .privacy-chat-editor__radio-box {
@@ -2121,7 +2109,7 @@ a {
 
 .privacy-chat-editor__radio:focus-visible + .privacy-chat-editor__radio-box,
 .privacy-chat-editor__checkbox:focus-visible
-    + .privacy-chat-editor__checkbox-box {
++ .privacy-chat-editor__checkbox-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -2263,10 +2251,9 @@ a {
     border-radius: 4px;
     background: #ffffff;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .privacy-discoverability-editor__checkbox-icon {
@@ -2276,19 +2263,19 @@ a {
 }
 
 .privacy-discoverability-editor__toggle-row:hover
-    .privacy-discoverability-editor__checkbox-box {
+.privacy-discoverability-editor__checkbox-box {
     border-color: var(--settings-accent);
 }
 
 .privacy-discoverability-editor__checkbox:checked
-    + .privacy-discoverability-editor__checkbox-box {
++ .privacy-discoverability-editor__checkbox-box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
 }
 
 .privacy-discoverability-editor__checkbox:focus-visible
-    + .privacy-discoverability-editor__checkbox-box {
++ .privacy-discoverability-editor__checkbox-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -2470,9 +2457,8 @@ a {
     border: 1px solid rgba(207, 217, 222, 0.95);
     border-radius: 9999px;
     color: #f4212e;
-    transition:
-        background-color 0.24s ease,
-        border-color 0.24s ease;
+    transition: background-color 0.24s ease,
+    border-color 0.24s ease;
 }
 
 .privacy-muted-word-item__action:hover {
@@ -2623,10 +2609,9 @@ a {
     border-radius: 4px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .privacy-muted-word-form__checkbox-box svg {
@@ -2636,7 +2621,7 @@ a {
 }
 
 .privacy-muted-word-form__checkbox:checked
-    + .privacy-muted-word-form__checkbox-box {
++ .privacy-muted-word-form__checkbox-box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
@@ -2650,9 +2635,8 @@ a {
     border: 2px solid #6b7a89;
     border-radius: 9999px;
     background: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .privacy-muted-word-form__radio:checked + .privacy-muted-word-form__radio-box {
@@ -2661,7 +2645,7 @@ a {
 }
 
 .privacy-muted-word-form__radio:focus-visible
-    + .privacy-muted-word-form__radio-box {
++ .privacy-muted-word-form__radio-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -2692,13 +2676,13 @@ a {
 }
 
 .privacy-muted-word-form__switch-input:checked
-    + .privacy-muted-word-form__switch-track {
++ .privacy-muted-word-form__switch-track {
     background: var(--settings-accent);
 }
 
 .privacy-muted-word-form__switch-input:checked
-    + .privacy-muted-word-form__switch-track
-    .privacy-muted-word-form__switch-thumb {
++ .privacy-muted-word-form__switch-track
+.privacy-muted-word-form__switch-thumb {
     transform: translateX(20px);
 }
 
@@ -2819,10 +2803,9 @@ a {
     border-radius: 4px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .privacy-posts-editor__checkbox-box svg {
@@ -2836,14 +2819,14 @@ a {
 }
 
 .privacy-posts-editor__checkbox:checked
-    + .privacy-posts-editor__checkbox-box {
++ .privacy-posts-editor__checkbox-box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
 }
 
 .privacy-posts-editor__checkbox:focus-visible
-    + .privacy-posts-editor__checkbox-box {
++ .privacy-posts-editor__checkbox-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -2954,10 +2937,9 @@ a {
     border-radius: 4px;
     background: transparent;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .privacy-posts-location-editor__checkbox-box svg {
@@ -2967,19 +2949,19 @@ a {
 }
 
 .privacy-posts-location-editor__toggle-row:hover
-    .privacy-posts-location-editor__checkbox-box {
+.privacy-posts-location-editor__checkbox-box {
     border-color: var(--settings-accent);
 }
 
 .privacy-posts-location-editor__checkbox:checked
-    + .privacy-posts-location-editor__checkbox-box {
++ .privacy-posts-location-editor__checkbox-box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
     color: #ffffff;
 }
 
 .privacy-posts-location-editor__checkbox:focus-visible
-    + .privacy-posts-location-editor__checkbox-box {
++ .privacy-posts-location-editor__checkbox-box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -3064,9 +3046,8 @@ a {
     border: 2px solid #6b7a89;
     border-radius: 4px;
     background: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .notification-muted-editor__box::after {
@@ -3085,18 +3066,18 @@ a {
 }
 
 .notification-muted-editor__checkbox:checked
-    + .notification-muted-editor__box {
++ .notification-muted-editor__box {
     border-color: var(--settings-accent);
     background: var(--settings-accent);
 }
 
 .notification-muted-editor__checkbox:checked
-    + .notification-muted-editor__box::after {
++ .notification-muted-editor__box::after {
     opacity: 1;
 }
 
 .notification-muted-editor__checkbox:focus-visible
-    + .notification-muted-editor__box {
++ .notification-muted-editor__box {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -3251,18 +3232,18 @@ a {
 }
 
 .notification-push-editor__switch-input:checked
-    + .notification-push-editor__switch-track {
++ .notification-push-editor__switch-track {
     background: var(--settings-accent);
 }
 
 .notification-push-editor__switch-input:checked
-    + .notification-push-editor__switch-track
-    .notification-push-editor__switch-thumb {
++ .notification-push-editor__switch-track
+.notification-push-editor__switch-thumb {
     transform: translateX(18px);
 }
 
 .notification-push-editor__switch-input:focus-visible
-    + .notification-push-editor__switch-track {
++ .notification-push-editor__switch-track {
     outline: 2px solid var(--settings-accent-focus);
     outline-offset: 2px;
 }
@@ -3383,10 +3364,9 @@ a {
     border-radius: 4px;
     background: #ffffff;
     color: transparent;
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .notification-push-editor__checkbox-box svg {

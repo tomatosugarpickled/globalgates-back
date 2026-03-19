@@ -17,9 +17,9 @@ public class AuthenticationHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.error("Authentication Failed: {}", authException.getMessage());
-        if(request.getRequestURI().startsWith("/api/")){
+        if (request.getRequestURI().startsWith("/api/")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-        }else{
+        } else {
             response.sendRedirect("/member/login");
         }
     }

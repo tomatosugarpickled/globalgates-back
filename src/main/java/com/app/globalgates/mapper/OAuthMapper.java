@@ -10,11 +10,13 @@ import java.util.Optional;
 
 @Mapper
 public interface OAuthMapper {
-//    회원가입
+    //    회원가입
     public void insert(OAuthVO oAuthVO);
-//    로그인
+
+    //    로그인
     public Optional<MemberDTO> selectMemberForLogin(MemberDTO memberDTO);
-//    이메일로 조회
+
+    //    이메일로 조회
     public Optional<MemberDTO> selectMemberByMemberEmail(@Param("memberEmail") String memberEmail,
                                                          @Param("provider") OAuthProvider provider);
 }

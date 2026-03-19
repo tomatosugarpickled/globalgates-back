@@ -13,16 +13,18 @@ import java.util.Optional;
 public class MemberDAO {
     private final MemberMapper memberMapper;
 
-//    회원가입
-    public void save(MemberDTO memberDTO){
+    //    회원가입
+    public void save(MemberDTO memberDTO) {
         memberMapper.insert(memberDTO);
     }
-//    로그인
-    public Optional<MemberDTO> findMemberForLogin(MemberVO memberVO){
+
+    //    로그인
+    public Optional<MemberDTO> findMemberForLogin(MemberVO memberVO) {
         return memberMapper.selectMemberForLogin(memberVO);
     }
-//    이메일로 조회
-    public Optional<MemberDTO> findMemberByMemberEmail(String memberEmail){
+
+    //    이메일로 조회
+    public Optional<MemberDTO> findMemberByMemberEmail(String memberEmail) {
         return memberMapper.selectMemberByMemberEmail(memberEmail);
     }
 }

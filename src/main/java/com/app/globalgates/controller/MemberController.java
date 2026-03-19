@@ -20,23 +20,23 @@ public class MemberController {
     private final MemberService memberService;
 
 
-//    회원가입
+    //    회원가입
     @GetMapping("join")
-    public String goToJoinForm(){
+    public String goToJoinForm() {
         return "member/join";
     }
 
     @PostMapping("join")
-    public RedirectView join(MemberDTO memberDTO){
+    public RedirectView join(MemberDTO memberDTO) {
         memberService.join(memberDTO);
         return new RedirectView("/member/login");
     }
 
-//    로그인
+    //    로그인
     @GetMapping("login")
-    public String login(@CookieValue(value="remember", required = false) boolean remember,
-                        @CookieValue(value="rememberEmail", required = false) String rememberEmail,
-                        Model model){
+    public String login(@CookieValue(value = "remember", required = false) boolean remember,
+                        @CookieValue(value = "rememberEmail", required = false) String rememberEmail,
+                        Model model) {
         model.addAttribute("remember", remember);
         model.addAttribute("rememberEmail", rememberEmail);
         return "member/login";

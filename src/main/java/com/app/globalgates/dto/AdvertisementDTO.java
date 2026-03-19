@@ -8,7 +8,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class AdvertisementDTO implements Serializable {
