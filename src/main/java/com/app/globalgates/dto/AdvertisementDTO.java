@@ -1,0 +1,50 @@
+package com.app.globalgates.dto;
+
+import com.app.globalgates.common.enumeration.AdStatus;
+import com.app.globalgates.domain.AdvertisementVO;
+import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
+
+@Getter @Setter @ToString
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
+public class AdvertisementDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private Long advertiserId;
+    private String title;
+    private String headline;
+    private String description;
+    private String landingUrl;
+    private int budget;
+    private int impressionEstimate;
+    private String receiptId;
+    private AdStatus status;
+    private String startedAt;
+    private String createdDatetime;
+    private String updatedDatetime;
+
+    // 광고 이미지 리스트
+    private List<?> adImageList;
+
+    public AdvertisementVO toAdVO() {
+        return AdvertisementVO.builder()
+                .id(id)
+                .advertiserId(advertiserId)
+                .title(title)
+                .headline(headline)
+                .description(description)
+                .landingUrl(landingUrl)
+                .budget(budget)
+                .impressionEstimate(impressionEstimate)
+                .receiptId(receiptId)
+                .status(status)
+                .startedAt(startedAt)
+                .build();
+    }
+}

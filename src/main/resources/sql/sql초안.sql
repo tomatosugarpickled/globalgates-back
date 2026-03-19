@@ -553,8 +553,6 @@ create type news_category_type as enum (
 'etc'           -- 기타
 );
 
-drop table tbl_news;
-
 create table tbl_news (
 id            bigint             generated always as identity primary key,  -- pk | 뉴스 고유 id (자동 증가)
 admin_id      bigint,  -- fk → tbl_member.id | 뉴스 등록 관리자 (탈퇴 시 null)
@@ -591,7 +589,6 @@ impression_estimate int            not null default 0,         -- 예상 노출 
 receipt_id          varchar(255),                              -- 광고비 결제 영수증 id
 status        ad_status      not null default 'active', -- 광고 게재 상태 (enum)
 started_at    timestamp,                                 -- 광고 게재 시작 일시
-expired_at    timestamp,                                 -- 광고 게재 만료 일시
 created_datetime    timestamp      not null default now(),
 updated_datetime    timestamp      not null default now(),
 constraint fk_advertisement_advertiser foreign key(advertiser_id)
