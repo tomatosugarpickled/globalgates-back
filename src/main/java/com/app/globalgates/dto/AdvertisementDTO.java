@@ -30,7 +30,7 @@ public class AdvertisementDTO implements Serializable {
     private String updatedDatetime;
 
     // 광고 이미지 리스트
-    private List<?> adImageList;
+    private List<FileAdvertisementDTO> adImageList;
 
     public AdvertisementVO toAdVO() {
         return AdvertisementVO.builder()
