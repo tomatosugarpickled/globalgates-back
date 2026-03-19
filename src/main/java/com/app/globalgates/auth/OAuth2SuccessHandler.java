@@ -1,10 +1,10 @@
 package com.app.globalgates.auth;
 
-import com.app.app.common.enumeration.OAuthProvider;
-import com.app.app.dto.MemberDTO;
-import com.app.app.dto.OAuthDTO;
-import com.app.app.repository.MemberDAO;
-import com.app.app.repository.OAuthDAO;
+import com.app.globalgates.common.enumeration.OAuthProvider;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.dto.OAuthDTO;
+import com.app.globalgates.repository.MemberDAO;
+import com.app.globalgates.repository.OAuthDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

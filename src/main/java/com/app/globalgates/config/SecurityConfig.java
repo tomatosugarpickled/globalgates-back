@@ -1,10 +1,10 @@
 package com.app.globalgates.config;
 
-import com.app.app.auth.AuthenticationFilter;
-import com.app.app.auth.AuthenticationHandler;
-import com.app.app.auth.AuthorizationHandler;
-import com.app.app.auth.OAuth2SuccessHandler;
-import com.app.app.common.enumeration.MemberRole;
+import com.app.globalgates.auth.AuthenticationFilter;
+import com.app.globalgates.auth.AuthenticationHandler;
+import com.app.globalgates.auth.AuthorizationHandler;
+import com.app.globalgates.auth.OAuth2SuccessHandler;
+import com.app.globalgates.common.enumeration.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,8 @@
 package com.app.globalgates.mapper;
 
-import com.app.app.common.enumeration.OAuthProvider;
-import com.app.app.domain.OAuthVO;
-import com.app.app.dto.MemberDTO;
+import com.app.globalgates.common.enumeration.OAuthProvider;
+import com.app.globalgates.domain.OAuthVO;
+import com.app.globalgates.dto.MemberDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

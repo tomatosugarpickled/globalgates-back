@@ -1,7 +1,7 @@
 package com.app.globalgates.mapper;
 
-import com.app.app.domain.MemberVO;
-import com.app.app.dto.MemberDTO;
+import com.app.globalgates.domain.MemberVO;
+import com.app.globalgates.dto.MemberDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;

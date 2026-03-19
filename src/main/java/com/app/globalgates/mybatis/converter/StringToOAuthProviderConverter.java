@@ -1,6 +1,6 @@
 package com.app.globalgates.mybatis.converter;
 
-import com.app.app.common.enumeration.OAuthProvider;
+import com.app.globalgates.common.enumeration.OAuthProvider;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

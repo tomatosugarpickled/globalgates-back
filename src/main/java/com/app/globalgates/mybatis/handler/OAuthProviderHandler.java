@@ -1,6 +1,6 @@
 package com.app.globalgates.mybatis.handler;
 
-import com.app.app.common.enumeration.OAuthProvider;
+import com.app.globalgates.common.enumeration.OAuthProvider;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 import org.apache.ibatis.type.TypeHandler;

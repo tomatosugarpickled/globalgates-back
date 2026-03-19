@@ -1,10 +1,10 @@
 package com.app.globalgates.dto;
 
-import com.app.app.common.enumeration.MemberRole;
-import com.app.app.common.enumeration.OAuthProvider;
-import com.app.app.common.enumeration.Status;
-import com.app.app.domain.MemberVO;
-import com.app.app.domain.OAuthVO;
+import com.app.globalgates.common.enumeration.MemberRole;
+import com.app.globalgates.common.enumeration.OAuthProvider;
+import com.app.globalgates.common.enumeration.Status;
+import com.app.globalgates.domain.MemberVO;
+import com.app.globalgates.domain.OAuthVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 

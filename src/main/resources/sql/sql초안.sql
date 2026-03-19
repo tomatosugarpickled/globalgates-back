@@ -239,7 +239,6 @@ references tbl_post(id)
 
 
 -- [19] tbl_bookmark_folder  ─ 북마크 폴더 (bookmark 화면)
-
 create table tbl_bookmark_folder (
 id          bigint       generated always as identity primary key,  -- pk | 폴더 고유 id (자동 증가)
 member_id   bigint       not null,           -- fk → tbl_member.id | 폴더 소유 회원
@@ -249,7 +248,6 @@ updated_datetime  timestamp    not null default now(),
 constraint fk_bookmark_folder_member foreign key(member_id)
 references tbl_member(id)
 );
-
 
 -- [20] tbl_bookmark  ─ 게시글 북마크 (n:n)
 create table tbl_bookmark (

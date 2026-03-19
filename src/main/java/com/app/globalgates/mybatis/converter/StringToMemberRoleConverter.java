@@ -1,6 +1,6 @@
 package com.app.globalgates.mybatis.converter;
 
-import com.app.app.common.enumeration.MemberRole;
+import com.app.globalgates.common.enumeration.MemberRole;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

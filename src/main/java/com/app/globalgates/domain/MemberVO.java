@@ -1,9 +1,9 @@
 package com.app.globalgates.domain;
 
 
-import com.app.app.audit.Period;
-import com.app.app.common.enumeration.MemberRole;
-import com.app.app.common.enumeration.Status;
+import com.app.globalgates.audit.Period;
+import com.app.globalgates.common.enumeration.MemberRole;
+import com.app.globalgates.common.enumeration.Status;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -21,6 +21,4 @@ public class MemberVO extends Period {
     private boolean memberEmailVerified;
     private Status memberStatus;
     private MemberRole memberRole;
-    private String createdDatetime;
-    private String updatedDatetime;
 }

@@ -1,8 +1,8 @@
 package com.app.globalgates.service;
 
-import com.app.app.auth.CustomUserDetails;
-import com.app.app.dto.MemberDTO;
-import com.app.app.repository.MemberDAO;
+import com.app.globalgates.auth.CustomUserDetails;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.repository.MemberDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
