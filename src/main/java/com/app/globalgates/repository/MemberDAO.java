@@ -1,8 +1,8 @@
 package com.app.globalgates.repository;
 
-import com.app.app.domain.MemberVO;
-import com.app.app.dto.MemberDTO;
-import com.app.app.mapper.MemberMapper;
+import com.app.globalgates.domain.MemberVO;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

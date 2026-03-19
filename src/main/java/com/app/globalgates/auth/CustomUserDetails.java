@@ -1,8 +1,8 @@
 package com.app.globalgates.auth;
 
-import com.app.app.common.enumeration.MemberRole;
-import com.app.app.common.enumeration.Status;
-import com.app.app.dto.MemberDTO;
+import com.app.globalgates.common.enumeration.MemberRole;
+import com.app.globalgates.common.enumeration.Status;
+import com.app.globalgates.dto.MemberDTO;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,10 +1,10 @@
 package com.app.globalgates.service;
 
-import com.app.app.auth.OAuth2Attribute;
-import com.app.app.common.enumeration.MemberRole;
-import com.app.app.common.enumeration.OAuthProvider;
-import com.app.app.dto.MemberDTO;
-import com.app.app.repository.OAuthDAO;
+import com.app.globalgates.auth.OAuth2Attribute;
+import com.app.globalgates.common.enumeration.MemberRole;
+import com.app.globalgates.common.enumeration.OAuthProvider;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.repository.OAuthDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

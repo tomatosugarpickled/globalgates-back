@@ -1,7 +1,7 @@
 package com.app.globalgates.controller;
 
-import com.app.app.dto.MemberDTO;
-import com.app.app.service.MemberService;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

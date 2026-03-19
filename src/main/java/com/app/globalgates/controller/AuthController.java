@@ -1,9 +1,9 @@
 package com.app.globalgates.controller;
 
-import com.app.app.auth.CustomUserDetails;
-import com.app.app.auth.JwtTokenProvider;
-import com.app.app.dto.MemberDTO;
-import com.app.app.service.MemberService;
+import com.app.globalgates.auth.CustomUserDetails;
+import com.app.globalgates.auth.JwtTokenProvider;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,7 @@
 package com.app.globalgates.dto;
 
-import com.app.app.common.enumeration.OAuthProvider;
-import com.app.app.domain.OAuthVO;
+import com.app.globalgates.common.enumeration.OAuthProvider;
+import com.app.globalgates.domain.OAuthVO;
 import lombok.*;
 
 @Getter @Setter @ToString

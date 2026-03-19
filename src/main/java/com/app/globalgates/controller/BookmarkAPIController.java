@@ -1,0 +1,79 @@
+package com.app.globalgates.controller;
+
+import com.app.globalgates.dto.BookmarkDTO;
+import com.app.globalgates.dto.BookmarkFolderDTO;
+import com.app.globalgates.service.BookmarkService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/bookmarks")
+public class BookmarkAPIController {
+    private final BookmarkService bookmarkService;
+
+    @GetMapping("/folders/{memberId}")
+    public List<BookmarkFolderDTO> getFolders(@PathVariable Long memberId) {
+        return bookmarkService.getFolders(memberId);
+    }
+
+    @PostMapping("/folders")
+    public void createFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO) {
+        bookmarkService.createFolder(bookmarkFolderDTO);
+    }
+
+    @PatchMapping("/folders")
+    public void updateFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO) {
+        bookmarkService.updateFolder(bookmarkFolderDTO);
+    }
+
+    @DeleteMapping("/folders/{id}")
+    public void deleteFolder(@PathVariable Long id) {
+        bookmarkService.deleteFolder(id);
+    }
+
+    @PostMapping
+    public void addBookmark(@RequestBody BookmarkDTO bookmarkDTO) {
+        bookmarkService.addBookmark(bookmarkDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteBookmark(@PathVariable Long id) {
+        bookmarkService.deleteBookmark(id);
+    }
+
+    @DeleteMapping("/members/{memberId}/posts/{postId}")
+    public void deleteBookmarkByMemberIdAndPostId(@PathVariable Long memberId, @PathVariable Long postId) {
+        bookmarkService.deleteBookmark(memberId, postId);
+    }
+
+    @PatchMapping("/{id}/folder")
+    public void updateFolderId(@PathVariable Long id, @RequestBody BookmarkDTO bookmarkDTO) {
+        bookmarkDTO.setId(id);
+        bookmarkService.updateFolderId(bookmarkDTO);
+    }
+
+    @GetMapping("/members/{memberId}")
+    public List<BookmarkDTO> getBookmarks(@PathVariable Long memberId) {
+        return bookmarkService.getBookmarks(memberId);
+    }
+
+    @GetMapping("/folders/{folderId}/items")
+    public List<BookmarkDTO> getBookmarksByFolder(@PathVariable Long folderId) {
+        return bookmarkService.getBookmarksByFolder(folderId);
+    }
+
+    @GetMapping("/members/{memberId}/uncategorized")
+    public List<BookmarkDTO> getUncategorizedBookmarks(@PathVariable Long memberId) {
+        return bookmarkService.getUncategorizedBookmarks(memberId);
+    }
+}

@@ -1,6 +1,6 @@
 package com.app.globalgates.mybatis.converter;
 
-import com.app.app.common.enumeration.Status;
+import com.app.globalgates.common.enumeration.Status;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

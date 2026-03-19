@@ -1,9 +1,9 @@
 package com.app.globalgates.service;
 
-import com.app.app.common.exception.MemberLoginFailException;
-import com.app.app.common.exception.MemberNotFoundException;
-import com.app.app.dto.MemberDTO;
-import com.app.app.repository.MemberDAO;
+import com.app.globalgates.common.exception.MemberLoginFailException;
+import com.app.globalgates.common.exception.MemberNotFoundException;
+import com.app.globalgates.dto.MemberDTO;
+import com.app.globalgates.repository.MemberDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;

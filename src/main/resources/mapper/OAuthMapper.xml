@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.app.app.mapper.OAuthMapper">
+<mapper namespace="com.app.globalgates.mapper.OAuthMapper">
     <insert id="insert">
         insert into tbl_oauth (provider_id, provider, profile_url, member_id)
         values (#{providerId}, #{provider}, #{profileURL}, #{memberId})
@@ -8,25 +8,27 @@
 
     <select id="selectMemberForLogin">
         select
-            m.id, m.member_name, m.member_email, m.member_status, m.member_role, m.created_datetime, m.updated_datetime,
+            m.id, m.member_nickname as member_name, m.member_email, false as member_email_verified,
+            m.member_status, m.member_role, m.created_datetime, m.updated_datetime,
             o.provider_id, o.provider, o.profile_url
         from tbl_member m join tbl_oauth o
         on m.id = o.member_id
-        where member_email = #{memberEmail} and
-              member_password = #{memberPassword} and
-              member_status = 'active' and
+        where m.member_email = #{memberEmail} and
+              m.member_password = #{memberPassword} and
+              m.member_status = 'active' and
               o.provider = #{provider}
     </select>
 
     <select id="selectMemberByMemberEmail">
         select
-            m.id, m.member_name, m.member_email, m.member_status, m.member_email_verified,
+            m.id, m.member_nickname as member_name, m.member_email, false as member_email_verified,
+            m.member_status,
             m.member_role, m.created_datetime, m.updated_datetime,
             o.provider_id, o.provider, o.profile_url
         from tbl_member m join tbl_oauth o
         on m.id = o.member_id
-        where member_email = #{memberEmail} and
-              member_status = 'active' and
+        where m.member_email = #{memberEmail} and
+              m.member_status = 'active' and
               o.provider = #{provider}
     </select>
 </mapper>
