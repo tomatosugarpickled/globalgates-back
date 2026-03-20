@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.app.app.mapper.MemberMapper">
+<mapper namespace="com.app.globalgates.mapper.MemberMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into tbl_member (member_name, member_email, member_password)
-        values (#{memberName}, #{memberEmail}, #{memberPassword})
+        insert into tbl_member (member_name
+                               ,member_email
+                               ,member_password
+                               ,member_handle
+                               ,member_phone
+                               ,member_region
+                               ,push_enabled
+                               ,birth_date)
+        values (#{memberName}, #{memberEmail}, #{memberPassword},#{memberHandle},#{memberPhone},#{memberRegion},#{pushEnabled},#{birthDate})
     </insert>
 
     <select id="selectMemberForLogin">
