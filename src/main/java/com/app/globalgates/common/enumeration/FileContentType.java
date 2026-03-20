@@ -30,4 +30,3 @@ public enum FileContentType {
         return FILE_CONTENT_TYPE_MAP.get(value);
     }
 }
-
