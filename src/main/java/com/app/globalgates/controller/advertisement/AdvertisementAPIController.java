@@ -50,8 +50,9 @@ public class AdvertisementAPIController implements AdvertisementAPIControllerDoc
 
     @GetMapping("detail")
     public ResponseEntity<?> detail(Long id) {
-        AdvertisementDTO adDTO = null;
-        return null;
+        AdvertisementDTO adDTO = advertisementService.getAdvertisementDetail(id);
+
+        return ResponseEntity.ok(adDTO);
     }
 
 }
