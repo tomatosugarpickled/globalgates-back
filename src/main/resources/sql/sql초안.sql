@@ -90,6 +90,7 @@ last_login_at timestamp                                                -- 마지
 
 -- [4] tbl_business_member  ─ 사업회원 확장 (1:1 → tbl_member)
 --     pk = fk → id 패턴 (상속 구조)
+select * from tbl_member;
 
 create table tbl_business_member (
 id              bigint       primary key,
@@ -504,7 +505,11 @@ payment_status  payment_status not null default 'pending',                      
 payment_method  varchar(255),                                                       -- 결제 수단 (라이트 페이)
 receipt_id      varchar(255),                                                       -- pg사 발급 결제 영수증 id
 paid_at         timestamp,                                                          -- 결제 완료 처리 일시
-created_datetime      timestamp      not null default now()
+created_datetime      timestamp      not null default now(),
+constraint fk_payment_advertisement foreign key(ad_id)
+references tbl_subscription(id),
+constraint fk_payment_advertisement_member foreign key(member_id)
+references tbl_member(id)
 );
 
 -- 결제 내역 구독

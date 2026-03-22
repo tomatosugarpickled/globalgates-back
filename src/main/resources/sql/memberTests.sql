@@ -10,4 +10,6 @@ select
     updated_datetime, last_login_at, member_name
 from tbl_member
 where member_phone = '01099139076' and member_password = '$2a$10$tq3cPX5qJaxrWcGaSBJYrutxACPQlfqWLY1QzNvNsoNdqIxhX6xkm'
-  and member_status = 'active'
+and member_status = 'active'
+
+select * from tbl_file;

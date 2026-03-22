@@ -76,4 +76,9 @@
         from tbl_advertisement
         where id = #{id}
     </select>
+
+    <delete id="delete">
+        delete from tbl_advertisement
+        where id = #{id}
+    </delete>
 </mapper>

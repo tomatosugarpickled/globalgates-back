@@ -27,4 +27,9 @@ public class FileAdvertisementDAO {
     public void delete(Long id) {
         fileAdvertisementMapper.delete(id);
     }
+
+    // 광고 id로 삭제
+    public void deleteByAdId(Long adId) {
+        fileAdvertisementMapper.deleteByAdId(adId);
+    }
 }

@@ -19,4 +19,9 @@
         delete from tbl_ad_file
         where id = #{id}
     </delete>
+
+    <delete id="deleteByAdId">
+        delete from tbl_ad_file
+        where ad_id = #{adId}
+    </delete>
 </mapper>

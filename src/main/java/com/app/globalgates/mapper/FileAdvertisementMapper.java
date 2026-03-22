@@ -17,4 +17,6 @@ public interface FileAdvertisementMapper {
     // 광고 이미지 삭제
     public void delete(Long id);
 
+    // 광고 id로 삭제
+    public void deleteByAdId(Long adId);
 }

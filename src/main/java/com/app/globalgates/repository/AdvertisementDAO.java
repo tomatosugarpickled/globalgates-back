@@ -40,4 +40,9 @@ public class AdvertisementDAO {
     public Optional<AdvertisementVO> findById(Long id) {
         return advertisementMapper.selectById(id);
     }
+
+    // 광고 삭제
+    public void delete(Long id) {
+        advertisementMapper.delete(id);
+    }
 }

@@ -26,4 +26,7 @@ public interface AdvertisementMapper {
 
     // id로 광고 상세 조회
     public Optional<AdvertisementVO> selectById(Long id);
+
+    // 광고 삭제
+    public void delete(Long id);
 }

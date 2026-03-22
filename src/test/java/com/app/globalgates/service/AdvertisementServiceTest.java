@@ -65,12 +65,6 @@ public class AdvertisementServiceTest {
     }
 
     @Test
-    public void testGetAllAds() {
-        List<AdvertisementDTO> foundAds = advertisementDAO.findAll();
-        log.info("찾아온 광고들 : {}", foundAds);
-    }
-
-    @Test
     public void testList() {
         AdSearch search = new AdSearch();
         search.setMemberId(1L);
@@ -79,10 +73,16 @@ public class AdvertisementServiceTest {
         AdWithPagingDTO adWithPagingDTO = new AdWithPagingDTO();
 
         // 이미지 등록
-        List<AdvertisementDTO> ads = advertisementDAO.findBySearch(criteria, search).stream()
+        List<AdvertisementDTO> ads = advertisementDAO.findBySearch(criteria, null).stream()
                 .map(adDTO -> {
                     List<FileAdvertisementDTO> images = new ArrayList<>(fileAdvertisementDAO.findByAdId(adDTO.getId()));
-                    if(!images.isEmpty()) { adDTO.setAdImageList(images); }
+                    if (!images.isEmpty()) {
+                        adDTO.setAdImageList(
+                                images.stream()
+                                        .map(FileAdvertisementDTO::getFilePath)
+                                        .collect(Collectors.toList())
+                        );
+                    }
                     return adDTO;
                 }).collect(Collectors.toList());
 
@@ -111,8 +111,12 @@ public class AdvertisementServiceTest {
 
         // 이미지 찾아오기
         List<FileAdvertisementDTO> images = fileAdvertisementDAO.findByAdId(adDetail.getId());
-        if(!images.isEmpty()) {
-            adDetail.setAdImageList(images);
+        if (!images.isEmpty()) {
+            adDetail.setAdImageList(
+                    images.stream()
+                            .map(FileAdvertisementDTO::getFilePath)
+                            .collect(Collectors.toList())
+            );
         }
 
         log.info("받아온 광고 상세 정보: {}", adDetail);

@@ -986,6 +986,8 @@ window.onload = () => {
             if (row) {
                 state.selectedAdId = row.dataset.adId;
                 setView("detail");
+
+                await advertisementService.detail(state.selectedAdId, advertisementLayout.showDetail);
             }
             return;
         }

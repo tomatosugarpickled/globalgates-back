@@ -28,6 +28,7 @@ const advertisementService = (() => {
         const response = await fetch("/api/advertisement", {
             method: "POST",
             body: formData,
+        //     credentials: "include",
         });
 
         if (!response.ok) throw new Error("광고 등록 실패");
@@ -48,5 +49,19 @@ const advertisementService = (() => {
         }
     }
 
-    return {write: write, list: list};
+    const detail = async (id, callback) => {
+        const response = await fetch(`/api/ad/detail?${id}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Fetch error");
+        }
+
+        const advertisementDTO = await response.json();
+
+        if(callback) {
+            callback(advertisementDTO);
+        }
+    }
+
+    return {write: write, list: list, detail: detail};
 })();
