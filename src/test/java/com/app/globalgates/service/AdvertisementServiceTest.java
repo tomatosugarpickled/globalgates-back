@@ -1,8 +1,10 @@
 package com.app.globalgates.service;
 
 import com.app.globalgates.common.enumeration.FileContentType;
+import com.app.globalgates.common.exception.AdvertisementNotFoundException;
 import com.app.globalgates.common.pagination.Criteria;
 import com.app.globalgates.common.search.AdSearch;
+import com.app.globalgates.domain.AdvertisementVO;
 import com.app.globalgates.dto.AdWithPagingDTO;
 import com.app.globalgates.dto.AdvertisementDTO;
 import com.app.globalgates.dto.FileAdvertisementDTO;
@@ -97,6 +99,42 @@ public class AdvertisementServiceTest {
         adWithPagingDTO.setAdvertisements(ads);
 
         log.info("받아온 광고들 : {}", adWithPagingDTO.getAdvertisements());
+    }
+
+    @Test
+    public void testGetAdvertisementDetail() {
+        Long id = 6L;
+        AdvertisementDTO adDetail = null;
+        AdvertisementVO advertisementVO = advertisementDAO.findById(id).orElseThrow(AdvertisementNotFoundException::new);
+
+        adDetail = toDTO(advertisementVO);
+
+        // 이미지 찾아오기
+        List<FileAdvertisementDTO> images = fileAdvertisementDAO.findByAdId(adDetail.getId());
+        if(!images.isEmpty()) {
+            adDetail.setAdImageList(images);
+        }
+
+        log.info("받아온 광고 상세 정보: {}", adDetail);
+    }
+
+    // toDTO
+    public AdvertisementDTO toDTO(AdvertisementVO adVO) {
+        AdvertisementDTO adDTO = new AdvertisementDTO();
+        adDTO.setId(adVO.getId());
+        adDTO.setAdvertiserId(adVO.getAdvertiserId());
+        adDTO.setTitle(adVO.getTitle());
+        adDTO.setHeadline(adVO.getHeadline());
+        adDTO.setDescription(adVO.getDescription());
+        adDTO.setLandingUrl(adVO.getLandingUrl());
+        adDTO.setBudget(adVO.getBudget());
+        adDTO.setImpressionEstimate(adVO.getImpressionEstimate());
+        adDTO.setReceiptId(adVO.getReceiptId());
+        adDTO.setStatus(adVO.getStatus());
+        adDTO.setCreatedDatetime(adVO.getCreatedDatetime());
+        adDTO.setUpdatedDatetime(adVO.getUpdatedDatetime());
+
+        return adDTO;
     }
 
 

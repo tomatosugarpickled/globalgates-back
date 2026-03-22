@@ -1,8 +1,10 @@
 package com.app.globalgates.service;
 
 import com.app.globalgates.common.enumeration.FileContentType;
+import com.app.globalgates.common.exception.AdvertisementNotFoundException;
 import com.app.globalgates.common.pagination.Criteria;
 import com.app.globalgates.common.search.AdSearch;
+import com.app.globalgates.domain.AdvertisementVO;
 import com.app.globalgates.dto.AdWithPagingDTO;
 import com.app.globalgates.dto.AdvertisementDTO;
 import com.app.globalgates.dto.FileAdvertisementDTO;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -93,7 +96,40 @@ public class AdvertisementService {
     }
 
     // 광고 상세 조회
+    public AdvertisementDTO getAdvertisementDetail(Long id) {
+        AdvertisementDTO adDetail = null;
+        AdvertisementVO advertisementVO = advertisementDAO.findById(id).orElseThrow(AdvertisementNotFoundException::new);
 
+        adDetail = toDTO(advertisementVO);
+
+        // 이미지 찾아오기
+        List<FileAdvertisementDTO> images = fileAdvertisementDAO.findByAdId(adDetail.getId());
+        if(!images.isEmpty()) {
+            adDetail.setAdImageList(images);
+        }
+
+        return adDetail;
+    }
+
+
+    // toDTO
+    public AdvertisementDTO toDTO(AdvertisementVO adVO) {
+        AdvertisementDTO adDTO = new AdvertisementDTO();
+        adDTO.setId(adVO.getId());
+        adDTO.setAdvertiserId(adVO.getAdvertiserId());
+        adDTO.setTitle(adVO.getTitle());
+        adDTO.setHeadline(adVO.getHeadline());
+        adDTO.setDescription(adVO.getDescription());
+        adDTO.setLandingUrl(adVO.getLandingUrl());
+        adDTO.setBudget(adVO.getBudget());
+        adDTO.setImpressionEstimate(adVO.getImpressionEstimate());
+        adDTO.setReceiptId(adVO.getReceiptId());
+        adDTO.setStatus(adVO.getStatus());
+        adDTO.setCreatedDatetime(adVO.getCreatedDatetime());
+        adDTO.setUpdatedDatetime(adVO.getUpdatedDatetime());
+
+        return adDTO;
+    }
 
     // 오늘자 경로 생성
     public String getTodayPath(){
