@@ -11,7 +11,7 @@ import java.util.List;
 @Getter @Setter
 @ToString
 @NoArgsConstructor
-public class TempPostWithPagingDTO {
-    private List<PostDTO> posts;
+public class PostProductWithPagingDTO {
+    private List<PostProductDTO> posts;
     private Criteria criteria;
 }
