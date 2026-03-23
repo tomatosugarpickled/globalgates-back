@@ -24,7 +24,7 @@ public class PostController {
 
     //    게시글 상세 페이지
     @GetMapping("detail/{id}")
-    public String goToPostDetail(@PathVariable Long id, @RequestParam(required = false) Long memberId, Model model) {
+    public String goToPostDetail(@PathVariable Long id, @RequestParam Long memberId, Model model) {
         PostDTO postDTO = postService.getDetail(id, memberId);
         model.addAttribute("post", postDTO);
         return "post/detail";

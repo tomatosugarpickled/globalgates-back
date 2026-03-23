@@ -9,10 +9,12 @@ import com.app.globalgates.dto.FileDTO;
 import com.app.globalgates.dto.PostDTO;
 import com.app.globalgates.dto.PostFileDTO;
 import com.app.globalgates.dto.PostHashtagDTO;
+import com.app.globalgates.dto.ReplyProductRelDTO;
 import com.app.globalgates.repository.FileDAO;
 import com.app.globalgates.repository.PostDAO;
 import com.app.globalgates.repository.PostFileDAO;
 import com.app.globalgates.repository.PostHashtagDAO;
+import com.app.globalgates.repository.ReplyProductRelDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class PostService {
     private final PostFileDAO postFileDAO;
     private final FileDAO fileDAO;
     private final PostHashtagDAO postHashtagDAO;
+    private final ReplyProductRelDAO replyProductRelDAO;
     private final S3Service s3Service;
 
 //    게시글 작성
@@ -159,6 +162,18 @@ public class PostService {
     //    게시글 삭제 = 상태 inactive로.
     public void delete(Long id) {
         postDAO.delete(id);
+    }
+
+//    댓글 작성 (판매품목 선택 시 관계 저장)
+    public void writeReply(PostDTO postDTO, Long productPostId) {
+        postDAO.save(postDTO);
+
+        if (productPostId != null) {
+            ReplyProductRelDTO relDTO = new ReplyProductRelDTO();
+            relDTO.setReplyPostId(postDTO.getId());
+            relDTO.setProductPostId(productPostId);
+            replyProductRelDAO.save(relDTO);
+        }
     }
     // 오늘자 경로 생성
     public String getTodayPath(){

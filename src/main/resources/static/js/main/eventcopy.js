@@ -1,74 +1,30 @@
 window.onload = () => {
-    const memberId = 1; // TODO: 로그인 구현 후 실제 로그인 회원 ID로 교체
-
-    // ── 1. 탭 전환 ──
-    let activeTab = "feed";
+    // 1. 탭 전환
     const tabFeed = document.getElementById("tabFeed");
     const tabFriends = document.getElementById("tabFriends");
     const feedSection = document.getElementById("feedSection");
     const friendsSection = document.getElementById("friendsSection");
+    const tabs = [tabFeed, tabFriends];
+    const sections = [feedSection, friendsSection];
 
-    tabFeed.addEventListener("click", () => {
-        activeTab = "feed";
-        tabFeed.classList.add("isActive");
-        tabFriends.classList.remove("isActive");
-        feedSection.classList.add("isActive");
-        friendsSection.classList.remove("isActive");
-    });
-
-    tabFriends.addEventListener("click", () => {
-        activeTab = "expert";
-        tabFriends.classList.add("isActive");
-        tabFeed.classList.remove("isActive");
-        friendsSection.classList.add("isActive");
-        feedSection.classList.remove("isActive");
-
-        if (!expertLoaded) {
-            expertService.getList(expertPage, memberId, (experts) => {
-                expertLayout.showList(experts, expertPage);
+    tabs.forEach((tab, i) => {
+        tab.addEventListener("click", (e) => {
+            tabs.forEach((t) => {
+                t.classList.remove("isActive");
             });
-            expertLoaded = true;
-        }
-    });
-
-    // ── 2. 게시글 로드 + 무한스크롤 ──
-    let postPage = 1;
-    let postCheckScroll = true;
-    let expertPage = 1;
-    let expertCheckScroll = true;
-    let expertLoaded = false;
-
-    service.getList(postPage, memberId, (posts) => {
-        layout.showList(posts, postPage);
-    });
-
-    window.addEventListener("scroll", () => {
-        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-        if (scrollTop + clientHeight < scrollHeight - 1) return;
-
-        if (activeTab === "feed" && postCheckScroll) {
-            postCheckScroll = false;
-            postPage++;
-            service.getList(postPage, memberId, (posts) => {
-                if (posts.length === 0) return;
-                layout.showList(posts, postPage);
+            sections.forEach((s) => {
+                s.classList.remove("isActive");
             });
-            setTimeout(() => { postCheckScroll = true; }, 1000);
-        }
-
-        if (activeTab === "expert" && expertCheckScroll) {
-            expertCheckScroll = false;
-            expertPage++;
-            expertService.getList(expertPage, memberId, (experts) => {
-                if (experts.length === 0) return;
-                expertLayout.showList(experts, expertPage);
-            });
-            setTimeout(() => { expertCheckScroll = true; }, 1000);
-        }
+            tab.classList.add("isActive");
+            sections[i].classList.add("isActive");
+        });
     });
 
-    // ── 3. 게시물 버튼 이벤트 (이벤트 위임) ──
+    // 2. 게시물 버튼 이벤트
+    const postCards = document.querySelectorAll(".postCard");
     const mainShareDropdown = document.getElementById("mainShareDropdown");
+
+    // 2-1. 헬퍼
     let activeMoreDropdown = null;
     let activeMoreButton = null;
     let activeMoreModal = null;
@@ -123,11 +79,11 @@ window.onload = () => {
     function openBlockModal(button) {
         const meta = getUserMetaFromButton(button);
         const handle = meta.handle;
-        const targetMemberId = getPostMemberIdFromButton(button);
         closePostMoreDropdown();
         closePostMoreModal();
         const modal = document.createElement("div");
-        modal.className = "notification-dialog notification-dialog--block";
+        modal.className = "notification-dialog";
+        modal.classList.add("notification-dialog--block");
         modal.innerHTML =
             '<div class="notification-dialog__backdrop"></div>' +
             '<div class="notification-dialog__card notification-dialog__card--small" role="alertdialog" aria-modal="true">' +
@@ -138,21 +94,17 @@ window.onload = () => {
             '<button type="button" class="notification-dialog__secondary notification-dialog__close">취소</button>' +
             '</div>' +
             '</div>';
-        modal.addEventListener("click", async function (e) {
-            if (e.target.classList.contains("notification-dialog__backdrop") || e.target.closest(".notification-dialog__close")) {
+        modal.addEventListener("click", function (e) {
+            if (
+                e.target.classList.contains("notification-dialog__backdrop") ||
+                e.target.closest(".notification-dialog__close")
+            ) {
                 e.preventDefault();
                 closePostMoreModal();
                 return;
             }
             if (e.target.closest(".notification-dialog__confirm-block")) {
                 e.preventDefault();
-                if (targetMemberId) {
-                    await fetch('/api/blocks', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ blockerId: memberId, blockedId: targetMemberId })
-                    });
-                }
                 showPostMoreToast(handle + " 님을 차단했습니다");
                 closePostMoreModal();
             }
@@ -162,20 +114,20 @@ window.onload = () => {
         activeMoreModal = modal;
     }
 
-    function openReportModal(button) {
-        const postId = getPostIdFromButton(button);
+    function openReportModal() {
         closePostMoreDropdown();
         closePostMoreModal();
         let listHtml = "";
         for (let i = 0; i < reportReasons.length; i++) {
             listHtml +=
-                '<li><button type="button" class="notification-report__item" data-reason="' + reportReasons[i] + '">' +
+                '<li><button type="button" class="notification-report__item">' +
                 '<span>' + reportReasons[i] + '</span>' +
                 '<svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M9.293 6.293 10.707 4.88 17.828 12l-7.121 7.12-1.414-1.413L14.999 12z"></path></g></svg>' +
                 '</button></li>';
         }
         const modal = document.createElement("div");
-        modal.className = "notification-dialog notification-dialog--report";
+        modal.className = "notification-dialog";
+        modal.classList.add("notification-dialog--report");
         modal.innerHTML =
             '<div class="notification-dialog__backdrop"></div>' +
             '<div class="notification-dialog__card notification-dialog__card--report" role="dialog" aria-modal="true">' +
@@ -190,27 +142,17 @@ window.onload = () => {
             '<ul class="notification-report__list">' + listHtml + '</ul>' +
             '</div>' +
             '</div>';
-        modal.addEventListener("click", async function (e) {
-            if (e.target.classList.contains("notification-dialog__backdrop") || e.target.closest(".notification-dialog__close")) {
+        modal.addEventListener("click", function (e) {
+            if (
+                e.target.classList.contains("notification-dialog__backdrop") ||
+                e.target.closest(".notification-dialog__close")
+            ) {
                 e.preventDefault();
                 closePostMoreModal();
                 return;
             }
-            const reportItem = e.target.closest(".notification-report__item");
-            if (reportItem) {
+            if (e.target.closest(".notification-report__item")) {
                 e.preventDefault();
-                if (postId) {
-                    await fetch('/api/reports', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            reporterId: memberId,
-                            targetId: postId,
-                            targetType: 'post',
-                            reason: reportItem.dataset.reason
-                        })
-                    });
-                }
                 showPostMoreToast("신고가 접수되었습니다");
                 closePostMoreModal();
             }
@@ -220,33 +162,11 @@ window.onload = () => {
         activeMoreModal = modal;
     }
 
-    function getPostMemberIdFromButton(button) {
-        const card = button.closest(".postCard");
-        return card ? card.dataset.memberId : null;
-    }
-
-    function getPostIdFromButton(button) {
-        const card = button.closest(".postCard");
-        return card ? card.dataset.postId : null;
-    }
-
-    async function handleDropdownAction(button, actionClass) {
+    function handleDropdownAction(button, actionClass) {
         const meta = getUserMetaFromButton(button);
         const handle = meta.handle;
-        const targetMemberId = getPostMemberIdFromButton(button);
-
         if (actionClass === "menu-item--follow-toggle") {
-            if (!targetMemberId) return;
             const isF = followState[handle] ? true : false;
-            if (isF) {
-                await fetch(`/api/follows/${memberId}/${targetMemberId}/delete`, { method: 'POST' });
-            } else {
-                await fetch('/api/follows', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ followerId: memberId, followingId: targetMemberId })
-                });
-            }
             followState[handle] = !isF;
             closePostMoreDropdown();
             showPostMoreToast(isF ? (handle + " 님 팔로우를 취소했습니다") : (handle + " 님을 팔로우했습니다"));
@@ -257,10 +177,11 @@ window.onload = () => {
             return;
         }
         if (actionClass === "menu-item--report") {
-            openReportModal(button);
+            openReportModal();
         }
     }
 
+    // 2-2. 더보기 드롭다운 (동적 생성, 버튼 위치 기준)
     function openPostMoreDropdown(button) {
         closePostMoreDropdown();
         const meta = getUserMetaFromButton(button);
@@ -306,7 +227,10 @@ window.onload = () => {
             '</div>';
         lc.addEventListener("click", function (e) {
             const item = e.target.closest(".menu-item");
-            if (!item) { e.stopPropagation(); return; }
+            if (!item) {
+                e.stopPropagation();
+                return;
+            }
             e.preventDefault();
             e.stopPropagation();
             let ac = "";
@@ -322,7 +246,7 @@ window.onload = () => {
         activeMoreButton = button;
     }
 
-    // 더보기 버튼 클릭 (이벤트 위임)
+    // 2-3. 더보기 버튼 클릭 (이벤트 위임)
     document.addEventListener("click", (e) => {
         const btn = e.target.closest(".postMoreButton");
         if (btn) {
@@ -340,68 +264,43 @@ window.onload = () => {
         }
     });
 
-    // 좋아요 토글 (이벤트 위임)
-    document.addEventListener("click", async (e) => {
-        const likeBtn = e.target.closest(".tweet-action-btn--like");
-        if (!likeBtn) return;
-        const postId = likeBtn.closest(".postCard").dataset.postId;
-        let isActive = likeBtn.classList.contains("active");
-        const countSpan = likeBtn.querySelector(".tweet-action-count");
-        let count = parseInt(countSpan.textContent);
-
-        if (isActive) {
-            await fetch(`/api/post-likes/members/${memberId}/posts/${postId}/delete`, { method: 'POST' });
-            likeBtn.classList.remove("active");
-            countSpan.textContent = count - 1;
-        } else {
-            await fetch('/api/post-likes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ memberId: memberId, postId: postId })
-            });
-            likeBtn.classList.add("active");
-            countSpan.textContent = count + 1;
-        }
+    // 2-6. 좋아요 토글
+    document.querySelectorAll(".tweet-action-btn--like").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            let isActive = btn.classList.contains("active");
+            btn.classList.toggle("active", !isActive);
+            const countSpan = btn.querySelector(".tweet-action-count");
+            let count = parseInt(countSpan.textContent);
+            countSpan.textContent = isActive ? count - 1 : count + 1;
+        });
     });
 
-    // 북마크 토글 (이벤트 위임)
-    document.addEventListener("click", async (e) => {
-        const bookmarkBtn = e.target.closest(".tweet-action-btn--bookmark");
-        if (!bookmarkBtn) return;
-        const postId = bookmarkBtn.closest(".postCard").dataset.postId;
-        let isActive = bookmarkBtn.classList.contains("active");
-
-        if (isActive) {
-            await fetch(`/api/bookmarks/members/${memberId}/posts/${postId}/delete`, { method: 'POST' });
-            bookmarkBtn.classList.remove("active");
-        } else {
-            await fetch('/api/bookmarks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ memberId: memberId, postId: postId })
-            });
-            bookmarkBtn.classList.add("active");
-        }
+    // 2-7. 북마크 토글
+    document.querySelectorAll(".tweet-action-btn--bookmark").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            let isActive = btn.classList.contains("active");
+            btn.classList.toggle("active", !isActive);
+        });
     });
 
-    // 공유 드롭다운 토글 (이벤트 위임)
-    document.addEventListener("click", (e) => {
-        const shareBtn = e.target.closest(".tweet-action-btn--share");
-        if (!shareBtn) return;
-        e.stopPropagation();
-        let isOpen = !mainShareDropdown.classList.contains("off");
-        closeAllMenus();
-        if (!isOpen) {
-            let rect = shareBtn.getBoundingClientRect();
-            let menu = document.getElementById("mainShareDropdownMenu");
-            menu.style.position = "fixed";
-            menu.style.left = rect.left + "px";
-            menu.style.top = (rect.bottom + 4) + "px";
-            mainShareDropdown.classList.remove("off");
-        }
+    // 2-8. 공유 드롭다운 토글
+    document.querySelectorAll(".tweet-action-btn--share").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            let isOpen = !mainShareDropdown.classList.contains("off");
+            closeAllMenus();
+            if (!isOpen) {
+                let rect = btn.getBoundingClientRect();
+                let menu = document.getElementById("mainShareDropdownMenu");
+                menu.style.position = "fixed";
+                menu.style.left = rect.left + "px";
+                menu.style.top = (rect.bottom + 4) + "px";
+                mainShareDropdown.classList.remove("off");
+            }
+        });
     });
 
-    // 공유 드롭다운 항목 클릭
+    // 2-9. 공유 드롭다운 항목 클릭
     const mainShareChatSheet = document.getElementById("mainShareChatSheet");
     const mainShareBookmarkSheet = document.getElementById("mainShareBookmarkSheet");
 
@@ -430,7 +329,7 @@ window.onload = () => {
         mainShareBookmarkSheet.classList.remove("off");
     });
 
-    // 공유 시트 닫기
+    // 2-10. 공유 시트 닫기
     mainShareChatSheet.querySelector(".share-sheet__backdrop").addEventListener("click", (e) => {
         mainShareChatSheet.classList.add("off");
     });
@@ -444,23 +343,23 @@ window.onload = () => {
         mainShareBookmarkSheet.classList.add("off");
     });
 
-    // 외부 클릭 시 공유 드롭다운 닫기
+    // 2-11. 외부 클릭 시 공유 드롭다운 닫기
     document.addEventListener("click", (e) => {
         if (!e.target.closest("#mainShareDropdown") && !e.target.closest(".tweet-action-btn--share")) {
             mainShareDropdown.classList.add("off");
         }
     });
 
-    // ── 4. 이미지 미리보기 (이벤트 위임) ──
+    // 3. 이미지 미리보기
     const mediaPreviewOverlay = document.getElementById("mediaPreviewOverlay");
     const mediaPreviewImage = document.getElementById("mediaPreviewImage");
     const mediaPreviewClose = document.getElementById("mediaPreviewClose");
 
-    document.addEventListener("click", (e) => {
-        const img = e.target.closest(".postMediaImage");
-        if (!img) return;
-        mediaPreviewImage.src = img.src;
-        mediaPreviewOverlay.classList.remove("off");
+    document.querySelectorAll(".postMediaImage").forEach((img) => {
+        img.addEventListener("click", (e) => {
+            mediaPreviewImage.src = img.src;
+            mediaPreviewOverlay.classList.remove("off");
+        });
     });
 
     mediaPreviewClose.addEventListener("click", (e) => {
@@ -473,17 +372,19 @@ window.onload = () => {
         }
     });
 
-    // ── 5. 좌측 네비게이션 ──
+    // 4. 좌측 네비게이션
     const navItems = document.querySelectorAll(".nav-item");
 
     navItems.forEach((item) => {
         item.addEventListener("click", (e) => {
-            navItems.forEach((nav) => { nav.classList.remove("active"); });
+            navItems.forEach((nav) => {
+                nav.classList.remove("active");
+            });
             item.classList.add("active");
         });
     });
 
-    // 더보기 팝오버
+    // 4-1. 더보기 팝오버
     const navMore = document.getElementById("navMore");
     const navMoreLayer = document.getElementById("navMoreLayer");
 
@@ -507,7 +408,7 @@ window.onload = () => {
         navMoreLayer.classList.add("off");
     });
 
-    // 계정 메뉴 팝업
+    // 4-2. 계정 메뉴 팝업
     const accountCard = document.getElementById("accountCard");
     const accountMenuPopup = document.getElementById("accountMenuPopup");
 
@@ -538,7 +439,7 @@ window.onload = () => {
         }
     });
 
-    // ── 6. 검색 ──
+    // 5. 우측 사이드바 검색
     const searchInput = document.getElementById("searchInput");
     const searchPanel = document.getElementById("searchPanel");
     const searchPanelEmpty = document.getElementById("searchPanelEmpty");
@@ -565,7 +466,7 @@ window.onload = () => {
         }
     });
 
-    // ── 7. Connect 버튼 토글 (이벤트 위임) ──
+    // 6. Connect 버튼 토글 (추천 + Experts)
     const disconnectModal = document.getElementById("disconnectModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalConfirm = document.getElementById("modalConfirm");
@@ -587,19 +488,20 @@ window.onload = () => {
         disconnectTarget = null;
     }
 
-    document.addEventListener("click", (e) => {
-        const connectBtn = e.target.closest(".connect-btn, .connect-btn-sm");
-        if (!connectBtn) return;
-        e.stopPropagation();
-        if (connectBtn.classList.contains("default")) {
-            connectBtn.classList.remove("default");
-            connectBtn.classList.add("connected");
-            connectBtn.textContent = "Connected";
-        } else {
-            openDisconnectModal(connectBtn);
-        }
+    document.querySelectorAll(".connect-btn, .connect-btn-sm").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (btn.classList.contains("default")) {
+                btn.classList.remove("default");
+                btn.classList.add("connected");
+                btn.textContent = "Connected";
+            } else {
+                openDisconnectModal(btn);
+            }
+        });
     });
 
+    // 6-1. 연결 끊기 모달
     if (modalConfirm) {
         modalConfirm.addEventListener("click", (e) => {
             if (disconnectTarget) {
@@ -623,7 +525,7 @@ window.onload = () => {
         });
     }
 
-    // ── 8. 게시글 작성 모달 ──
+    // 7. 게시글 작성 모달
     const composeOverlay = document.querySelector("[data-compose-modal]");
     const composeClose = composeOverlay.querySelector(".tweet-modal__close");
     const composeEditor = composeOverlay.querySelector(".tweet-modal__editor");
@@ -647,6 +549,7 @@ window.onload = () => {
         }
     });
 
+    // 7-1. 글자 수 게이지
     composeEditor.addEventListener("input", (e) => {
         let length = composeEditor.textContent.length;
         let remaining = composeMaxLength - length;
@@ -663,6 +566,7 @@ window.onload = () => {
         }
     });
 
+    // 7-2. 게시하기 버튼
     composeSubmit.addEventListener("click", (e) => {
         if (composeEditor.textContent.length === 0) { return; }
         alert("게시되었습니다.");
@@ -673,23 +577,25 @@ window.onload = () => {
         composeOverlay.classList.add("off");
     });
 
-    // ── 9. 답글 모달 ──
+    // 7-3. 답글 모달
     const replyOverlay = document.querySelector("[data-reply-modal]");
     const replyClose = replyOverlay.querySelector(".tweet-modal__close");
     const replyEditor = replyOverlay.querySelector(".tweet-modal__editor");
     const replyGaugeText = replyOverlay.querySelector(".composerGaugeText");
     const replySubmit = replyOverlay.querySelector(".tweet-modal__submit");
     const replyMaxLength = 500;
-    let replyTargetPostId = null;
 
-    // 댓글 버튼 클릭 (이벤트 위임)
-    document.addEventListener("click", (e) => {
-        const replyBtn = e.target.closest(".tweet-action-btn[data-action='reply']");
-        if (!replyBtn) return;
-        const card = replyBtn.closest(".postCard");
-        replyTargetPostId = card ? card.dataset.postId : null;
-        replyOverlay.classList.remove("off");
-        replyEditor.focus();
+    document.querySelectorAll(".tweet-action-btn").forEach((btn) => {
+        if (btn.classList.contains("tweet-action-btn--like") ||
+            btn.classList.contains("tweet-action-btn--views") ||
+            btn.classList.contains("tweet-action-btn--bookmark") ||
+            btn.classList.contains("tweet-action-btn--share")) {
+            return;
+        }
+        btn.addEventListener("click", (e) => {
+            replyOverlay.classList.remove("off");
+            replyEditor.focus();
+        });
     });
 
     replyClose.addEventListener("click", (e) => {
@@ -702,6 +608,7 @@ window.onload = () => {
         }
     });
 
+    // 7-4. 답글 글자 수 게이지
     replyEditor.addEventListener("input", (e) => {
         let length = replyEditor.textContent.length;
         let remaining = replyMaxLength - length;
@@ -718,27 +625,18 @@ window.onload = () => {
         }
     });
 
-    replySubmit.addEventListener("click", async (e) => {
+    // 7-5. 답글 제출 버튼
+    replySubmit.addEventListener("click", (e) => {
         if (replyEditor.textContent.length === 0) { return; }
-        if (replyTargetPostId) {
-            await fetch(`/api/posts/${replyTargetPostId}/replies`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    memberId: memberId,
-                    postContent: replyEditor.textContent
-                })
-            });
-        }
+        alert("답글이 게시되었습니다.");
         replyEditor.textContent = "";
         replyGaugeText.textContent = replyMaxLength;
         replyGaugeText.style.color = "";
         replySubmit.disabled = true;
         replyOverlay.classList.add("off");
-        replyTargetPostId = null;
     });
 
-    // ── 10. 서브뷰 토글 (게시물 + 답글 공통) ──
+    // 7-6. 서브뷰 토글 (게시물 + 답글 공통)
     function setupSubViews(overlay) {
         const composeView = overlay.querySelector(".tweet-modal__compose-view");
         const locationView = overlay.querySelector(".tweet-modal__location-view");
@@ -764,6 +662,7 @@ window.onload = () => {
             composeView.classList.remove("off");
         }
 
+        // 임시저장
         const draftBtn = overlay.querySelector(".tweet-modal__draft");
         if (draftBtn && draftView) {
             draftBtn.addEventListener("click", (e) => { showSubView(draftView); });
@@ -773,6 +672,7 @@ window.onload = () => {
             draftBack.addEventListener("click", (e) => { backToCompose(); });
         }
 
+        // 위치
         const geoBtn = overlay.querySelector(".tweet-modal__tool-btn--geo");
         if (geoBtn && locationView) {
             geoBtn.addEventListener("click", (e) => { showSubView(locationView); });
@@ -786,6 +686,7 @@ window.onload = () => {
             locationComplete.addEventListener("click", (e) => { backToCompose(); });
         }
 
+        // 태그
         const tagClose = tagView ? tagView.querySelector(".tweet-modal__tag-close") : null;
         if (tagClose) {
             tagClose.addEventListener("click", (e) => { backToCompose(); });
@@ -795,6 +696,7 @@ window.onload = () => {
             tagComplete.addEventListener("click", (e) => { backToCompose(); });
         }
 
+        // 미디어
         const mediaBack = mediaView ? mediaView.querySelector(".tweet-modal__media-header-btn--ghost") : null;
         if (mediaBack) {
             mediaBack.addEventListener("click", (e) => { backToCompose(); });
@@ -804,6 +706,7 @@ window.onload = () => {
             mediaSave.addEventListener("click", (e) => { backToCompose(); });
         }
 
+        // 판매글
         const productClose = productView ? productView.querySelector("[data-product-select-close]") : null;
         if (productClose) {
             productClose.addEventListener("click", (e) => { backToCompose(); });
@@ -817,17 +720,19 @@ window.onload = () => {
     setupSubViews(composeOverlay);
     setupSubViews(replyOverlay);
 
-    // ── 11. 모바일 네비게이션 ──
+    // 8. 모바일 네비게이션
     const mobileItems = document.querySelectorAll(".mobileItem");
 
     mobileItems.forEach((item) => {
         item.addEventListener("click", (e) => {
-            mobileItems.forEach((mi) => { mi.classList.remove("active"); });
+            mobileItems.forEach((mi) => {
+                mi.classList.remove("active");
+            });
             item.classList.add("active");
         });
     });
 
-    // ── 12. 환율 피드 ──
+    // 9. 환율 피드
     const exchangeRateFeedContent = document.getElementById("exchangeRateFeedContent");
     const exchangeRateFeedSubtitle = document.getElementById("exchangeRateFeedSubtitle");
 
@@ -885,7 +790,7 @@ window.onload = () => {
             });
     }
 
-    // ── 13. 사이드바 sticky ──
+    // 10. 오른쪽 사이드바 sticky top 계산
     const trendPanel = document.querySelector(".trendPanel");
     if (trendPanel) {
         const updateStickyTop = () => {
@@ -900,4 +805,6 @@ window.onload = () => {
         setTimeout(updateStickyTop, 0);
         window.addEventListener("resize", updateStickyTop);
     }
+
 };
+
