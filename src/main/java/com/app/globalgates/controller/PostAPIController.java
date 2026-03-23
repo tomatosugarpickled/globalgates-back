@@ -1,6 +1,7 @@
 package com.app.globalgates.controller;
 
 import com.app.globalgates.dto.PostDTO;
+import com.app.globalgates.dto.PostWithPagingDTO;
 import com.app.globalgates.service.PostService;
 import com.app.globalgates.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class PostAPIController {
 
     //    게시글 목록 조회
     @GetMapping("list/{page}")
-    public List<PostDTO> getList(@PathVariable int page, @RequestParam Long memberId) {
+    public PostWithPagingDTO getList(@PathVariable int page, @RequestParam Long memberId) {
         return postService.getList(page, memberId);
     }
 
@@ -44,7 +45,7 @@ public class PostAPIController {
     }
 
     //    게시글 수정 (모달로 수정함)
-    @PostMapping("/{id}")
+    @PostMapping("update/{id}")
     public void update(PostDTO postDTO,
                        @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         if (files == null) {
@@ -54,7 +55,7 @@ public class PostAPIController {
     }
 
     //    게시글 삭제 - 상태만 변경
-    @PostMapping("/{id}")
+    @PostMapping("delete/{id}")
     public void delete(@PathVariable Long id) {
         postService.delete(id);
     }
