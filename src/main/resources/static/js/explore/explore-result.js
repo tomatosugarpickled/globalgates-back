@@ -64,8 +64,9 @@ window.onload = () => {
         tabMembers.addEventListener("click", () => {
             showMembersTab();
             currentTab = "members";
-            // TODO
-            // 회원 탭을 눌러도 반응이 오지 않고 있음
+            if (scrollStates.members.page === 1) {
+                loadTab("members", true);
+            }
         });
     }
 
@@ -108,7 +109,6 @@ window.onload = () => {
 
         try {
             if (tab === "popular") {
-                console.log('인기순');
                 const criteria = await exploreService.searchPosts(
                     state.page,
                     { keyword: currentKeyword, type: "popular" },

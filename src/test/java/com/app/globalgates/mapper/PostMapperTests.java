@@ -2,6 +2,7 @@ package com.app.globalgates.mapper;
 
 import com.app.globalgates.common.enumeration.Status;
 import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.PostSearch;
 import com.app.globalgates.domain.PostVO;
 import com.app.globalgates.dto.PostDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -70,5 +71,17 @@ public class PostMapperTests {
     public void testSelectTotal() {
         int total = postMapper.selectTotal();
         log.info("게시글 전체 개수: {}", total);
+    }
+
+    @Test
+    public void testSelectBySearch() {
+        PostSearch search = new PostSearch();
+        search.setMemberId(9L);
+        search.setKeyword("산업용");
+        search.setType("popular");
+        Criteria criteria = new Criteria(1, postMapper.selectTotalBySearch(search));
+
+        List<PostDTO> foundPosts = postMapper.selectBySearch(criteria, search);
+        log.info("조회한 게시물 : {}", foundPosts);
     }
 }

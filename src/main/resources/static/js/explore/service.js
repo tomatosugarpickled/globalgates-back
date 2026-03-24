@@ -61,7 +61,6 @@ const exploreService = (() => {
 
     // 검색 값에 따른 회원 조회
     const searchUsers = async (page, keyword, callback) => {
-        console.log("회원 검색 들어옴");
         const response = await fetch(`/api/explore/search/member/${page}?keyword=${keyword}`);
 
         if(!response.ok) {

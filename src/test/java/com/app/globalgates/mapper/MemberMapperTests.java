@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -85,6 +86,13 @@ public class MemberMapperTests {
     public void phoneCheckTest(){
         Optional<MemberDTO> memberDTO = memberMapper.selectMemberByMemberPhone("01012221234");
         log.info("memberDTO : {}", memberDTO);
+    }
+
+    @Test
+    public void testSelectMembersByKeyword() {
+        String keyword = "아";
+        List<MemberDTO> foundMembers = memberMapper.selectMembersByKeyword(keyword);
+        log.info("조회한 회원들: {}", foundMembers);
     }
 
 }

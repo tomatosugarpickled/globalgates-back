@@ -39,7 +39,7 @@ public class SearchController {
         PostWithPagingDTO postWithPagingDTO = postService.getListBySearch(page, search);
 
         postWithPagingDTO.getPosts().forEach(post -> {
-            post.setPostFiles(convertToPresignedUrl(post.getPostFiles()));
+            post.setFileUrls(convertToPresignedUrl(post.getFileUrls()));
         });
 
         return ResponseEntity.ok(postWithPagingDTO);

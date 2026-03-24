@@ -43,6 +43,7 @@ public class PostDTO {
 
     // 첨부파일
     private List<PostFileDTO> postFiles;
+    private List<String> fileUrls;
     private String[] fileIdsToDelete;
 
     public PostVO toPostVO() {

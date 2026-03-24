@@ -62,7 +62,7 @@ public class MainAPIController {
     public void writePost(PostDTO postDTO,
                           @RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
         log.info("게시글 작성 — memberId: {}, content: {}", postDTO.getMemberId(), postDTO.getPostContent());
-        postService.writePost(postDTO);
+        postService.writePost(postDTO, files);
 
         if (files != null && !files.isEmpty()) {
             String todayPath = postService.getTodayPath();

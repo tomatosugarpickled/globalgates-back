@@ -43,9 +43,7 @@ public class PostService {
     private final S3Service s3Service;
 
 //    게시글 작성
-    public String writePost(PostDTO postDTO, List<MultipartFile> files) {
-        String path = getTodayPath();
-
+    public void writePost(PostDTO postDTO, List<MultipartFile> files) {
         postDAO.save(postDTO);
 
         //    태그 저장 (없으면 생성, 있으면 기존꺼 쓰기)
@@ -92,6 +90,10 @@ public class PostService {
         posts.forEach(postDTO -> {
             postDTO.setHashtags(postHashtagDAO.findAllByPostId(postDTO.getId()));
             postDTO.setPostFiles(postFileDAO.findAllByPostId(postDTO.getId()));
+            List<String> fileUrls = postDTO.getPostFiles().stream()
+                    .map(PostFileDTO::getFilePath)
+                    .collect(Collectors.toList());
+            postDTO.setFileUrls(fileUrls);
         });
 
         PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
@@ -154,6 +156,10 @@ public class PostService {
                     List<PostFileDTO> images = new ArrayList<>(postFileDAO.findAllByPostId(postDTO.getId()));
                     if(!images.isEmpty()) {
                         postDTO.setPostFiles(images);
+                        List<String> fileUrls = images.stream()
+                                .map(PostFileDTO::getFilePath)
+                                .collect(Collectors.toList());
+                        postDTO.setFileUrls(fileUrls);
                     }
                     return postDTO;
                 }).collect(Collectors.toList());
