@@ -41,6 +41,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String path = "/main/main";
         boolean errorCreateTokens = false;
         String loginId = "";
+        log.info("들어옴1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
         // OAuth 로그인 식별값은 email 우선, 없으면 phone 사용
         if(email != null && !email.isBlank()) {
             loginId = email;
@@ -51,30 +52,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             path = "/member/join";
             errorCreateTokens = true;
         }
-
+        log.info("loginId : {}",loginId);
         if(isExist){
 //            기존 SNS 회원
             //이미 tbl_oauth 연동이 끝난 회원이므로 그대로 토큰 발급
         } else{
             Optional<MemberDTO> foundMember = memberDAO.findMemberByLoginId(loginId);
-
+            log.info("foundMember : {}", foundMember);
+            log.info("들어옴2..........................................");
             if(foundMember.isEmpty()){
-//            신규 회원
-//            여기서 oauth를 저장하는게 아니라 최종 가입 api에서 저장한다.
-//                MemberDTO memberDTO = new MemberDTO();
-//                memberDTO.setMemberEmail(email);
-//                memberDTO.setMemberPhone(phone);
-//                memberDTO.setMemberName(oAuth2User.getAttribute("name"));
-//                memberDTO.setMemberRole(MemberRole.getMemberRole(role));
-//                memberDAO.save(memberDTO);
-//
-//                OAuthDTO oAuthDTO = new OAuthDTO();
-//                oAuthDTO.setProvider(OAuthProvider.getOAuthProvider(provider));
-//                oAuthDTO.setMemberId(memberDTO.getId());
-//                oAuthDTO.setProviderId(oAuth2User.getAttribute("id"));
-//                oAuthDTO.setProfileURL(oAuth2User.getAttribute("profile"));
-//                oAuthDAO.save(oAuthDTO.toOAuthVO());
-
                 // 신규 OAuth 회원:
                 // 여기서 DB insert 하지 않고, 추가정보 입력용 임시 토큰만 쿠키에 저장한 뒤
                 // 별도 HTML 화면으로 보낸다.
@@ -86,7 +72,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 String providerId = getAttributeAsString(oAuth2User, "id");
                 String name = getAttributeAsString(oAuth2User, "name");
                 String profileUrl = getAttributeAsString(oAuth2User, "profile");
-
+                log.info("provideId : {}", providerId);
+                log.info("name : {}", name);
+                log.info("profileUrl : {}",profileUrl);
+                log.info("들어옴3.................................");
                 path = "/member/join"
                         + "?oauth=1"
                         + "&provider=" + enc(provider)
@@ -96,7 +85,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                         + "&memberName=" + enc(name)
                         + "&profileUrl=" + enc(profileUrl)
                         + "#modal-oauth-birth";
-
+                log.info("들어옴4.................................");
+                log.info("path : {}",path);
                 // 아직 회원가입이 끝난 게 아니므로 JWT는 발급하지 않는다.
                 errorCreateTokens = true;
 //                return RedirectView ;
@@ -122,7 +112,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             jwtTokenProvider.createAccessToken(loginId, provider);
             jwtTokenProvider.createRefreshToken(loginId, provider);
         }
-
+        log.info("들어옴5.................................");
         response.sendRedirect(path);
     }
 
