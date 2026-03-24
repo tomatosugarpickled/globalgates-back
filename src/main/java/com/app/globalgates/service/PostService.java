@@ -12,6 +12,7 @@ import com.app.globalgates.dto.PostHashtagDTO;
 import com.app.globalgates.dto.PostWithPagingDTO;
 import com.app.globalgates.dto.ReplyProductRelDTO;
 import com.app.globalgates.repository.FileDAO;
+import com.app.globalgates.util.DateUtils;
 import com.app.globalgates.repository.PostDAO;
 import com.app.globalgates.repository.PostFileDAO;
 import com.app.globalgates.repository.PostHashtagDAO;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,9 +46,7 @@ public class PostService {
 
 //    게시글 작성
 
-    public String writePost(PostDTO postDTO, List<MultipartFile> files) {
-        String path = getTodayPath();
-
+    public String writePost(PostDTO postDTO) {
         postDAO.save(postDTO);
 
         //    태그 저장 (없으면 생성, 있으면 기존꺼 쓰기)
@@ -62,26 +62,25 @@ public class PostService {
             postHashtagDAO.saveRel(postDTO.getId(), hashtagDTO.getId());
         });
 
-        if(!files.isEmpty()) {
-            files.forEach((file) -> {
-                UUID uuid = UUID.randomUUID();
-                FileDTO fileDTO = new FileDTO();
-                fileDTO.setOriginalName(file.getOriginalFilename());
-                fileDTO.setFileName(uuid.toString() + "_" + file.getOriginalFilename());
-                fileDTO.setFilePath(path);
-                fileDTO.setFileSize(file.getSize());
-                fileDTO.setContentType(file.getContentType().contains("image") ? FileContentType.IMAGE
-                        : file.getContentType().contains("video")
-                        ? FileContentType.VIDEO : FileContentType.ETC);
-                fileDAO.save(fileDTO);
+        return getTodayPath();
+    }
 
-                PostFileDTO postFileDTO = new PostFileDTO();
-                postFileDTO.setId(fileDTO.getId());
-                postFileDTO.setPostId(postDTO.getId());
-                postFileDAO.save(postFileDTO.toPostFileVO());
-            });
-        }
-        return path;
+//    게시글 파일 저장 (S3 키 기반)
+    public void saveFile(Long postId, MultipartFile file, String s3Key) {
+        FileDTO fileDTO = new FileDTO();
+        fileDTO.setOriginalName(file.getOriginalFilename());
+        fileDTO.setFileName(s3Key);
+        fileDTO.setFilePath(s3Key);
+        fileDTO.setFileSize(file.getSize());
+        fileDTO.setContentType(file.getContentType().contains("image") ? FileContentType.IMAGE
+                : file.getContentType().contains("video")
+                ? FileContentType.VIDEO : FileContentType.ETC);
+        fileDAO.save(fileDTO);
+
+        PostFileDTO postFileDTO = new PostFileDTO();
+        postFileDTO.setFileId(fileDTO.getId());
+        postFileDTO.setPostId(postId);
+        postFileDAO.save(postFileDTO.toPostFileVO());
     }
 
     //    게시글 목록 조회
@@ -93,8 +92,10 @@ public class PostService {
         if (criteria.isHasMore()) posts.remove(posts.size() - 1);
 
         posts.forEach(postDTO -> {
+            postDTO.setCreatedDatetime(DateUtils.toRelativeTime(postDTO.getCreatedDatetime()));
             postDTO.setHashtags(postHashtagDAO.findAllByPostId(postDTO.getId()));
-            postDTO.setPostFiles(postFileDAO.findAllByPostId(postDTO.getId()));
+            postDTO.setPostFiles(postFileDAO.findAllByPostId(postDTO.getId())
+                    .stream().map(PostFileDTO::getFilePath).collect(Collectors.toList()));
         });
 
         PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
@@ -109,7 +110,8 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         postDTO.setHashtags(postHashtagDAO.findAllByPostId(id));
-        postDTO.setPostFiles(postFileDAO.findAllByPostId(id));
+        postDTO.setPostFiles(postFileDAO.findAllByPostId(id)
+                .stream().map(PostFileDTO::getFilePath).collect(Collectors.toList()));
         return postDTO;
     }
 

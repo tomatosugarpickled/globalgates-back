@@ -6,6 +6,8 @@ select
 from tbl_ad_file af
 join tbl_file f on af.id = f.id;
 
+-- select * from view_post_feed;
+
 create view view_post_feed as
 select p.id,
        p.member_id,
@@ -29,3 +31,5 @@ from tbl_post p
          join tbl_member m on p.member_id = m.id
 where p.post_status = 'active'
   and p.reply_post_id is null;
+
+drop view view_post_feed;

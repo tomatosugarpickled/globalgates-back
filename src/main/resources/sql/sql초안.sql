@@ -56,23 +56,24 @@ create type member_role as enum (
 );
 
 -- 1. member_name 컬럼 추가
-alter table tbl_member
-add column member_name varchar(255);
+-- alter table tbl_member
+-- add column member_name varchar(255);
 
 -- 2. member_nickname의 not null 제거
-alter table tbl_member
-alter column member_nickname drop not null;
+-- alter table tbl_member
+-- alter column member_nickname drop not null;
 
 -- 3. member_handle에 not null 추가
 --    (기존 데이터에 null이 있으면 에러 발생 → 먼저 확인/처리 필요)
-alter table tbl_member
-alter column member_handle set not null;
+-- alter table tbl_member
+-- alter column member_handle set not null;
 -- 수정사항: member_name 컬럼 추가, nickname에 not null제거, handle에 not null 추가.
 create table tbl_member (
 id            bigint        generated always as identity primary key,  -- pk | 회원 고유 id (자동 증가)
 member_name varchar(255),
 member_email         varchar(255)  not null unique,                           -- 로그인 이메일 (unique)
-member_password      varchar(255),                                            -- 해시된 비밀번호 (oauth 전용이면 null)
+member_password      varchar(255),                                          -- 해시된 비밀번호 (oauth 전용이면 null)
+member_name varchar(255),
 member_nickname      varchar(255) ,                                  -- 닉네임 (화면 표시용)
 member_handle        varchar(255)   unique not null,                                    -- @핸들 - 마이페이지 url 구분자 (unique)
 member_phone         varchar(255),                                             -- 연락처
@@ -180,12 +181,14 @@ create type post_status as enum (
 'inactive'      -- 삭제됨
 );
 
+-- alter table tbl_post
+-- alter column title drop not null;
 -- 게시글 (게시물 + 댓글 대댓글 : reply_post_id)
 create table tbl_post (
 id             bigint          generated always as identity primary key,  -- pk | 게시글 고유 id (자동 증가)
 member_id      bigint          not null,  -- fk → tbl_member.id | 게시글 작성자
 post_status    post_status     not null default 'active',        -- 게시 상태 (enum)
-title          varchar(255) not null,                            -- 게시글 제목 (상품/문의글에 주로 사용)
+title          varchar(255),                                     -- 게시글 제목 (상품/문의글에 주로 사용)
 content        text            not null,                         -- 게시글 본문 내용
 location       varchar(255),                                     -- 위치 태그 (post-detailed 페이지 표시)
 reply_post_id  bigint,
@@ -207,12 +210,12 @@ constraint fk_reply_product_product foreign key(product_post_id)
 references tbl_post(id)
 );
 
-select * from tbl_post_product;
+-- select * from tbl_post_product;
 -- [13] tbl_post_product -- 게시물 (상품)
-alter table tbl_post_product
-add column product_category_id bigint not null;
+
 create table tbl_post_product (
 id         bigint    primary key,                -- pk | 댓글 고유 id (자동 증가)
+product_category_id bigint not null,
 product_price int   not null,
 product_stock int not null,
 created_datetime timestamp not null default now(),
