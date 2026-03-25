@@ -131,6 +131,21 @@ const exploreService = (() => {
         }
     };
 
+    // 팔로우 체크
+    const checkFollow = async (memberId) => {
+        const response = await fetch(`/api/follows/follow?memberId=${memberId}`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if(!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Fetch error");
+        }
+    }
+
+
+
     return {
         getRecommends: getRecommends,
         getNews: getNews,
@@ -140,6 +155,7 @@ const exploreService = (() => {
         getSuggestions: getSuggestions,
         getRecentKeywords: getRecentKeywords,
         deleteKeyword: deleteKeyword,
-        deleteAllKeywords: deleteAllKeywords
+        deleteAllKeywords: deleteAllKeywords,
+        checkFollow: checkFollow,
     };
 })();

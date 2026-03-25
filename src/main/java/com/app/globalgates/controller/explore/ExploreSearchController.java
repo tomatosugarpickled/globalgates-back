@@ -7,7 +7,6 @@ import com.app.globalgates.dto.PostWithPagingDTO;
 import com.app.globalgates.service.MemberService;
 import com.app.globalgates.service.PostService;
 import com.app.globalgates.service.S3Service;
-import com.app.globalgates.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/api/explore/**")
 @Slf4j
-public class SearchController {
+public class ExploreSearchController {
     private final PostService postService;
     private final MemberService memberService;
     private final S3Service s3service;
@@ -46,8 +45,8 @@ public class SearchController {
     }
 
     @GetMapping("search/member/{page}")
-    public ResponseEntity<?> getSearchMembers(@PathVariable int page, String keyword) {
-        MemberWithPagingDTO memberWithPagingDTO = memberService.getSearchMember(page, keyword);
+    public ResponseEntity<?> getSearchMembers(@PathVariable int page, Long memberId, String keyword) {
+        MemberWithPagingDTO memberWithPagingDTO = memberService.getSearchMember(page, memberId, keyword);
         return ResponseEntity.ok(memberWithPagingDTO);
     }
 

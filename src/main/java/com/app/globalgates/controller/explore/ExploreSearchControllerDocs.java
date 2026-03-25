@@ -1,10 +1,9 @@
 package com.app.globalgates.controller.explore;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Search", description = "Search API")
-public interface SearchControllerDocs {
+public interface ExploreSearchControllerDocs {
 //    @Operation(
 //            summary = "게시물 인기순 조회",
 //            description = "게시물을 조회수가 가장 높은 순으로 조회",

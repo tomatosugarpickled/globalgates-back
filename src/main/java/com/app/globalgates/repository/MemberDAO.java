@@ -38,6 +38,10 @@ public class MemberDAO {
     public List<MemberDTO> findMembersByKeyword(String keyword) {
         return memberMapper.selectMembersByKeyword(keyword);
     }
+    //  닉네임 또는 핸들로 회원 검색 (팔로우 여부 포함)
+    public List<MemberDTO> findMembersByKeywordWithFollow(Long memberId, String keyword) {
+        return memberMapper.selectMembersByKeywordWithFollow(memberId, keyword);
+    }
     //  Handle로 조회
     public Optional<MemberDTO> findMemberByMemberHandle(String memberHandle){
         return memberMapper.selectMemberByMemberHandle(memberHandle);

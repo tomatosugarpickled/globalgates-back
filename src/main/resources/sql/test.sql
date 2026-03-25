@@ -19,3 +19,5 @@ select * from tbl_follow;
 select * from tbl_payment_advertisement;
 
 select * from tbl_search_history;
+
+select * from tbl_member_category_rel;

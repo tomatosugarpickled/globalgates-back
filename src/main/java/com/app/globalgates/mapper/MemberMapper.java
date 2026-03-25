@@ -21,6 +21,8 @@ public interface MemberMapper {
     public Optional<MemberDTO> selectMemberByMemberPhone(String memberPhone);
     //  닉네임 또는 핸들로 회원 검색
     public List<MemberDTO> selectMembersByKeyword(String keyword);
+    //  닉네임 또는 핸들로 회원 검색(팔로우 여부 포함)
+    public List<MemberDTO> selectMembersByKeywordWithFollow(Long memberId, String keyword);
     //  Handle로 조회
     public Optional<MemberDTO> selectMemberByMemberHandle(String memberHandle);
     //  memberId로 조회

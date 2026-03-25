@@ -286,7 +286,7 @@ const exploreLayout = (() => {
         const friendsList = document.getElementById("friendsList");
         if (!friendsList) return;
 
-        const members = users?.posts ?? [];
+        const members = users?.members ?? [];
 
         if (!append) {
             friendsList.innerHTML = "";
@@ -298,16 +298,21 @@ const exploreLayout = (() => {
         }
 
         members.forEach(member => {
-            const handle   = member.memberHandle   ?? "";
+            const handle   = member.memberHandle ?? "";
             const name     = member.memberNickname ?? "";
             const bio      = member.memberBio      ?? "";
-            const avatar   = member.memberProfileFileName ?? "";
+            const avatar   = member.filePath ?? "";
             const initial  = name ? name[0].toUpperCase() : "?";
 
             // ── 아바타 ────────────────────────────────────────
             const avatarHtml = avatar
                 ? `<img src="${avatar}" alt="${name}" class="postAvatarImage" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`
                 : initial;
+
+            // 팔로우 여부
+            const isFollowed = member.followed ?? false;
+            const btnClass   = isFollowed ? "connect-btn connected" : "connect-btn default";
+            const btnText    = isFollowed ? "Connected" : "Connect";
 
             const card = document.createElement("div");
             card.className = "user-card";
@@ -318,9 +323,9 @@ const exploreLayout = (() => {
                 <div class="user-top">
                     <div class="user-name-group">
                         <div class="user-name">${name}</div>
-                        <div class="user-handle">@${handle}</div>
+                        <div class="user-handle">${handle}</div>
                     </div>
-                    <button class="connect-btn default">Connect</button>
+                    <button class="connect-btn ${btnClass}" data-member-id="${member.id}">${btnText}</button>
                 </div>
                 ${bio ? `<div class="user-bio">${bio}</div>` : ""}
             </div>

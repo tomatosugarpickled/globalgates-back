@@ -66,10 +66,26 @@
         select id, member_name, member_nickname, member_handle,
                member_bio, member_region, member_status, member_role,
                created_datetime, updated_datetime
-        from tbl_member
+        from tbl_member m
         where member_status = 'active'
           and (member_nickname like concat('%', #{keyword}, '%')
                or member_handle like concat('%', #{keyword}, '%'))
+        order by member_nickname
+    </select>
+
+    <select id="selectMembersByKeywordWithFollow">
+        select id, member_name, member_nickname, member_handle,
+               member_bio, member_region, member_status, member_role,
+               created_datetime, updated_datetime,
+               case when exists (
+                   select 1 from tbl_follow f
+                   where f.follower_id  = #{memberId}
+                     and f.following_id = m.id
+               ) then true else false end as followed
+        from tbl_member m
+        where member_status = 'active'
+          and (member_nickname like concat('%', #{keyword}, '%')
+            or member_handle like concat('%', #{keyword}, '%'))
         order by member_nickname
     </select>
 
@@ -90,6 +106,10 @@
         where id = #{id}
     </select>
 
+    <select id="selectMembersWithCategory">
+
+    </select>
+
     <delete id="delete">
         delete from tbl_member
         where id = #{id}
@@ -102,7 +122,7 @@
     </update>
 
     <!-- 채팅 유저 검색 (차단 사용자 제외) -->
-    <select id="searchByKeyword" resultType="com.app.globalgates.dto.MemberDTO">
+    <select id="searchByKeyword">
         select
             id, member_name, member_email, member_nickname,
             member_handle, member_bio, member_region

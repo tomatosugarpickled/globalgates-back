@@ -61,6 +61,8 @@ public class MemberDTO implements Serializable {
     private String filePath;
     private Long fileSize;
     private FileContentType contentType;
+//    follow
+    private boolean followed;
 
     public MemberVO toMemberVO(){
         return MemberVO.builder()

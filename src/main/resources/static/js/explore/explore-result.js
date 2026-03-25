@@ -630,6 +630,16 @@ window.onload = () => {
             button.textContent = "Connected";
         }
 
+        function showConnectToast(message) {
+            const existing = document.querySelector(".notification-toast");
+            if (existing) existing.remove();
+            const toast = document.createElement("div");
+            toast.className = "notification-toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
         function resetButtonToDefault(button) {
             button.classList.remove("connected");
             button.classList.add("default");
@@ -671,13 +681,20 @@ window.onload = () => {
             pendingBtn = null;
         }
 
-        document.addEventListener("click", (e) => {
+        document.addEventListener("click", async (e) => {
             const btn = e.target.closest(".connect-btn");
-            if (!btn) {
-                return;
-            }
+            if (!btn) return;
+            const memberId = btn.dataset.memberId;
+            if (!memberId) return;
+
             if (btn.classList.contains("default")) {
-                setButtonToConnected(btn);
+                try {
+                    await exploreService.checkFollow(memberId);
+                    setButtonToConnected(btn);
+                    showConnectToast("팔로우했습니다.");
+                } catch (err) {
+                    console.error("팔로우 실패:", err);
+                }
             } else if (btn.classList.contains("connected")) {
                 openDisconnectModal(btn);
             }
@@ -700,9 +717,16 @@ window.onload = () => {
         });
 
         if (modalConfirm) {
-            modalConfirm.addEventListener("click", (e) => {
+            modalConfirm.addEventListener("click", async (e) => {
                 if (pendingBtn) {
-                    resetButtonToDefault(pendingBtn);
+                    const memberId = pendingBtn.dataset.memberId;
+                    try {
+                        if (memberId) await exploreService.checkFollow(memberId);
+                        resetButtonToDefault(pendingBtn);
+                        showConnectToast("언팔로우했습니다.");
+                    } catch (err) {
+                        console.error("언팔로우 실패:", err);
+                    }
                 }
                 closeDisconnectModal();
             });
