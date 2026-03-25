@@ -8,62 +8,65 @@
                                ,member_handle
                                ,member_phone
                                ,member_region
+                               ,member_language
                                ,push_enabled
                                ,birth_date)
-        values (#{memberName}, #{memberEmail}, #{memberPassword},#{memberHandle},#{memberPhone},#{memberRegion},#{pushEnabled},#{birthDate})
+        values (#{memberName}, #{memberEmail}, #{memberPassword},#{memberHandle},#{memberPhone},#{memberRegion},#{memberLanguage},#{pushEnabled},#{birthDate})
     </insert>
 
     <select id="selectMemberForLogin">
         select
-            id, member_name, member_email, member_status, member_role, created_datetime, updated_datetime
+            id, member_email, member_password, member_nickname, member_handle,
+            member_phone, member_bio, member_region, member_status, member_role,
+            push_enabled, member_language, birth_date, created_datetime, updated_datetime,
+            last_login_at, member_name
         from tbl_member
-        where member_email = #{memberEmail} and member_password = #{memberPassword} and member_status = 'active'
+        where member_email = #{loginId} or member_phone = #{loginId} and member_password = #{memberPassword} and member_status = 'active'
+    </select>
+
+    <select id="selectMemberByMemberPhone">
+        select id, member_email, member_password,
+               member_nickname, member_handle, member_phone,
+               member_bio, member_region, member_status,
+               member_role, push_enabled,
+               member_language, birth_date, created_datetime,
+               updated_datetime, last_login_at, member_name
+        from tbl_member
+        where member_phone = #{memberPhone}
     </select>
 
     <select id="selectMemberByMemberEmail">
         select
-            id, member_name, member_email, member_password,
-            member_role, member_status, created_datetime, updated_datetime
+            id, member_email, member_password,
+            member_nickname, member_handle,
+            member_phone, member_bio,
+            member_region, member_status,
+            member_role, push_enabled,
+            member_language, birth_date, created_datetime,
+            updated_datetime, last_login_at, member_name
         from tbl_member
-        where member_email = #{memberEmail} and member_status = 'active'
+        where member_email = #{memberEmail}
     </select>
 
-    <select id="selectMemberById" resultType="com.app.globalgates.dto.MemberDTO">
+    <select id="selectMemberByLoginId">
         select
-            id,
-            member_name,
-            member_email,
-            member_nickname,
-            member_handle,
-            member_role,
-            member_status,
-            created_datetime,
-            updated_datetime
+            id, member_email, member_password,
+            member_nickname, member_handle,
+            member_phone, member_bio,
+            member_region, member_status,
+            member_role, push_enabled,
+            member_language, birth_date, created_datetime,
+            updated_datetime, last_login_at, member_name
         from tbl_member
-        where id = #{memberId}
+        where (member_email = #{loginId} or member_phone = #{loginId})
+          and member_status = 'active'
     </select>
 
     <select id="selectMembersByKeyword">
         select id, member_name, member_nickname, member_handle,
                member_bio, member_region, member_status, member_role,
                created_datetime, updated_datetime
-        from tbl_member m
-        where member_status = 'active'
-          and (member_nickname like concat('%', #{keyword}, '%')
-               or member_handle like concat('%', #{keyword}, '%'))
-        order by member_nickname
-    </select>
-
-    <select id="selectMembersByKeywordWithFollow">
-        select id, member_name, member_nickname, member_handle,
-               member_bio, member_region, member_status, member_role,
-               created_datetime, updated_datetime,
-               case when exists (
-                   select 1 from tbl_follow f
-                   where f.follower_id  = #{memberId}
-                     and f.following_id = m.id
-               ) then true else false end as followed
-        from tbl_member m
+        from tbl_member
         where member_status = 'active'
           and (member_nickname like concat('%', #{keyword}, '%')
             or member_handle like concat('%', #{keyword}, '%'))
@@ -83,12 +86,8 @@
              ,member_status, member_role, push_enabled
              ,member_language, birth_date, created_datetime
              ,updated_datetime, last_login_at, member_name
-            from tbl_member
+        from tbl_member
         where id = #{id}
-    </select>
-
-    <select id="selectMembersWithCategory">
-
     </select>
 
     <delete id="delete">
@@ -103,7 +102,7 @@
     </update>
 
     <!-- 채팅 유저 검색 (차단 사용자 제외) -->
-    <select id="searchByKeyword">
+    <select id="searchByKeyword" resultType="com.app.globalgates.dto.MemberDTO">
         select
             id, member_name, member_email, member_nickname,
             member_handle, member_bio, member_region
@@ -112,14 +111,14 @@
           and id != #{memberId}
           and (
             lower(member_name) like lower(concat('%', #{keyword}, '%'))
-            or lower(member_handle) like lower(concat('%', #{keyword}, '%'))
-            or lower(member_nickname) like lower(concat('%', #{keyword}, '%'))
-          )
+                or lower(member_handle) like lower(concat('%', #{keyword}, '%'))
+                or lower(member_nickname) like lower(concat('%', #{keyword}, '%'))
+            )
           and not exists (
-              select 1 from tbl_block
-              where (blocker_id = #{memberId} and blocked_id = tbl_member.id)
-                 or (blocker_id = tbl_member.id and blocked_id = #{memberId})
-          )
+            select 1 from tbl_block
+            where (blocker_id = #{memberId} and blocked_id = tbl_member.id)
+               or (blocker_id = tbl_member.id and blocked_id = #{memberId})
+        )
         order by member_name
         limit 20
     </select>
