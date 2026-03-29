@@ -9,11 +9,11 @@ import com.app.globalgates.service.video_chat.VideoChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,19 +22,79 @@ import org.springframework.web.bind.annotation.RestController;
 public class VideoChatAPIController {
     private final ChatRoomService chatRoomService;
     private final VideoChatService videoChatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/session")
-    public ResponseEntity<?> getOrCreateSession(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                @RequestBody VideoChatDTO videoChatDTO) {
+    public ResponseEntity<?> requestVideoCall(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody VideoChatDTO videoChatDTO) {
+
         Long callerId = userDetails.getId();
 
-        // 채팅방 조회
-        ChatRoomDTO chatRoom = chatRoomService.createOrGetRoom(null, callerId, videoChatDTO.getReceiverId());
-        // 화상 채팅방 조회
-        VideoChatDTO response = videoChatService.getOrCreateSession(
+        // 채팅방 조회 or 생성
+        ChatRoomDTO chatRoom = chatRoomService.createOrGetRoom(
+                null, callerId, videoChatDTO.getReceiverId()
+        );
+
+        // 화상 세션 조회 or 생성
+        VideoChatDTO session = videoChatService.getOrCreateSession(
                 chatRoom.getId(), callerId, videoChatDTO.getReceiverId()
         );
 
-        return ResponseEntity.ok(response);
+        // roomName 세팅
+        String roomName = "conversation-" + chatRoom.getId();
+        session.setRoomName(roomName);
+
+        log.info("화상통화 요청 - callerId: {}, receiverId: {}, roomName: {}",
+                callerId, videoChatDTO.getReceiverId(), roomName);
+
+        // 상대방에게 STOMP로 통화 요청 알림 전송
+        messagingTemplate.convertAndSend(
+                "/topic/video-call." + videoChatDTO.getReceiverId(),
+                Map.of(
+                        "type", "REQUEST",
+                        "callerId", callerId,
+                        "callerName", userDetails.getMemberName(),
+                        "receiverId", videoChatDTO.getReceiverId(),
+                        "roomName", roomName,
+                        "sessionId", session.getId()
+                )
+        );
+
+        return ResponseEntity.ok(session);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Long>> getMyId(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(Map.of("memberId", userDetails.getId()));
+    }
+
+    @PostMapping("/session/reject")
+    public ResponseEntity<Void> rejectVideoCall(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody Map<String, Object> body) {
+
+        Long callerId = Long.valueOf(body.get("callerId").toString());
+        String callerName = userDetails.getUsername();
+
+        log.info("화상통화 거절 - callerId: {}, rejecterId: {}", callerId, userDetails.getId());
+
+        // 발신자에게 거절 알림 전송
+        messagingTemplate.convertAndSend(
+                "/topic/video-call." + callerId,
+                Map.of(
+                        "type", "REJECTED",
+                        "callerName", callerName
+                )
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/session/end")
+    public ResponseEntity<Void> endSession(@RequestParam Long conversationId) {
+        videoChatService.endSession(conversationId);
+        return ResponseEntity.ok().build();
     }
 }

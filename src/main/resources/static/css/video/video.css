@@ -147,14 +147,32 @@ body {
 }
 
 .video-chat-session {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1ft));
+    display: flex;
+    flex-direction: row;
     gap: 10px;
     justify-content: center;
     align-content: center;
     width: 100%;
-    max-width: 1000px;
     height: 100%;
+    min-height: 0;
+}
+
+.video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.participant-data {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    color: white;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    z-index: 1;
 }
 
 .host-profile {
@@ -243,6 +261,7 @@ body {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 
 @media (max-width: 900px) {
     .video-page {
