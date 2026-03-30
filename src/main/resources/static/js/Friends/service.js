@@ -5,8 +5,17 @@ const friendsService = (() => {
         return await response.json();
     };
 
-    const getFriendsList = async (page, memberId, callback) => {
-        const response = await fetch(`/api/friends/list/${page}?memberId=${memberId}`);
+    const getFriendsList = async (page, memberId, categoryId, callback) => {
+        let url = `/api/friends/list/${page}?memberId=${memberId}`;
+        if (categoryId) url += `&categoryId=${categoryId}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (callback) return callback(data);
+        return data;
+    };
+
+    const getCategories = async (callback) => {
+        const response = await fetch('/api/friends/categories');
         const data = await response.json();
         if (callback) return callback(data);
         return data;
@@ -24,5 +33,5 @@ const friendsService = (() => {
         await fetch(`/api/main/follows/${followerId}/${followingId}/delete`, { method: 'POST' });
     };
 
-    return { getMyInfo, getFriendsList, follow, unfollow };
+    return { getMyInfo, getFriendsList, getCategories, follow, unfollow };
 })();

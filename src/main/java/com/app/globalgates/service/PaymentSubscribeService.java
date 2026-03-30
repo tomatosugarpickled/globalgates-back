@@ -23,13 +23,13 @@ public class PaymentSubscribeService {
     //    id로 결제 정보 조회
     public PaymentSubscribeDTO findById(Long id) {
         return paymentSubscribeDAO.findById(id)
-                .orElseThrow(() -> new RuntimeException("결제 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("결제 오류"));
     }
 
     //    영수증 id로 결제 정보 조회
     public PaymentSubscribeDTO findByReceiptId(String receiptId) {
         return paymentSubscribeDAO.findByReceiptId(receiptId)
-                .orElseThrow(() -> new RuntimeException("결제 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("결제 정보조회 오류"));
     }
 
     //    결제 상태 변경

@@ -13,11 +13,11 @@ import java.util.List;
 public class FriendsDAO {
     private final FriendsMapper friendsMapper;
 
-    public List<FriendsDTO> findAll(Criteria criteria, Long memberId) {
-        return friendsMapper.selectAll(criteria, memberId);
+    public List<FriendsDTO> findAll(Criteria criteria, Long memberId, Long categoryId) {
+        return friendsMapper.selectAll(criteria, memberId, categoryId);
     }
 
-    public int findTotal(Long memberId) {
-        return friendsMapper.selectTotal(memberId);
+    public int findTotal(Long memberId, Long categoryId) {
+        return friendsMapper.selectTotal(memberId, categoryId);
     }
 }

@@ -16,23 +16,59 @@ window.onload = () => {
     const headerBackButton = document.getElementById("headerBack");
 
     // ===== 2. 화면 상태 =====
-    const originalChipsHTML = scrollEl ? scrollEl.innerHTML : "";
     let pendingDisconnectButton = null;
+    let selectedCategoryId = null;
 
     // ===== 3. 페이징 + 무한스크롤 =====
     let page = 1;
     let checkScroll = true;
     let hasMore = true;
 
+    // 카테고리 데이터 (서버에서 로드)
+    let categories = [];
+    let originalChipsHTML = "";
+
+    const loadFriendsList = async () => {
+        await friendsService.getFriendsList(page, memberId, selectedCategoryId, (data) => {
+            friendsLayout.showFriendsList(data.friends, page);
+            hasMore = data.criteria.hasMore;
+        });
+    };
+
+    // 카테고리 칩 렌더링
+    const renderCategoryChips = () => {
+        if (!scrollEl) return;
+
+        const parents = categories.filter(c => c.productCategoryParentId === null);
+
+        let html = `<button class="cat-chip active" data-cat-id="">전체</button>`;
+        parents.forEach(parent => {
+            const children = categories.filter(c => c.productCategoryParentId === parent.id);
+            if (children.length > 0) {
+                const subs = children.map(c => `${c.id}:${c.categoryName}`).join(",");
+                html += `<button class="cat-chip has-subs" data-cat-id="${parent.id}" data-subs="${subs}">${parent.categoryName} ›</button>`;
+            } else {
+                html += `<button class="cat-chip" data-cat-id="${parent.id}">${parent.categoryName}</button>`;
+            }
+        });
+
+        scrollEl.innerHTML = html;
+        originalChipsHTML = html;
+        scrollEl.scrollLeft = 0;
+        scheduleScrollArrowVisibilityUpdate();
+    };
+
     // 초기 데이터 로드
     const loadInitialData = async () => {
         const member = await friendsService.getMyInfo();
         memberId = member.id;
 
-        await friendsService.getFriendsList(page, memberId, (data) => {
-            friendsLayout.showFriendsList(data.friends, page);
-            hasMore = data.criteria.hasMore;
+        await friendsService.getCategories((data) => {
+            categories = data;
+            renderCategoryChips();
         });
+
+        await loadFriendsList();
     };
 
     loadInitialData();
@@ -45,10 +81,7 @@ window.onload = () => {
         if (scrollY + innerHeight >= documentHeight - 1) {
             checkScroll = false;
             page++;
-            await friendsService.getFriendsList(page, memberId, (data) => {
-                friendsLayout.showFriendsList(data.friends, page);
-                hasMore = data.criteria.hasMore;
-            });
+            await loadFriendsList();
             setTimeout(() => { checkScroll = true; }, 1000);
         }
     });
@@ -73,13 +106,13 @@ window.onload = () => {
         scheduleScrollArrowVisibilityUpdate();
     }
 
-    function renderSubCategories(categoryName, subCategories) {
+    function renderSubCategories(parentId, parentName, subCategories) {
         if (!scrollEl) return;
         let nextMarkup =
-            '<button class="cat-back-btn" title="대카테고리로 돌아가기"><svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(270 12 12)"/></svg></button>';
-        nextMarkup += `<button class="cat-chip parent-highlight">${categoryName}</button>`;
-        subCategories.forEach((subCategory) => {
-            nextMarkup += `<button class="cat-chip" data-cat="${subCategory}" data-is-sub="true">${subCategory}</button>`;
+            '<button class="cat-back-btn"><svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(270 12 12)"/></svg></button>';
+        nextMarkup += `<button class="cat-chip parent-highlight" data-cat-id="${parentId}">${parentName}</button>`;
+        subCategories.forEach((sub) => {
+            nextMarkup += `<button class="cat-chip" data-cat-id="${sub.id}" data-is-sub="true">${sub.name}</button>`;
         });
         scrollEl.innerHTML = nextMarkup;
         scrollEl.scrollLeft = 0;
@@ -99,7 +132,7 @@ window.onload = () => {
         chip.classList.add("active");
     }
 
-    function handleCategoryClick(event) {
+    async function handleCategoryClick(event) {
         const clickedChip = event.target.closest(".cat-chip");
         const clickedBackButton = event.target.closest(".cat-back-btn");
 
@@ -109,13 +142,30 @@ window.onload = () => {
         }
         if (!clickedChip) return;
 
+        // 대카테고리 → 소카테고리 펼치기
         if (clickedChip.classList.contains("has-subs")) {
-            const categoryName = clickedChip.dataset.cat || "";
-            const subCategories = (clickedChip.dataset.subs || "").split(",").filter(Boolean);
-            renderSubCategories(categoryName, subCategories);
+            const parentId = clickedChip.dataset.catId;
+            const parentName = clickedChip.textContent.replace(" ›", "").trim();
+            const subs = (clickedChip.dataset.subs || "").split(",").filter(Boolean).map(s => {
+                const [id, name] = s.split(":");
+                return { id: id, name: name };
+            });
+            renderSubCategories(parentId, parentName, subs);
+
+            // 대카테고리 선택 시 해당 대카테고리로 필터
+            selectedCategoryId = parentId || null;
+            page = 1;
+            await loadFriendsList();
             return;
         }
+
         setActiveChip(clickedChip);
+
+        // 카테고리 필터 적용
+        const catId = clickedChip.dataset.catId;
+        selectedCategoryId = catId || null;
+        page = 1;
+        await loadFriendsList();
     }
 
     // ===== 5. Connect/Disconnect =====
@@ -176,6 +226,18 @@ window.onload = () => {
         button.style.background = "transparent";
     }
 
+    function handleConnectedButtonMouseOver(event) {
+        const hoveredButton = event.target.closest(".connect-btn.connected");
+        if (!hoveredButton) return;
+        updateConnectedButtonHoverState(hoveredButton, true);
+    }
+
+    function handleConnectedButtonMouseOut(event) {
+        const hoveredButton = event.target.closest(".connect-btn.connected");
+        if (!hoveredButton) return;
+        updateConnectedButtonHoverState(hoveredButton, false);
+    }
+
     async function handleConnectButtonClick(event) {
         const clickedButton = event.target.closest(".connect-btn");
         if (!clickedButton) return;
@@ -191,18 +253,6 @@ window.onload = () => {
         if (clickedButton.classList.contains("connected")) {
             openDisconnectModal(clickedButton);
         }
-    }
-
-    function handleConnectedButtonMouseOver(event) {
-        const hoveredButton = event.target.closest(".connect-btn.connected");
-        if (!hoveredButton) return;
-        updateConnectedButtonHoverState(hoveredButton, true);
-    }
-
-    function handleConnectedButtonMouseOut(event) {
-        const hoveredButton = event.target.closest(".connect-btn.connected");
-        if (!hoveredButton) return;
-        updateConnectedButtonHoverState(hoveredButton, false);
     }
 
     // ===== 6. 이벤트 바인딩 =====

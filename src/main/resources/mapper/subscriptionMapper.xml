@@ -3,7 +3,7 @@
 <mapper namespace="com.app.globalgates.mapper.SubscriptionMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into tbl_subscription (member_id, tier, billing_cycle, status, expires_at)
-        values (#{memberId}, #{tier}, #{billingCycle}, #{status}, #{expiresAt})
+        values (#{memberId}, #{tier}, #{billingCycle}, #{status}, #{expiresAt}::timestamp)
     </insert>
 
     <select id="selectByMemberId">
@@ -18,7 +18,7 @@
         update tbl_subscription
         set tier = #{tier},
             billing_cycle = #{billingCycle},
-            expires_at = #{expiresAt},
+            expires_at = #{expiresAt}::timestamp,
             updated_datetime = now()
         where id = #{id}
     </update>

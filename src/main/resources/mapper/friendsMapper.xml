@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.app.globalgates.mapper.FriendsMapper">
 
+    <sql id="categoryFilter">
+        <if test="categoryId != null">
+            and m.id in (
+                select mcr.member_id from tbl_member_category_rel mcr
+                where mcr.category_id in (
+                    select c.id from tbl_category c
+                    where c.id = #{categoryId} or c.product_category_parent_id = #{categoryId}
+                )
+            )
+        </if>
+    </sql>
+
     <select id="selectAll">
         select m.id,
                m.member_nickname,
@@ -20,6 +32,7 @@
           and m.id != #{memberId}
           and m.id not in (select fl.following_id from tbl_follow fl where fl.follower_id = #{memberId})
           and m.id not in (select bl.blocked_id from tbl_block bl where bl.blocker_id = #{memberId})
+          <include refid="categoryFilter"/>
         order by m.created_datetime desc
         limit #{criteria.count}
         offset #{criteria.offset}
@@ -32,6 +45,7 @@
           and m.id != #{memberId}
           and m.id not in (select fl.following_id from tbl_follow fl where fl.follower_id = #{memberId})
           and m.id not in (select bl.blocked_id from tbl_block bl where bl.blocker_id = #{memberId})
+          <include refid="categoryFilter"/>
     </select>
 
 </mapper>

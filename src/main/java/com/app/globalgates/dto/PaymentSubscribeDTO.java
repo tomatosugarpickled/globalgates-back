@@ -4,8 +4,6 @@ import com.app.globalgates.common.enumeration.PaymentStatus;
 import com.app.globalgates.domain.PaymentSubscribeVO;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Getter @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
@@ -14,7 +12,7 @@ public class PaymentSubscribeDTO {
     private Long id;
     private Long subscriptionId;
     private Long memberId;
-    private BigDecimal amount;
+    private Long amount;
     private PaymentStatus paymentStatus;
     private String paymentMethod;
     private String receiptId;

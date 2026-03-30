@@ -18,6 +18,10 @@ select * from tbl_category;
 
 select * from tbl_follow;
 
+select * from tbl_advertisement;
+
+select * from tbl_payment_advertisement;
+
 select * from tbl_conversation;
 
 select * from tbl_video_session;
@@ -34,4 +38,8 @@ select * from tbl_member_category_rel;
 
 select * from tbl_post_temp;
 
+select * from tbl_subscription;
+
 select * from tbl_payment_subscribe;
+
+select * from tbl_badge;

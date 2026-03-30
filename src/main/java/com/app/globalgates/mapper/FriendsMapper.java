@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface FriendsMapper {
-    public List<FriendsDTO> selectAll(@Param("criteria") Criteria criteria, @Param("memberId") Long memberId);
+    public List<FriendsDTO> selectAll(@Param("criteria") Criteria criteria, @Param("memberId") Long memberId, @Param("categoryId") Long categoryId);
 
-    public int selectTotal(@Param("memberId") Long memberId);
+    public int selectTotal(@Param("memberId") Long memberId, @Param("categoryId") Long categoryId);
 }

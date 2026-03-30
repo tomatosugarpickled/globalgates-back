@@ -18,9 +18,9 @@ import java.util.List;
 public class FriendsService {
     private final FriendsDAO friendsDAO;
 
-    public FriendsWithPagingDTO getList(int page, Long memberId) {
-        Criteria criteria = new Criteria(page, friendsDAO.findTotal(memberId));
-        List<FriendsDTO> friends = friendsDAO.findAll(criteria, memberId);
+    public FriendsWithPagingDTO getList(int page, Long memberId, Long categoryId) {
+        Criteria criteria = new Criteria(page, friendsDAO.findTotal(memberId, categoryId));
+        List<FriendsDTO> friends = friendsDAO.findAll(criteria, memberId, categoryId);
 
         criteria.setHasMore(friends.size() > criteria.getRowCount());
         if (criteria.isHasMore()) friends.remove(friends.size() - 1);

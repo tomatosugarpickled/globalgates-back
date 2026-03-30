@@ -589,7 +589,10 @@ window.onload = () => {
         e.preventDefault();
         const text = replyEditor?.textContent?.trim();
         if (!text || !replyTargetPostId) return;
-        await service.writeReply(replyTargetPostId, memberId, text);
+        const replyFormData = new FormData();
+        replyFormData.append("memberId", memberId);
+        replyFormData.append("postContent", text);
+        await service.writeReply(replyTargetPostId, replyFormData);
         closeReplyModal();
         showToast("답글이 게시되었습니다");
         await refreshReplies();

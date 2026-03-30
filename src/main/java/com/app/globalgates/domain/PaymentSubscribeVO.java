@@ -3,8 +3,6 @@ package com.app.globalgates.domain;
 import com.app.globalgates.common.enumeration.PaymentStatus;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Getter @ToString
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,7 +12,7 @@ public class PaymentSubscribeVO {
     private Long id;
     private Long subscriptionId;
     private Long memberId;
-    private BigDecimal amount;
+    private Long amount;
     private PaymentStatus paymentStatus;
     private String paymentMethod;
     private String receiptId;
