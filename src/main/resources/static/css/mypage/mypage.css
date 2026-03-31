@@ -231,6 +231,7 @@ body {
     height: 200px;
     background-color: rgb(207, 217, 222);
     overflow: hidden;
+    justify-content: center;
 }
 
 .Profile-Avatar-Row {
@@ -705,6 +706,7 @@ body {
 .Sidebar-User-Avatar-Link {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .Sidebar-User-Avatar-Circle {
@@ -714,16 +716,23 @@ body {
     height: 50px;
     border-radius: 9999px;
     background-color: #cfe8fc;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .Sidebar-User-Avatar-Img {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    border-radius: 9999px;
 }
 
 .Sidebar-User-Info {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     justify-content: flex-start;
 }
 
@@ -732,6 +741,9 @@ body {
     font-weight: 700;
     line-height: 20px;
     color: #0f1419;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .Sidebar-User-Handle {
@@ -739,6 +751,9 @@ body {
     font-weight: 400;
     line-height: 20px;
     color: #536471;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .Sidebar-Follow-Btn {
@@ -749,6 +764,7 @@ body {
     border-radius: 9999px;
     color: #0f1419;
     cursor: pointer; /* [FIX 4] */
+    flex-shrink: 0;
 }
 
 .Sidebar-Follow-Btn:hover {
@@ -760,6 +776,191 @@ body {
 .Sidebar-Follow-Btn-Text {
     font-size: 15px;
     font-weight: 700;
+}
+
+.Sidebar-Follow-Btn--Discover {
+    /* 빈 상태 CTA는 기존 팔로잉 상태 버튼과 역할이 다르다.
+       그래서 공통 버튼 구조는 재사용하되, hover 색만 서비스의 기본 파란 톤으로 분리한다. */
+    margin-top: 30px;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.Sidebar-Follow-Btn--Discover:hover {
+    border-color: #1d9bf0;
+    color: #1d9bf0;
+    background-color: rgba(29, 155, 240, 0.12);
+}
+
+/* mypage 사이드바의 팔로잉 카드를 main의 추천 유저 카드와 같은 시각 구조로 맞춘다.
+   main.css를 직접 의존하지 않고, 필요한 모양만 mypage 범위 안에 복제해서
+   다른 화면 스타일에 영향이 퍼지지 않게 한다. */
+.Mypage-Follow-Card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid #e8eef1;
+    transition: background 0.15s ease;
+}
+
+.Mypage-Follow-Card:hover {
+    background: #ebeff2;
+}
+
+.Mypage-Follow-Avatar-Link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.Mypage-Follow-Avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: #cfe8fc;
+    overflow: hidden;
+}
+
+.Mypage-Follow-Avatar-Img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Mypage-Follow-Info {
+    flex: 1;
+    min-width: 0;
+}
+
+.Mypage-Follow-Top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.Mypage-Follow-Name-Group {
+    min-width: 0;
+}
+
+.Mypage-Follow-Name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f1419;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.Mypage-Follow-Handle {
+    color: #536471;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 버튼의 시각 결과는 main.css의 .connect-btn / .connect-btn.connected 값을 그대로 따른다.
+   mypage에서는 기존 마크업 문맥을 살리기 위해 Mypage-Follow-Button 클래스도 유지하지만,
+   실제 톤·크기·hover 반응은 main의 Connected 버튼과 1:1로 맞춘다. */
+.Mypage-Follow-Button,
+.connect-btn {
+    flex-shrink: 0;
+    min-width: 110px;
+    padding: 0 16px;
+    height: 34px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.Mypage-Follow-Button.default,
+.connect-btn.default {
+    background: #0f1419;
+    color: #fff;
+}
+
+.Mypage-Follow-Button.default:hover,
+.connect-btn.default:hover {
+    background: #272c30;
+}
+
+.Mypage-Follow-Button.connected,
+.connect-btn.connected {
+    background: transparent;
+    color: #0f1419;
+    border-color: #cfd9de;
+}
+
+.Mypage-Follow-Button.connected:hover,
+.connect-btn.connected:hover {
+    border-color: #f4212e;
+    color: #f4212e;
+    background: rgba(244, 33, 46, 0.1);
+}
+
+/* 모달도 main.css의 disconnectModal 스타일 값을 그대로 따른다.
+   이전처럼 마이페이지용 톤으로 재해석하지 않고, 배경/간격/버튼 배치를 같은 값으로 맞춰
+   두 화면을 나란히 봤을 때 동일한 컴포넌트로 인지되게 한다. */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(91, 112, 131, 0.4);
+    z-index: 100;
+}
+
+.modalOverlay.active {
+    display: flex;
+}
+
+.modalPanel {
+    width: min(90vw, 360px);
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.modalTitle {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.modalText {
+    margin: 0 0 20px;
+    color: #536471;
+    font-size: 14px;
+}
+
+.modalActions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modalConfirm,
+.modalCancel {
+    min-height: 44px;
+    border-radius: 9999px;
+    font-weight: 700;
+}
+
+.modalConfirm {
+    background: #0f1419;
+    color: #ffffff;
+}
+
+.modalCancel {
+    border: 1px solid #cfd9de;
+    color: #0f1419;
 }
 
 .Sidebar-Card-More {

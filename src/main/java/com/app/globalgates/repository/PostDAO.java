@@ -47,6 +47,11 @@ public class PostDAO {
         return postMapper.selectAllByMemberId(criteria, memberId);
     }
 
+    //    좋아요한 게시글 목록 조회 (mypage Likes 탭)
+    public List<PostDTO> findLikedPostsByMemberId(Criteria criteria, Long memberId) {
+        return postMapper.selectLikedPostsByMemberId(criteria, memberId);
+    }
+
     //    게시글 전체 개수
     public int findTotal() {
         return postMapper.selectTotal();
@@ -55,6 +60,11 @@ public class PostDAO {
     //    member가 가진 게시글 전체 개수
     public int findTotalByMemberId(Long memberId) {
         return postMapper.selectTotalByMemberId(memberId);
+    }
+
+    //    member가 좋아요한 게시글 전체 개수
+    public int findLikedPostTotalByMemberId(Long memberId) {
+        return postMapper.selectLikedPostTotalByMemberId(memberId);
     }
 
     //    게시글 검색 조회

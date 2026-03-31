@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -39,7 +41,28 @@ public class MypageAPIController {
             @RequestParam(defaultValue = "1") int page,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return postProductService.getMyProducts(page, userDetails.getId());
+        PostProductWithPagingDTO result = postProductService.getMyProducts(page, userDetails.getId());
+
+        // 마이페이지 "내 상품" 탭도 main 피드와 같은 기준으로 이미지 URL을 내려줘야 한다.
+        // 현재 서비스/DB 계층은 파일 경로에 S3 raw key를 유지하고 있고,
+        // 기존 프런트는 그 값을 직접 S3 주소로 이어 붙여서 해석하려고 했다.
+        //
+        // 하지만 이 프로젝트의 다른 화면(main, 프로필 등)은
+        // "응답 직전에 presigned URL로 바꿔서 브라우저에 전달"하는 방식을 이미 사용한다.
+        // 따라서 mypage도 동일한 정책으로 맞추는 것이 가장 일관적이고 안전하다.
+        result.getPosts().forEach(product -> {
+            if (product.getPostFiles() == null || product.getPostFiles().isEmpty()) {
+                return;
+            }
+
+            product.setPostFiles(
+                    product.getPostFiles().stream()
+                            .map(this::toPresignedUrlOrOriginal)
+                            .collect(Collectors.toList())
+            );
+        });
+
+        return result;
     }
 
     // 마이페이지 게시물 탭은 현재 로그인한 사용자가 작성한 "일반 게시글"만 내려준다.
@@ -50,7 +73,50 @@ public class MypageAPIController {
             @RequestParam(defaultValue = "1") int page,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return postService.getMyPosts(page, userDetails.getId());
+        PostWithPagingDTO result = postService.getMyPosts(page, userDetails.getId());
+
+        // 게시물 탭도 main 피드와 동일하게 "브라우저가 직접 열 수 있는 URL"로 가공해서 내려준다.
+        // layout.js는 post.postFiles[*].filePath를 그대로 img/background-image에 사용하므로,
+        // raw S3 key를 그대로 반환하면 mypage에서만 이미지가 깨진다.
+        //
+        // 이 변환은 저장 모델을 바꾸는 작업이 아니라, 화면 응답 전용 표현을 만드는 단계다.
+        // 따라서 controller에서 처리하는 편이 현재 프로젝트 구조와 가장 잘 맞는다.
+        result.getPosts().forEach(post -> {
+            if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
+                return;
+            }
+
+            post.getPostFiles().forEach(file ->
+                    file.setFilePath(toPresignedUrlOrOriginal(file.getFilePath()))
+            );
+        });
+
+        return result;
+    }
+
+    // Likes 탭도 Posts 탭과 같은 PostDTO 구조를 사용한다.
+    // 화면은 동일한 카드 컴포넌트를 재사용하고,
+    // 데이터만 "내가 좋아요한 게시글"로 바꿔 내려주는 방식이 유지보수에 가장 유리하다.
+    @GetMapping("/likes")
+    public PostWithPagingDTO getMyLikedPosts(
+            @RequestParam(defaultValue = "1") int page,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        PostWithPagingDTO result = postService.getMyLikedPosts(page, userDetails.getId());
+
+        // main / mypage Posts 탭과 동일하게, Likes 탭도 이미지 URL을 presigned URL로 가공한다.
+        // 이 단계가 없으면 raw S3 key가 그대로 브라우저에 전달되어 이미지가 깨질 수 있다.
+        result.getPosts().forEach(post -> {
+            if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
+                return;
+            }
+
+            post.getPostFiles().forEach(file ->
+                    file.setFilePath(toPresignedUrlOrOriginal(file.getFilePath()))
+            );
+        });
+
+        return result;
     }
 
     // 회원가입 join 흐름처럼:
@@ -113,5 +179,22 @@ public class MypageAPIController {
         postProductService.delete(productId, userDetails.getId());
 
         return ResponseEntity.ok(Map.of("message", "상품 삭제 성공"));
+    }
+
+    // S3 raw key를 화면 출력용 presigned URL로 바꾼다.
+    // 실패 시에는 목록 API 전체를 500으로 만들지 않고, 해당 파일만 원본 경로를 유지한다.
+    // 이렇게 하면 일시적인 URL 생성 실패가 전체 마이페이지 렌더링 실패로 번지는 것을 막을 수 있다.
+    // 동시에 로그를 남겨 운영 중 원인 추적도 가능하게 한다.
+    private String toPresignedUrlOrOriginal(String filePath) {
+        if (filePath == null || filePath.isBlank()) {
+            return filePath;
+        }
+
+        try {
+            return s3Service.getPresignedUrl(filePath, Duration.ofMinutes(10));
+        } catch (IOException e) {
+            log.warn("mypage presigned URL 생성 실패. 원본 경로를 그대로 반환합니다. filePath={}", filePath, e);
+            return filePath;
+        }
     }
 }

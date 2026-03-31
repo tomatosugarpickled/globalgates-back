@@ -56,6 +56,10 @@ drop view  vw_category_member;
 drop table tbl_oauth
 drop type oauth_provider;
 
+select * from tbl_post;
+select * from tbl_post_product;
+select * from vw_file_member
+
 -- ============================================================
 -- 마이페이지용 더미 데이터
 -- - 게시물 탭에 보일 일반 게시글 2개

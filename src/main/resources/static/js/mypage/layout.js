@@ -13,9 +13,11 @@ const layout = (() => {
     // 동일한 이벤트 위임 경로로 처리할 수 있다. 조회/페이징 로직에는 손대지 않고 액션 바인딩만 분리하려는 의도다.
     // 더미 카드의 구조를 그대로 유지하되, 실제 데이터만 끼워 넣는다.
     const createMyProductCard = (product) => {
-        const image = product.postFiles && product.postFiles.length > 0
-            ? product.postFiles[0]
-            : "/images/main/global-gates-logo.png";
+        // 상품 카드도 서버가 내려준 "최종 표시용 URL"을 그대로 사용한다.
+        // 이전 구현은 raw S3 key를 프런트에서 직접 버킷 주소와 이어 붙였는데,
+        // 이 프로젝트의 다른 화면은 presigned URL을 서버에서 만들어 내려주는 구조다.
+        // 프런트가 저장 경로 규칙을 알 필요가 없도록, 여기서는 첫 번째 이미지 URL만 그대로 쓴다.
+        const image = product.postFiles?.[0] || "/images/main/global-gates-logo.png";
 
         const hashtags = (product.hashtags ?? [])
             .map((tag) => `<span class="Category-Tag">#${tag.tagName}</span>`)
@@ -164,7 +166,8 @@ const layout = (() => {
           `;
         }
 
-        return ` // 4장은 2x2 그리드 구조를 쓴다.
+        // 4장은 2x2 그리드 구조를 쓴다.
+        return  ` 
           <div class="Post-Media-Grid">
               <div class="Post-Media-Aspect-Ratio" style="position:relative;">
                   <div class="Post-Media-Absolute-Layer">
@@ -294,8 +297,33 @@ const layout = (() => {
         }
     };
 
+    const showMyLikedPostList = (postWithPagingDTO, page) => {
+        // Likes 탭은 카드 구조를 새로 만들지 않고 Posts 탭과 같은 렌더러를 재사용한다.
+        // 이렇게 하면 첨부파일, 해시태그, 액션 버튼, 이미지 레이아웃 규칙이 한 군데에서 유지된다.
+        const likeSection = document.querySelector(".Profile-Content.Likes .Profile-Content-List");
+        if (!likeSection) return;
+
+        const posts = postWithPagingDTO?.posts ?? [];
+        const html = posts.map(createMyPostCard).join("");
+
+        if (posts.length === 0 && page === 1) {
+            likeSection.innerHTML = `
+              <p class="feedEmpty" style="padding: 20px; text-align: center; color: #536471;">
+                  좋아요한 게시글이 없습니다.
+              </p>`;
+            return;
+        }
+
+        if (page === 1) {
+            likeSection.innerHTML = html;
+        } else {
+            likeSection.innerHTML += html;
+        }
+    };
+
     return {
         showMyProductList: showMyProductList,
-        showMyPostList: showMyPostList
+        showMyPostList: showMyPostList,
+        showMyLikedPostList: showMyLikedPostList
     };
 })();

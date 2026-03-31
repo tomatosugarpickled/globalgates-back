@@ -4,6 +4,7 @@ import com.app.globalgates.dto.PostLikeDTO;
 import com.app.globalgates.repository.PostLikeDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,13 @@ public class PostLikeService {
     private final PostLikeDAO postLikeDAO;
 
 //    좋아요 추가
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void addLike(PostLikeDTO postLikeDTO) {
         postLikeDAO.save(postLikeDTO);
     }
 
 //    좋아요 삭제
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void deleteLike(Long memberId, Long postId) {
         postLikeDAO.deleteByMemberIdAndPostId(memberId, postId);
     }

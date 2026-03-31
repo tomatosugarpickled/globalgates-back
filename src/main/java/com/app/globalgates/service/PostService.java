@@ -16,6 +16,7 @@ import com.app.globalgates.repository.PostHashtagDAO;
 import com.app.globalgates.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class PostService {
     private final S3Service s3Service;
 
 //    게시글 작성
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void writePost(PostDTO postDTO, List<MultipartFile> files) {
         postDAO.save(postDTO);
 
@@ -78,7 +80,7 @@ public class PostService {
     }
 
     //    게시글 목록 조회
-    @Cacheable(value="post:list", key="'page:' + #page" + " + 'memberId:' + #memberId")
+    @Cacheable(value="post:list", key="'feed:page:' + #page + ':memberId:' + #memberId")
     public PostWithPagingDTO getList(int page, Long memberId) {
         Criteria criteria = new Criteria(page, postDAO.findTotal());
         List<PostDTO> posts = postDAO.findAll(criteria, memberId);
@@ -109,7 +111,7 @@ public class PostService {
     // 일반 게시글만 조회해야 한다.
     // 페이징 규칙은 기존 내 상품 목록과 동일하게 rowCount + 1개를 먼저 조회한 뒤
     // 마지막 1개로 hasMore 여부만 판단한다.
-    @Cacheable(value="post:list", key="'page:' + #page" + " + 'memberId:' + #memberId")
+    @Cacheable(value="post:list", key="'mypage:page:' + #page + ':memberId:' + #memberId")
     public PostWithPagingDTO getMyPosts(int page, Long memberId) {
         PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
         Criteria criteria = new Criteria(page, postDAO.findTotalByMemberId(memberId));
@@ -141,6 +143,57 @@ public class PostService {
         return postWithPagingDTO;
     }
 
+    // 마이페이지 Likes 탭은 "현재 로그인 사용자가 좋아요한 일반 게시글"만 보여준다.
+    // Posts 탭과 같은 PostDTO / PostWithPagingDTO 구조를 재사용하면,
+    // 카드 렌더링, 이미지 첨부파일, 해시태그, 카운트 표시 로직을 새로 만들 필요가 없다.
+    // 조회 기준은 다음과 같다:
+    // 1. 좋아요 관계(tbl_post_like)가 존재해야 한다.
+    // 2. 게시글은 active 상태여야 한다.
+    // 3. 댓글(reply)은 제외한다.
+    // 4. 상품 게시글(tbl_post_product)은 제외한다.
+    //
+    // 페이징은 기존 mypage Posts / MyProducts와 동일하게 rowCount + 1개를 먼저 조회한 뒤
+    // 마지막 1개로 hasMore 여부만 판단한다.
+    @Cacheable(value="post:list", key="'liked:page:' + #page + ':memberId:' + #memberId")
+    public PostWithPagingDTO getMyLikedPosts(int page, Long memberId) {
+        PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
+        Criteria criteria = new Criteria(page, postDAO.findLikedPostTotalByMemberId(memberId));
+
+        List<PostDTO> posts = postDAO.findLikedPostsByMemberId(criteria, memberId).stream()
+                .map(postDTO -> {
+                    List<PostFileDTO> files = new ArrayList<>(postFileDAO.findAllByPostId(postDTO.getId()));
+                    if (!files.isEmpty()) {
+                        postDTO.setPostFiles(files);
+                        postDTO.setFileUrls(
+                                files.stream()
+                                        .map(PostFileDTO::getFilePath)
+                                        .collect(Collectors.toList())
+                        );
+                    }
+                    postDTO.setHashtags(postHashtagDAO.findAllByPostId(postDTO.getId()));
+                    return postDTO;
+                }).collect(Collectors.toList());
+
+        criteria.setHasMore(posts.size() > criteria.getRowCount());
+        postWithPagingDTO.setCriteria(criteria);
+
+        if (criteria.isHasMore()) {
+            posts.remove(posts.size() - 1);
+        }
+
+        posts.forEach(post -> post.setCreatedDatetime(DateUtils.toRelativeTime(post.getCreatedDatetime())));
+        postWithPagingDTO.setPosts(posts);
+        return postWithPagingDTO;
+    }
+
+    // 마이페이지 헤더의 "게시물 수"는 목록과 같은 기준으로 보여줘야 한다.
+    // 즉 현재 로그인 사용자의 active 상태 일반 게시글 개수만 반환하고,
+    // 댓글이나 상품 게시글은 기존 selectTotalByMemberId 쿼리 조건에 따라 제외한다.
+    // count 전용 메서드를 분리해 두면 템플릿 진입 시 목록 1페이지를 억지로 조회하지 않아도 된다.
+    public int getMyPostCount(Long memberId) {
+        return postDAO.findTotalByMemberId(memberId);
+    }
+
     //    게시글 단건 조회
     @Cacheable(value="post", key="'id:' + #id + ':memberId:' + #memberId")
     public PostDTO getDetail(Long id, Long memberId) {
@@ -153,6 +206,7 @@ public class PostService {
     }
 
     //    게시글 수정
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void update(PostDTO postDTO) {
         postDAO.setPost(postDTO.toPostVO());
 
@@ -219,11 +273,13 @@ public class PostService {
     }
 
     //    게시글 삭제 = 상태 inactive로.
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void delete(Long id) {
         postDAO.delete(id);
     }
 
 //    댓글 작성
+    @CacheEvict(value = {"post:list", "post", "page:search"}, allEntries = true)
     public void writeReply(PostDTO postDTO) {
         postDAO.save(postDTO);
     }

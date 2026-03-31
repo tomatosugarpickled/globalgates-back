@@ -1971,6 +1971,43 @@ window.onload = function () {
     let myProductCheckScroll = true;
     let myProductHasMore = true;
     let myProductLoaded = false;
+    let myLikedPage = 1;
+    let myLikedCheckScroll = true;
+    let myLikedHasMore = true;
+    let myLikedLoaded = false;
+
+    // main의 Connected 버튼 UX를 마이페이지 요약 카드에만 좁혀 이식한다.
+    // 이 페이지는 "이미 팔로우 중인 사람"만 렌더링하므로,
+    // default/connected 전체 상태 머신 대신 "연결 끊기 확인 → 언팔로우" 흐름만 유지하면 충분하다.
+    const disconnectModal = document.getElementById("disconnectModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalConfirm = document.getElementById("modalConfirm");
+    const modalCancel = document.getElementById("modalCancel");
+    let disconnectTarget = null;
+
+    function openDisconnectModal(btn) {
+        if (!disconnectModal || !modalTitle) {
+            return;
+        }
+
+        disconnectTarget = btn;
+
+        // 카드 루트에 handle을 저장해 두면,
+        // main처럼 클릭 시점에 모달 제목만 동적으로 맞춰 바꿀 수 있다.
+        const card = btn.closest(".Mypage-Follow-Card");
+        const handle = card?.dataset.handle || "";
+
+        modalTitle.textContent = handle
+            ? `${handle} 님과의 연결을 끊으시겠습니까?`
+            : "연결을 끊으시겠습니까?";
+
+        disconnectModal.classList.add("active");
+    }
+
+    function closeDisconnectModal() {
+        disconnectModal?.classList.remove("active");
+        disconnectTarget = null;
+    }
 
     // 네비게이션 탭 (마이페이지)
     const navBarDivs = document.querySelectorAll(".Profile-Tab-Item");
@@ -2021,6 +2058,17 @@ window.onload = function () {
 
             if (nav.classList.contains("Likes")) {
                 activeProfileTab = "Likes";
+
+                // Likes 탭도 다른 목록 탭과 같은 규칙으로 첫 진입 시에만 1페이지를 로드한다.
+                // 이후에는 이미 렌더링된 목록을 유지하고,
+                // 추가 페이지는 아래 스크롤 이벤트에서 이어 붙인다.
+                if (!myLikedLoaded) {
+                    service.getMyLikedPosts(myLikedPage, (data) => {
+                        layout.showMyLikedPostList(data, myLikedPage);
+                        myLikedHasMore = data.criteria.hasMore;
+                    });
+                    myLikedLoaded = true;
+                }
             }
         });
     });
@@ -2060,6 +2108,20 @@ window.onload = function () {
 
             setTimeout(() => {
                 myProductCheckScroll = true;
+            }, 1000);
+        }
+
+        if (activeProfileTab === "Likes" && myLikedCheckScroll && myLikedHasMore) {
+            myLikedCheckScroll = false;
+            myLikedPage++;
+
+            service.getMyLikedPosts(myLikedPage, (data) => {
+                layout.showMyLikedPostList(data, myLikedPage);
+                myLikedHasMore = data.criteria.hasMore;
+            });
+
+            setTimeout(() => {
+                myLikedCheckScroll = true;
             }, 1000);
         }
     });
@@ -3722,6 +3784,61 @@ window.onload = function () {
         },
         true,
     );
+
+    // 마이페이지에는 main 전체처럼 여러 종류의 Connect 버튼이 섞여 있지 않다.
+    // 그래서 이벤트 위임 범위를 사이드바의 연결 버튼으로만 한정해서,
+    // 다른 탭/모달 버튼과 충돌하지 않게 한다.
+    document.addEventListener("click", (e) => {
+        const followBtn = e.target.closest(".Mypage-Follow-Button.connect-btn.connected");
+        if (!followBtn) {
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        openDisconnectModal(followBtn);
+    });
+
+    modalConfirm?.addEventListener("click", async () => {
+        if (!disconnectTarget) {
+            return;
+        }
+
+        const followerId = disconnectTarget.dataset.loginMemberId;
+        const followingId = disconnectTarget.dataset.followingId;
+        const card = disconnectTarget.closest(".Mypage-Follow-Card");
+
+        if (!followerId || !followingId) {
+            closeDisconnectModal();
+            return;
+        }
+
+        try {
+            // 서버 반영이 성공한 뒤에만 카드를 제거해야
+            // 화면이 실제 팔로우 상태와 어긋나지 않는다.
+            await service.unfollow(followerId, followingId);
+            card?.remove();
+
+            // 요약 카드가 모두 비면 "더 보기" 링크도 의미가 없어지므로 같이 걷어낸다.
+            if (!document.querySelector(".Mypage-Follow-Card")) {
+                document.querySelector(".Sidebar-Card-More")?.remove();
+            }
+        } catch (error) {
+            alert(error.message || "팔로우 해제 중 오류가 발생했습니다.");
+        } finally {
+            closeDisconnectModal();
+        }
+    });
+
+    modalCancel?.addEventListener("click", () => {
+        closeDisconnectModal();
+    });
+
+    disconnectModal?.addEventListener("click", (e) => {
+        if (e.target === disconnectModal) {
+            closeDisconnectModal();
+        }
+    });
 
     document.querySelector(".Header-Back-Btn").addEventListener("click", (e) => {
         e.preventDefault();

@@ -31,11 +31,17 @@ public interface PostMapper {
     //    게시글 목록 조회 (mypage의 memberId)
     public List<PostDTO> selectAllByMemberId(@Param("criteria") Criteria criteria, @Param("memberId") Long memberId);
 
+    //    좋아요한 게시글 목록 조회 (mypage Likes 탭)
+    public List<PostDTO> selectLikedPostsByMemberId(@Param("criteria") Criteria criteria, @Param("memberId") Long memberId);
+
     //    게시글 전체 개수
     public int selectTotal();
 
     //    member가 가진 게시글 전체 개수
     public int selectTotalByMemberId(@Param("memberId") Long memberId);
+
+    //    member가 좋아요한 게시글 전체 개수
+    public int selectLikedPostTotalByMemberId(@Param("memberId") Long memberId);
 
     //    게시글 검색 조회
     public List<PostDTO> selectBySearch(@Param("criteria") Criteria criteria, @Param("postSearch") PostSearch postSearch);

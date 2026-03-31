@@ -1,11 +1,13 @@
 package com.app.globalgates.controller.mypage;
 
 import com.app.globalgates.auth.JwtTokenProvider;
+import com.app.globalgates.dto.FollowDTO;
 import com.app.globalgates.dto.MemberDTO;
 import com.app.globalgates.dto.MemberProfileFileDTO;
 import com.app.globalgates.repository.MemberProfileFileDAO;
 import com.app.globalgates.service.FollowService;
 import com.app.globalgates.service.MemberService;
+import com.app.globalgates.service.PostService;
 import com.app.globalgates.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class MypageController {
     private final MemberProfileFileDAO memberProfileFileDAO;
     private final S3Service s3Service;
     private final FollowService followService;
+    private final PostService postService;
 
     @GetMapping("/mypage")
     public String goToMypage(HttpServletRequest request, Model model) {
@@ -61,6 +67,39 @@ public class MypageController {
         // 이번 단계에서는 count 전용 쿼리를 새로 만들지 않고 목록 크기만 사용해서 가장 가볍게 연결한다.
         int connectingCount = followService.getFollowings(member.getId()).size();
         int connectorCount = followService.getFollowers(member.getId()).size();
+        int myPostCount = postService.getMyPostCount(member.getId());
+
+        // 사이드바의 "내가 팔로우한 사업자들"은 전체 팔로잉 화면이 아니라 요약 영역이다.
+        // 따라서 새 API나 별도 페이징 로직을 만들지 않고, 기존 follow 도메인의 팔로잉 목록을
+        // 그대로 재사용하되 현재 더미 카드 개수와 맞춰 최근 2명만 잘라서 전달한다.
+        List<FollowDTO> myFollowings = new ArrayList<>(
+                followService.getFollowings(member.getId())
+                        .stream()
+                        .limit(2)
+                        .toList()
+        );
+
+        // followMapper는 프로필 파일명을 raw S3 key 형태로 내려주므로,
+        // mypage의 다른 이미지 처리와 동일하게 컨트롤러에서 presigned URL로 바꿔서 템플릿에 전달한다.
+        // 이 가공은 화면 표현 전용이며 follow 저장/조회 로직 자체는 바꾸지 않는다.
+        myFollowings.forEach(following -> {
+            String profileFileName = following.getMemberProfileFileName();
+
+            if (profileFileName == null || profileFileName.isBlank()) {
+                following.setMemberProfileFileName("/images/main/global-gates-logo.png");
+                return;
+            }
+
+            try {
+                following.setMemberProfileFileName(
+                        s3Service.getPresignedUrl(profileFileName, java.time.Duration.ofMinutes(10))
+                );
+            } catch (java.io.IOException e) {
+                // presigned URL 생성 실패가 mypage 전체 진입 실패로 이어지지 않도록
+                // 해당 사용자 이미지에만 기본 이미지를 적용한다.
+                following.setMemberProfileFileName("/images/main/global-gates-logo.png");
+            }
+        });
 
         // mypage 템플릿에서는 member + 이미지 url 모델을 같이 사용한다.
         model.addAttribute("member", member);
@@ -68,6 +107,8 @@ public class MypageController {
         model.addAttribute("bannerImageUrl", bannerImageUrl);
         model.addAttribute("connectingCount", connectingCount);
         model.addAttribute("connectorCount", connectorCount);
+        model.addAttribute("myPostCount", myPostCount);
+        model.addAttribute("myFollowings", myFollowings);
         return "mypage/mypage";
     }
 }

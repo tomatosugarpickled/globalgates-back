@@ -30,7 +30,8 @@
                             <span class="Header-Name-Text" th:text="${member.memberNickname ?: member.memberName ?: ''}"></span>
                         </div>
                         <div class="Header-Post-Count">
-                            <span class="Header-Post-Count-Text">0 게시물</span>
+                            <span class="Header-Post-Count-Text"
+                                  th:text="|${myPostCount} 게시물|">0 게시물</span>
                         </div>
                     </div>
                 </div>
@@ -309,59 +310,10 @@
             </div>
 
             <!-- 좋아요 목록 -->
-            <div class="Profile-Content Likes">
+            <div class="Profile-Content Likes off">
                 <div class="Profile-Content-List">
-                    <article class="Post-Card" data-type="text">
-                        <div class="Post-Avatar-Wrapper">
-                            <div class="Post-Avatar">텍</div>
-                        </div>
-                        <div class="Post-Body">
-                            <header class="Post-Header">
-                                <div class="Post-Identity">
-                                    <strong class="Post-Name">텍스트유저</strong>
-                                    <span class="Post-Handle">@textonly</span>
-                                    <span class="Post-Time">1시간</span>
-                                </div>
-                                <button class="Post-More-Button" type="button" aria-label="더 보기">
-                                    <svg viewBox="0 0 24 24" class="Post-More-Icon" aria-hidden="true">
-                                        <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
-                                    </svg>
-                                </button>
-                            </header>
-                            <p class="Post-Text">텍스트만 있는 게시글입니다.</p>
-                            <footer class="Post-Metrics">
-                                <div class="Post-Action-Bar">
-                                    <button class="Post-Action-Btn Reply" type="button" aria-label="답글 3">
-                                        <svg viewBox="0 0 24 24" class="Post-Action-Icon" aria-hidden="true">
-                                            <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"/>
-                                        </svg>
-                                        <span class="Post-Action-Count">3</span></button>
-                                    <button class="Post-Action-Btn Like" type="button" aria-label="좋아요 17">
-                                        <svg viewBox="0 0 24 24" class="Post-Action-Icon" aria-hidden="true">
-                                            <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/>
-                                        </svg>
-                                        <span class="Post-Action-Count">17</span></button>
-                                    <button class="Post-Action-Btn" type="button" aria-label="조회수 204">
-                                        <svg viewBox="0 0 24 24" class="Post-Action-Icon" aria-hidden="true">
-                                            <path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"/>
-                                        </svg>
-                                        <span class="Post-Action-Count">204</span></button>
-                                    <div class="Post-Action-Right">
-                                        <button class="Post-Action-Btn Bookmark" type="button" aria-label="북마크">
-                                            <svg viewBox="0 0 24 24" class="Post-Action-Icon" aria-hidden="true">
-                                                <path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"/>
-                                            </svg>
-                                        </button>
-                                        <button class="Post-Action-Btn Share" type="button" aria-label="공유">
-                                            <svg viewBox="0 0 24 24" class="Post-Action-Icon" aria-hidden="true">
-                                                <path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </footer>
-                        </div>
-                    </article>
+                    <!-- Likes 탭도 더미 카드를 두지 않고 layout.js가 실제 목록을 뿌린다. -->
+                    <!-- 첫 페이지에 데이터가 없으면 layout.js가 "좋아요한 게시글이 없습니다." 문구를 넣는다. -->
                 </div>
             </div>
 
@@ -378,35 +330,63 @@
                 <div class="Sidebar-Card-Header">
                     <span class="Sidebar-Card-Title">내가 팔로우한 사업자들</span>
                 </div>
-                <div class="Sidebar-User-Cell" data-testid="UserCell">
-                    <a href="" class="Sidebar-User-Avatar-Link">
-                        <div class="Sidebar-User-Avatar-Circle">
-                            <img src="" class="Sidebar-User-Avatar-Img"/>
+                <!-- 이 영역은 본문 탭처럼 동적 페이징되는 목록이 아니라, mypage 진입 시 즉시 보여줄 요약 카드다.
+                     따라서 별도 JS/API를 추가하지 않고 서버에서 전달한 팔로잉 목록을 Thymeleaf로 바로 렌더링한다. -->
+                <th:block th:if="${#lists.isEmpty(myFollowings)}">
+                    <div class="Sidebar-User-Cell">
+                        <div class="Sidebar-User-Info">
+                            <span class="Sidebar-User-Name">아직 팔로우한 사업자가 없습니다.</span>
+                            <span class="Sidebar-User-Handle">새로운 사업자를 연결해보세요.</span>
+                            <!-- 빈 상태에서 다음 행동으로 바로 이어질 수 있도록
+                                 탐색 화면으로 이동하는 CTA를 같은 카드 안에 둔다.
+                                 기존 사이드바 버튼 스타일을 재사용해서 다른 카드와 시각적 톤을 맞춘다. -->
+                            <button type="button"
+                                    class="Sidebar-Follow-Btn Sidebar-Follow-Btn--Discover"
+                                    th:onclick="|window.location.href='@{/explore}'|">
+                                <span class="Sidebar-Follow-Btn-Text">사업가 찾기</span>
+                            </button>
+                        </div>
+                    </div>
+                </th:block>
+
+                <!-- main의 팔로우 추천 카드와 같은 시각 구조를 가져오되,
+                     마이페이지에서는 "이미 내가 팔로우한 회원" 목록만 노출한다.
+                     그래서 카드 루트에는 모달 문구와 언팔로우 요청에 필요한 최소 식별자만 data-*로 심어 둔다. -->
+                <div class="Mypage-Follow-Card"
+                     data-testid="UserCell"
+                     th:attr="data-following-id=${following.followingId}, data-handle=${following.memberHandle}"
+                     th:each="following : ${myFollowings}">
+
+                    <a href="" class="Mypage-Follow-Avatar-Link">
+                        <div class="Mypage-Follow-Avatar">
+                            <img th:src="${following.memberProfileFileName}"
+                                 src=""
+                                 class="Mypage-Follow-Avatar-Img"
+                                 th:alt="${following.memberNickname ?: following.memberHandle}"/>
                         </div>
                     </a>
-                    <div class="Sidebar-User-Info">
-                        <span class="Sidebar-User-Name">이재명</span>
-                        <span class="Sidebar-User-Handle">@Jaemyung_Lee</span>
-                    </div>
-                    <button type="button" class="Sidebar-Follow-Btn">
-                        <span class="Sidebar-Follow-Btn-Text">Approved</span>
-                    </button>
-                </div>
-                <div class="Sidebar-User-Cell" data-testid="UserCell">
-                    <a href="" class="Sidebar-User-Avatar-Link">
-                        <div class="Sidebar-User-Avatar-Circle">
-                            <img src="" class="Sidebar-User-Avatar-Img"/>
+
+                    <div class="Mypage-Follow-Info">
+                        <div class="Mypage-Follow-Top">
+                            <div class="Mypage-Follow-Name-Group">
+                                <div class="Mypage-Follow-Name"
+                                     th:text="${following.memberNickname ?: ''}">회원 이름</div>
+                                <div class="Mypage-Follow-Handle"
+                                     th:text="${following.memberHandle ?: ''}">@memberHandle</div>
+                            </div>
+
+                            <!-- 버튼 클래스는 mypage 진입점이라는 맥락을 유지하기 위해 Mypage-Follow-Button을 남기되,
+                                 실제 시각 결과는 main의 connect-btn connected와 완전히 같게 맞춘다.
+                                 이렇게 하면 이후 스타일 비교나 유지보수 시에도 "어느 화면을 기준으로 삼았는지"가 분명하다. -->
+                            <button type="button"
+                                    class="Mypage-Follow-Button connect-btn connected"
+                                    th:attr="data-login-member-id=${member.id}, data-following-id=${following.followingId}">
+                                Connected
+                            </button>
                         </div>
-                    </a>
-                    <div class="Sidebar-User-Info">
-                        <span class="Sidebar-User-Name">살림하는 도로로</span>
-                        <span class="Sidebar-User-Handle">@Happy48791</span>
                     </div>
-                    <button type="button" class="Sidebar-Follow-Btn">
-                        <span class="Sidebar-Follow-Btn-Text">Approved</span>
-                    </button>
                 </div>
-                <div class="Sidebar-Card-More">
+                <div class="Sidebar-Card-More" th:if="${!#lists.isEmpty(myFollowings)}">
                     <a href="" class="Sidebar-Card-More-Link">더 보기</a>
                 </div>
             </div>
@@ -429,6 +409,20 @@
                     <a href="" class="Sidebar-Card-More-Link">더 보기</a>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- main의 "연결 끊기" 확인 모달을 마이페이지에도 같은 톤으로 재사용한다.
+     마이페이지는 팔로잉 카드 요약 영역이므로, 여기서는 모달 본문을 정적으로 두고
+     제목만 클릭한 카드의 handle에 맞춰 event.js에서 바꿔 끼운다. -->
+<div class="modalOverlay" id="disconnectModal">
+    <div class="modalPanel">
+        <h2 class="modalTitle" id="modalTitle">연결을 끊으시겠습니까?</h2>
+        <p class="modalText">상대방은 알림을 받지 않습니다.</p>
+        <div class="modalActions">
+            <button class="modalConfirm" id="modalConfirm">연결 끊기</button>
+            <button class="modalCancel" id="modalCancel">취소</button>
         </div>
     </div>
 </div>
