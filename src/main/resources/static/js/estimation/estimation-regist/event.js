@@ -32,6 +32,8 @@ window.addEventListener("load", () => {
     const titleInput = document.querySelector('input[name="postName"]');
     const summaryInput = document.querySelector('input[name="postPrice"]');
     const contentInput = document.querySelector('textarea[name="postContent"]');
+    const tagToggleButton = document.getElementById("composerTagToggle");
+    const tagEditor = document.getElementById("composerTagEditor");
     const tagInput = document.getElementById("devTags");
     const tagsHiddenInput = document.querySelector('input[name="tags"]');
     const locationHiddenInput = document.querySelector('input[name="location"]');
@@ -77,6 +79,50 @@ window.addEventListener("load", () => {
             .map((tag) => `#${tag.tagName}`)
             .join(", ");
         tagsHiddenInput.value = normalized;
+    };
+
+    const syncTagEditorState = () => {
+        if (!tagToggleButton || !tagEditor) {
+            return;
+        }
+
+        const isOpen = !tagEditor.hidden;
+        tagToggleButton.setAttribute("aria-expanded", String(isOpen));
+        tagToggleButton.textContent = isOpen ? "태그 닫기" : "태그 추가";
+    };
+
+    const openTagEditor = () => {
+        if (!tagEditor) {
+            return;
+        }
+
+        tagEditor.hidden = false;
+        syncTagEditorState();
+        window.requestAnimationFrame(() => {
+            tagInput?.focus();
+        });
+    };
+
+    const closeTagEditor = () => {
+        if (!tagEditor) {
+            return;
+        }
+
+        tagEditor.hidden = true;
+        syncTagEditorState();
+    };
+
+    const toggleTagEditor = () => {
+        if (!tagEditor) {
+            return;
+        }
+
+        if (tagEditor.hidden) {
+            openTagEditor();
+            return;
+        }
+
+        closeTagEditor();
     };
 
     const syncLocationHiddenInput = () => {
@@ -508,6 +554,14 @@ window.addEventListener("load", () => {
         syncHiddenTags();
         syncSubmitState();
     });
+    tagInput?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            syncHiddenTags();
+            closeTagEditor();
+        }
+    });
+    tagToggleButton?.addEventListener("click", toggleTagEditor);
 
     locationDisplayButton?.addEventListener("click", () => {
         void openLocationPanel();
@@ -569,6 +623,7 @@ window.addEventListener("load", () => {
     document.getElementById("composerModalOverlay")?.addEventListener("click", closeComposerModal);
 
     syncHiddenTags();
+    syncTagEditorState();
     syncSubmitState();
     syncProductSelection();
     renderSelectedProduct();

@@ -197,6 +197,7 @@ body.modal-open {
 }
 
 .Input-Content-Input {
+    display: flex;
     flex: 1 1 0%;
     flex-direction: row;
     justify-content: center;
@@ -307,8 +308,20 @@ body.modal-open {
 .selectedProductPreview[hidden],
 .productSelectModal[hidden],
 .share-sheet[hidden],
-.tweet-modal__location-view[hidden] {
+.tweet-modal__location-view[hidden],
+#composerLocationView[hidden] {
     display: none;
+}
+
+#composerLocationView {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: rgba(15, 20, 25, 0.52);
 }
 
 #composerLocation {
@@ -319,6 +332,12 @@ body.modal-open {
 
 .estimationLocationModal {
     width: min(640px, calc(100vw - 32px));
+    height: min(720px, calc(100vh - 48px));
+    max-height: calc(100vh - 48px);
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: rgba(15, 20, 25, 0.28) 0 12px 48px;
 }
 
 .estimationLocationSearch {
