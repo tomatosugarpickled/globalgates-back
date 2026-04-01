@@ -990,7 +990,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 await settingService.deactivateAccount(password);
                 await settingService.logout();
-                window.location.href = "/";
+                window.location.href = "/member/join";
             } catch (error) {
                 passwordMessage.hidden = false;
                 passwordMessage.textContent =

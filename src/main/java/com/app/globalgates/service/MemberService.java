@@ -2,6 +2,7 @@ package com.app.globalgates.service;
 
 import com.app.globalgates.aop.annotation.LogStatusWithReturn;
 import com.app.globalgates.common.enumeration.FileContentType;
+import com.app.globalgates.common.enumeration.Status;
 import com.app.globalgates.common.enumeration.ProfileImageType;
 import com.app.globalgates.common.exception.MemberLoginFailException;
 import com.app.globalgates.common.exception.MemberNotFoundException;
@@ -11,6 +12,7 @@ import com.app.globalgates.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -206,7 +208,7 @@ public class MemberService {
     }
 
     @Transactional
-    @CacheEvict(value="member", key="#loginId")
+    @CachePut(value="member", key="#loginId")
     public void updateHandle(String loginId, String memberHandle) {
         MemberDTO member = memberDAO.findMemberByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
@@ -237,7 +239,7 @@ public class MemberService {
     }
 
     @Transactional
-    @CacheEvict(value="member", key="#loginId")
+    @CachePut(value="member", key="#loginId")
     public void updatePhone(String loginId, String memberPhone) {
         MemberDTO member = memberDAO.findMemberByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
@@ -265,7 +267,7 @@ public class MemberService {
     }
 
     @Transactional
-    @CacheEvict(value="member", key="#loginId")
+    @CachePut(value="member", key="#loginId")
     public void updateEmail(String loginId, String memberEmail) {
         MemberDTO member = memberDAO.findMemberByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
@@ -296,7 +298,7 @@ public class MemberService {
     // getMember(loginId)는 캐시를 사용하므로 저장 후에는 현재 사용자의 member 캐시를 비워
     // 다음 setting 진입이나 새로고침 시 최신 언어가 다시 내려오게 만든다.
     @Transactional
-    @CacheEvict(value="member", key="#loginId")
+    @CachePut(value="member", key="#loginId")
     public void updateLanguage(String loginId, String memberLanguage) {
         MemberDTO member = memberDAO.findMemberByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
@@ -333,6 +335,64 @@ public class MemberService {
         }
 
         memberDAO.softDelete(member.getId());
+    }
+
+    // 재활성화는 active 조회를 쓰지 않고, 상태와 무관한 로그인 식별값 조회로 시작해야 한다.
+    // 그래야 inactive 회원을 일반 로그인과 분리해서 별도 복구 흐름으로 보낼 수 있다.
+    public MemberDTO getInactiveMemberForReactivation(String loginId, String memberPassword) {
+        MemberDTO member = memberDAO.findMemberByLoginIdAnyStatus(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("입력한 정보가 일치하지 않습니다."));
+
+        if (member.getMemberStatus() != Status.INACTIVE) {
+            throw new IllegalArgumentException("재활성화 가능한 계정을 찾지 못했습니다.");
+        }
+
+        if (!passwordEncoder.matches(memberPassword, member.getMemberPassword())) {
+            throw new IllegalArgumentException("입력한 정보가 일치하지 않습니다.");
+        }
+
+        return member;
+    }
+
+    public String getMaskedReactivationTarget(String loginId, MemberDTO member) {
+        // 재활성화 안내 화면은 실제 연락처 전체를 보여줄 필요가 없으므로
+        // 로그인에 사용한 식별자 채널만 남기고 마스킹된 문자열로 내려준다.
+        if (loginId != null && loginId.contains("@")) {
+            String email = member.getMemberEmail();
+
+            if (email == null || !email.contains("@")) {
+                return "가입된 이메일";
+            }
+
+            String[] parts = email.split("@", 2);
+            String local = parts[0];
+
+            if (local.length() <= 2) {
+                return local.charAt(0) + "*@" + parts[1];
+            }
+
+            return local.substring(0, 2)
+                    + "*".repeat(local.length() - 2)
+                    + "@"
+                    + parts[1];
+        }
+
+        String phone = member.getMemberPhone();
+
+        if (phone == null || phone.length() < 8) {
+            return "가입된 휴대폰 번호";
+        }
+
+        return phone.substring(0, 3) + "-****-" + phone.substring(phone.length() - 4);
+    }
+
+    // inactive 계정 복구는 상태만 active로 되돌리면 되고,
+    // 이후 인증/토큰 발급은 기존 로그인과 같은 보안 흐름을 컨트롤러가 이어서 마무리한다.
+    @Transactional
+    @CacheEvict(value="member", key="#loginId")
+    public void reactivateMember(String loginId, String memberPassword) {
+        MemberDTO member = getInactiveMemberForReactivation(loginId, memberPassword);
+        memberDAO.reactivate(member.getId());
     }
 
     //    로그인

@@ -1,5 +1,6 @@
 package com.app.globalgates.service;
 
+import com.app.globalgates.common.enumeration.Status;
 import com.app.globalgates.dto.MemberDTO;
 import com.app.globalgates.repository.BusinessMemberDAO;
 import com.app.globalgates.repository.CategoryDAO;
@@ -160,5 +161,20 @@ class MemberServicePasswordTest {
         memberService.deactivateMember("tester@example.com", "plain-password");
 
         verify(memberDAO).softDelete(7L);
+    }
+
+    @Test
+    void reactivateMember_restoresInactiveMemberWhenPasswordMatches() {
+        MemberDTO member = new MemberDTO();
+        member.setId(7L);
+        member.setMemberPassword("$2a$10$encodedPassword");
+        member.setMemberStatus(Status.INACTIVE);
+
+        when(memberDAO.findMemberByLoginIdAnyStatus("tester@example.com")).thenReturn(Optional.of(member));
+        when(passwordEncoder.matches("plain-password", "$2a$10$encodedPassword")).thenReturn(true);
+
+        memberService.reactivateMember("tester@example.com", "plain-password");
+
+        verify(memberDAO).reactivate(7L);
     }
 }

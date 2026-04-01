@@ -28,7 +28,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "비밀번호 변경 실패");
@@ -75,7 +75,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "사용자 아이디 변경 실패");
@@ -131,7 +131,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "휴대폰 번호 저장 실패");
@@ -184,7 +184,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "이메일 저장 실패");
@@ -206,7 +206,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "언어 저장 실패");
@@ -228,7 +228,7 @@ const settingService = (() => {
             }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        const result = await response.json();
 
         if (!response.ok) {
             throw new Error(result.message || "계정 비활성화 실패");

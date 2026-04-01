@@ -57,6 +57,15 @@ a {
     display: none !important;
 }
 
+.gmpx-split-layout {
+    height: 500px;
+    width: 600px;
+}
+
+.gmpx-split-layout:not(:defined) {
+    visibility: hidden;
+}
+
 .settings-page {
     display: flex;
     justify-content: center;

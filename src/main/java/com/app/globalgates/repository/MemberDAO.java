@@ -29,6 +29,10 @@ public class MemberDAO {
     public Optional<MemberDTO> findMemberByLoginId(String loginId){
         return memberMapper.selectMemberByLoginId(loginId);
     }
+    //  상태와 무관하게 이메일 혹은 핸드폰 조회
+    public Optional<MemberDTO> findMemberByLoginIdAnyStatus(String loginId){
+        return memberMapper.selectMemberByLoginIdAnyStatus(loginId);
+    }
     //  이메일 유효성 검사
     public Optional<MemberDTO> findMemberByMemberEmail(String memberEmail){
         return memberMapper.selectMemberByMemberEmail(memberEmail);
@@ -64,6 +68,10 @@ public class MemberDAO {
     //  memberId로 soft delete
     public void softDelete(Long memberId){
         memberMapper.softDelete(memberId);
+    }
+    //  memberId로 re-activate
+    public void reactivate(Long memberId){
+        memberMapper.reactivate(memberId);
     }
     //  프로필 수정
     public void update(MemberDTO memberDTO){

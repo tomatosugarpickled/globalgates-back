@@ -19,6 +19,8 @@ public interface MemberMapper {
     public Optional<MemberDTO> selectMemberForLogin(MemberVO memberVO);
     //  입력받은 이메일 혹은 핸드폰번호를 조회
     Optional<MemberDTO> selectMemberByLoginId(String loginId);
+    //  상태와 무관하게 입력받은 이메일 혹은 핸드폰번호를 조회
+    Optional<MemberDTO> selectMemberByLoginIdAnyStatus(String loginId);
     //  이메일로 조회
     public Optional<MemberDTO> selectMemberByMemberEmail(String memberEmail);
     //  핸드폰 번호로 조회
@@ -37,6 +39,8 @@ public interface MemberMapper {
     public void delete(Long memberId);
     //  memberId로 soft delete
     public void softDelete(Long memberId);
+    //  memberId로 active 복구
+    public void reactivate(Long memberId);
     //  프로필 수정
     public void update(MemberDTO memberDTO);
     //  비밀번호 변경
