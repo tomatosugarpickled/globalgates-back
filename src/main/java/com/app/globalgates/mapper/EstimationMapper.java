@@ -2,6 +2,7 @@ package com.app.globalgates.mapper;
 
 import com.app.globalgates.common.pagination.Criteria;
 import com.app.globalgates.dto.EstimationDTO;
+import com.app.globalgates.dto.EstimationExpertDTO;
 import com.app.globalgates.dto.EstimationTagDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,11 +14,14 @@ import java.util.Optional;
 public interface EstimationMapper {
     void insert(EstimationDTO estimationDTO);
 
-    int selectTotal();
+    int selectTotal(@Param("receiverId") Long receiverId);
 
-    List<EstimationDTO> selectAll(@Param("criteria") Criteria criteria);
+    List<EstimationDTO> selectAll(@Param("criteria") Criteria criteria, @Param("receiverId") Long receiverId);
 
     Optional<EstimationDTO> selectById(Long id);
+
+    List<EstimationExpertDTO> selectExpertsForRequest(@Param("memberId") Long memberId,
+                                                      @Param("keyword") String keyword);
 
     void insertTag(EstimationTagDTO estimationTagDTO);
 

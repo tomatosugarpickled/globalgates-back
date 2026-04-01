@@ -6,4 +6,5 @@
 -- delete from tbl_bookmark a using tbl_bookmark b
 -- where a.id > b.id and a.member_id = b.member_id and a.post_id = b.post_id;
 
+
 alter table tbl_bookmark add constraint uq_bookmark_member_post unique (member_id, post_id);

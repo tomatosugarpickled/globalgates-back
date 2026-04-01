@@ -2,6 +2,7 @@ package com.app.globalgates.repository;
 
 import com.app.globalgates.common.pagination.Criteria;
 import com.app.globalgates.dto.EstimationDTO;
+import com.app.globalgates.dto.EstimationExpertDTO;
 import com.app.globalgates.mapper.EstimationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,15 +19,19 @@ public class EstimationDAO {
         estimationMapper.insert(estimationDTO);
     }
 
-    public int findTotal() {
-        return estimationMapper.selectTotal();
+    public int findTotal(Long receiverId) {
+        return estimationMapper.selectTotal(receiverId);
     }
 
-    public List<EstimationDTO> findAll(Criteria criteria) {
-        return estimationMapper.selectAll(criteria);
+    public List<EstimationDTO> findAll(Criteria criteria, Long receiverId) {
+        return estimationMapper.selectAll(criteria, receiverId);
     }
 
     public Optional<EstimationDTO> findById(Long id) {
         return estimationMapper.selectById(id);
+    }
+
+    public List<EstimationExpertDTO> findExpertsForRequest(Long memberId, String keyword) {
+        return estimationMapper.selectExpertsForRequest(memberId, keyword);
     }
 }

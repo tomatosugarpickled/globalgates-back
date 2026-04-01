@@ -336,7 +336,7 @@ create type estimation_status as enum (
 'requesting'
 'reject'     -- 취소
 );
-
+select * from tbl_estimation;
 create table tbl_estimation (
 id           bigint            generated always as identity primary key,  -- pk | 견적 고유 id (자동 증가)
 requester_id bigint            not null,  -- fk → tbl_member.id | 견적 요청자

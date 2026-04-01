@@ -8,9 +8,6 @@ window.addEventListener("load", () => {
     const productSelectClose = document.getElementById("productSelectClose");
     const productSelectConfirm = document.getElementById("productSelectConfirm");
     const productSelectList = document.getElementById("productSelectList");
-    const productItems = Array.from(
-        document.querySelectorAll("#productSelectList .productSelectModal__item"),
-    );
     const productSelectEmpty = document.getElementById("productSelectEmpty");
     const selectedProductPreview = document.getElementById("selectedProductPreview");
     const selectedProductImage = document.getElementById("selectedProductImage");
@@ -23,18 +20,21 @@ window.addEventListener("load", () => {
     const linkedProfileEmail = document.getElementById("composerLinkedProfileEmail");
     const shareChatSheet = document.getElementById("estimationShareChatSheet");
     const shareChatSearch = document.getElementById("estimationShareChatSearch");
+    const shareChatUserList = document.getElementById("estimationShareChatUserList");
+    const shareChatEmpty = document.getElementById("estimationShareChatEmpty");
     const shareChatCloseButtons = Array.from(
         document.querySelectorAll("[data-estimation-share-close]"),
-    );
-    const shareUserButtons = Array.from(
-        document.querySelectorAll("#estimationShareChatUserList .share-sheet__user"),
     );
     const titleInput = document.querySelector('input[name="postName"]');
     const summaryInput = document.querySelector('input[name="postPrice"]');
     const contentInput = document.querySelector('textarea[name="postContent"]');
-    const tagToggleButton = document.getElementById("composerTagToggle");
-    const tagEditor = document.getElementById("composerTagEditor");
-    const tagInput = document.getElementById("devTags");
+    const categoryScroll = document.getElementById("categoryScroll");
+    const categoryLeftButton = document.getElementById("scrollLeft");
+    const categoryRightButton = document.getElementById("scrollRight");
+    const composerTagToggle = document.getElementById("composerTagToggle");
+    const composerTagEditor = document.getElementById("composerTagEditor");
+    const productTagInput = document.getElementById("productTag");
+    const tagInput = document.getElementById("composerTagInput");
     const tagsHiddenInput = document.querySelector('input[name="tags"]');
     const locationHiddenInput = document.querySelector('input[name="location"]');
     const composeView = document.getElementById("composerComposeView");
@@ -58,71 +58,111 @@ window.addEventListener("load", () => {
     let mapMarker = null;
     let geocoder = null;
     let mapsLoaderPromise = null;
+    let expertSearchAbortController = null;
+    let productItems = [];
+    let isTagEditorOpen = false;
 
     const safeText = (value, fallback = "") => (value || fallback).trim();
-
-    const parseTags = (value) =>
-        value
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean)
-            .map((tag) => tag.replace(/^#/, ""))
-            .filter((tag, index, array) => array.indexOf(tag) === index)
-            .map((tag) => ({ tagName: tag }));
+    const specialCharRegex = /[\{\}\[\]\?.,;:|\)*~`!^\-_+<>@\#$%&\\=\(\'\"]/;
 
     const syncHiddenTags = () => {
-        if (!tagInput || !tagsHiddenInput) {
+        if (!tagsHiddenInput || !tagInput) {
             return;
         }
 
-        const normalized = parseTags(tagInput.value)
-            .map((tag) => `#${tag.tagName}`)
+        const normalized = Array.from(tagInput.querySelectorAll(".tagDiv"))
+            .map((tagElement) => tagElement.textContent.replace(/^#/, "").trim())
+            .filter(Boolean)
             .join(", ");
         tagsHiddenInput.value = normalized;
     };
+    const originalCategoryChipsHTML = categoryScroll?.innerHTML || "";
 
-    const syncTagEditorState = () => {
-        if (!tagToggleButton || !tagEditor) {
-            return;
+    const getTagElements = () => {
+        if (!tagInput) {
+            return [];
         }
 
-        const isOpen = !tagEditor.hidden;
-        tagToggleButton.setAttribute("aria-expanded", String(isOpen));
-        tagToggleButton.textContent = isOpen ? "태그 닫기" : "태그 추가";
+        return Array.from(tagInput.querySelectorAll(".tagDiv"));
     };
 
-    const openTagEditor = () => {
-        if (!tagEditor) {
+    const syncTagDock = () => {
+        if (!tagInput) {
             return;
         }
 
-        tagEditor.hidden = false;
-        syncTagEditorState();
-        window.requestAnimationFrame(() => {
-            tagInput?.focus();
-        });
+        tagInput.hidden = getTagElements().length === 0;
+        syncHiddenTags();
+        if (composerTagToggle) {
+            composerTagToggle.textContent = isTagEditorOpen ? "태그 닫기" : "태그 추가";
+        }
     };
 
-    const closeTagEditor = () => {
-        if (!tagEditor) {
+    const syncTagEditor = () => {
+        if (!composerTagEditor) {
             return;
         }
 
-        tagEditor.hidden = true;
-        syncTagEditorState();
+        composerTagEditor.hidden = !isTagEditorOpen;
+        if (isTagEditorOpen) {
+            window.requestAnimationFrame(() => productTagInput?.focus());
+        }
     };
 
-    const toggleTagEditor = () => {
-        if (!tagEditor) {
+    const addTag = (rawTag, { alertOnFail = false } = {}) => {
+        if (!tagInput) {
+            return false;
+        }
+
+        const tag = (rawTag || "").trim();
+        if (!tag || tag === "전체") {
+            return false;
+        }
+
+        if (getTagElements().length >= 5) {
+            if (alertOnFail) {
+                alert("태그는 최대 5개까지 추가할 수 있어요");
+            }
+            return false;
+        }
+
+        if (specialCharRegex.test(tag)) {
+            if (alertOnFail) {
+                alert("특수문자는 입력 못해요");
+            }
+            return false;
+        }
+
+        const existingTags = getTagElements().map((tagElement) => tagElement.textContent.trim());
+        const normalizedTag = `#${tag}`;
+        if (existingTags.includes(normalizedTag)) {
+            if (alertOnFail) {
+                alert("중복된 태그가 있어요");
+            }
+            return false;
+        }
+
+        const tagElement = document.createElement("span");
+        tagElement.className = "tagDiv";
+        tagElement.textContent = normalizedTag;
+        tagInput.appendChild(tagElement);
+        isTagEditorOpen = false;
+        if (productTagInput) {
+            productTagInput.value = "";
+        }
+        syncTagEditor();
+        syncTagDock();
+        return true;
+    };
+
+    const checkCategoryScroll = () => {
+        if (!categoryScroll || !categoryLeftButton || !categoryRightButton) {
             return;
         }
 
-        if (tagEditor.hidden) {
-            openTagEditor();
-            return;
-        }
-
-        closeTagEditor();
+        const { scrollLeft, scrollWidth, clientWidth } = categoryScroll;
+        categoryLeftButton.style.display = scrollLeft > 4 ? "flex" : "none";
+        categoryRightButton.style.display = scrollLeft + clientWidth < scrollWidth - 4 ? "flex" : "none";
     };
 
     const syncLocationHiddenInput = () => {
@@ -204,13 +244,111 @@ window.addEventListener("load", () => {
         productSelectConfirm.disabled = !selectedProductId;
     };
 
+    const formatProductMeta = (product) => {
+        const parts = [];
+
+        if (typeof product.productPrice === "number") {
+            parts.push(`₩${product.productPrice.toLocaleString()}`);
+        }
+
+        if (typeof product.productStock === "number") {
+            parts.push(`${product.productStock}개`);
+        }
+
+        return parts.join(" · ");
+    };
+
+    const formatProductTags = (product) => {
+        const hashtags = Array.isArray(product.hashtags) ? product.hashtags : [];
+        if (!hashtags.length) {
+            return "";
+        }
+
+        return hashtags
+            .map((hashtag) => hashtag?.tagName?.trim())
+            .filter(Boolean)
+            .map((tagName) => `#${tagName}`)
+            .join(" ");
+    };
+
+    const renderProductOptions = (products) => {
+        if (!productSelectList) {
+            return;
+        }
+
+        productSelectList.innerHTML = products.map((product) => {
+            const productId = String(product.id ?? "");
+            const productName = safeText(product.postTitle, "상품");
+            const productMeta = formatProductMeta(product);
+            const productTags = formatProductTags(product);
+            const productImage = Array.isArray(product.postFiles) && product.postFiles.length
+                ? product.postFiles[0]
+                : "/images/main/global-gates-logo.png";
+
+            return `
+                <button
+                    type="button"
+                    class="productSelectModal__item"
+                    data-product-id="${productId}"
+                    data-product-name="${productName}"
+                    data-product-meta="${productMeta}"
+                    data-product-image="${productImage}"
+                    aria-pressed="false"
+                >
+                    <span class="productSelectModal__checkbox" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><g><path d="M9 20c-.264 0-.518-.104-.707-.293l-4.785-4.785 1.414-1.414L9 17.586 19.072 7.5l1.42 1.416L9.708 19.7c-.188.19-.442.3-.708.3z"></path></g></svg>
+                    </span>
+                    <img class="productSelectModal__thumb" src="${productImage}" alt="${productName}">
+                    <span class="productSelectModal__item-body">
+                        <strong class="productSelectModal__item-title">${productName}</strong>
+                        <span class="productSelectModal__item-tags">${productTags}</span>
+                        <span class="productSelectModal__item-meta">${productMeta}</span>
+                    </span>
+                </button>
+            `;
+        }).join("");
+
+        productItems = Array.from(
+            productSelectList.querySelectorAll(".productSelectModal__item"),
+        );
+        syncProductSelection();
+    };
+
+    const fetchProducts = async () => {
+        if (!productSelectList) {
+            return;
+        }
+
+        const response = await fetch("/api/estimations/products");
+        if (!response.ok) {
+            throw new Error(`상품 목록 조회 실패 (${response.status})`);
+        }
+
+        const products = await response.json();
+        renderProductOptions(Array.isArray(products) ? products : []);
+    };
+
     const openProductSelectModal = () => {
         if (!productSelectModal) {
             return;
         }
 
-        syncProductSelection();
         productSelectModal.hidden = false;
+        void (async () => {
+            try {
+                await fetchProducts();
+            } catch (error) {
+                console.error(error);
+                if (productSelectList) {
+                    productSelectList.innerHTML = "";
+                }
+                productItems = [];
+                if (productSelectEmpty) {
+                    productSelectEmpty.hidden = false;
+                }
+            }
+            syncProductSelection();
+        })();
     };
 
     const closeProductSelectModal = () => {
@@ -225,6 +363,10 @@ window.addEventListener("load", () => {
         if (shareChatSheet) {
             shareChatSheet.hidden = false;
         }
+        if (shareChatSearch) {
+            shareChatSearch.value = "";
+        }
+        void fetchExperts();
     };
 
     const closeShareChatSheet = () => {
@@ -233,14 +375,81 @@ window.addEventListener("load", () => {
         }
     };
 
-    const syncShareUsers = () => {
-        const keyword = shareChatSearch?.value.trim().toLowerCase() || "";
+    const renderExperts = (experts) => {
+        if (!shareChatUserList) {
+            return;
+        }
 
-        shareUserButtons.forEach((button) => {
-            const name = (button.dataset.shareUserName || "").toLowerCase();
-            const email = (button.dataset.shareUserEmail || "").toLowerCase();
-            button.hidden = Boolean(keyword) && !name.includes(keyword) && !email.includes(keyword);
-        });
+        shareChatUserList.innerHTML = experts.map((expert) => {
+            const displayName = expert.memberNickname || expert.memberName || "전문가";
+            const avatar = expert.memberProfileFileName || "/images/main/lown1.jpg";
+            const handle = expert.memberHandle ? `@${expert.memberHandle}` : expert.memberEmail;
+
+            return `
+                <button
+                    type="button"
+                    class="share-sheet__user"
+                    data-share-user-email="${expert.memberEmail || ""}"
+                    data-share-user-name="${displayName}"
+                    data-share-user-avatar="${avatar}"
+                >
+                    <span class="share-sheet__user-avatar">
+                        <img src="${avatar}" alt="${displayName}" />
+                    </span>
+                    <span class="share-sheet__user-body">
+                        <span class="share-sheet__user-name">${displayName}</span>
+                        <span class="share-sheet__user-handle">${handle || ""}</span>
+                    </span>
+                </button>
+            `;
+        }).join("");
+
+        if (shareChatEmpty) {
+            shareChatEmpty.hidden = experts.length > 0;
+        }
+    };
+
+    const fetchExperts = async () => {
+        if (!shareChatUserList) {
+            return;
+        }
+
+        if (expertSearchAbortController) {
+            expertSearchAbortController.abort();
+        }
+
+        expertSearchAbortController = new AbortController();
+        const keyword = shareChatSearch?.value.trim() || "";
+
+        try {
+            shareChatUserList.innerHTML = "";
+            if (shareChatEmpty) {
+                shareChatEmpty.hidden = true;
+            }
+
+            const query = keyword ? `?keyword=${encodeURIComponent(keyword)}` : "";
+            const response = await fetch(`/api/estimations/experts${query}`, {
+                signal: expertSearchAbortController.signal,
+            });
+
+            if (!response.ok) {
+                throw new Error(`전문가 목록 조회 실패 (${response.status})`);
+            }
+
+            const experts = await response.json();
+            renderExperts(Array.isArray(experts) ? experts : []);
+        } catch (error) {
+            if (error.name === "AbortError") {
+                return;
+            }
+
+            console.error(error);
+            shareChatUserList.innerHTML = "";
+            if (shareChatEmpty) {
+                shareChatEmpty.hidden = false;
+                shareChatEmpty.textContent = "전문가 목록을 불러오지 못했습니다.";
+            }
+        }
     };
 
     const selectLinkedProfile = (button) => {
@@ -483,7 +692,9 @@ window.addEventListener("load", () => {
             deadLine: null,
             status: "requesting",
             receiverEmail: selectedReceiverEmail || null,
-            tags: parseTags(tagInput?.value || ""),
+            tags: getTagElements().map((tagElement) => ({
+                tagName: tagElement.textContent.replace(/^#/, "").trim(),
+            })),
         };
     };
 
@@ -493,8 +704,19 @@ window.addEventListener("load", () => {
         selectedReceiverEmail = "";
         selectedLocation = "";
         pendingLocation = "";
+        if (tagInput) {
+            tagInput.innerHTML = "";
+            tagInput.hidden = true;
+        }
+        isTagEditorOpen = false;
+        if (productTagInput) {
+            productTagInput.value = "";
+        }
         if (tagsHiddenInput) {
             tagsHiddenInput.value = "";
+        }
+        if (categoryScroll) {
+            categoryScroll.innerHTML = originalCategoryChipsHTML;
         }
         if (locationHiddenInput) {
             locationHiddenInput.value = "";
@@ -506,6 +728,7 @@ window.addEventListener("load", () => {
         renderSelectedProduct();
         syncProductSelection();
         syncLocationUI();
+        checkCategoryScroll();
         syncSubmitState();
     };
 
@@ -550,18 +773,92 @@ window.addEventListener("load", () => {
         field.addEventListener("input", syncSubmitState);
     });
 
-    tagInput?.addEventListener("input", () => {
-        syncHiddenTags();
-        syncSubmitState();
+    tagInput?.addEventListener("click", (event) => {
+        const tagElement = event.target.closest(".tagDiv");
+        if (!(tagElement instanceof HTMLElement)) {
+            return;
+        }
+
+        tagElement.remove();
+        syncTagDock();
     });
-    tagInput?.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            syncHiddenTags();
-            closeTagEditor();
+
+    composerTagToggle?.addEventListener("click", () => {
+        isTagEditorOpen = !isTagEditorOpen;
+        syncTagEditor();
+        syncTagDock();
+    });
+
+    productTagInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") {
+            return;
+        }
+
+        event.preventDefault();
+        addTag(productTagInput.value, { alertOnFail: true });
+    });
+
+    categoryScroll?.addEventListener("scroll", checkCategoryScroll);
+    categoryScroll?.addEventListener("click", (event) => {
+        const backButton = event.target.closest(".cat-back-btn");
+        if (backButton instanceof HTMLElement) {
+            categoryScroll.innerHTML = originalCategoryChipsHTML;
+            categoryScroll.scrollLeft = 0;
+            window.setTimeout(checkCategoryScroll, 50);
+            return;
+        }
+
+        const chip = event.target.closest(".cat-chip");
+        if (!(chip instanceof HTMLElement)) {
+            return;
+        }
+
+        if (chip.classList.contains("has-subs")) {
+            const categoryName = chip.textContent.replace(" ›", "").trim();
+            const subValues = chip.getAttribute("data-subs");
+            if (!subValues) {
+                return;
+            }
+
+            const subList = subValues.split(",").map((value) => value.trim()).filter(Boolean);
+            let nextMarkup = '<button type="button" class="cat-back-btn"><svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(180 12 12)" fill="currentColor"/></svg></button>';
+            nextMarkup += `<button type="button" class="cat-chip parent-highlight">${categoryName}</button>`;
+            subList.forEach((subCategory) => {
+                nextMarkup += `<button type="button" class="cat-chip" data-is-sub="true">${subCategory}</button>`;
+            });
+
+            categoryScroll.innerHTML = nextMarkup;
+            categoryScroll.scrollLeft = 0;
+            window.setTimeout(checkCategoryScroll, 50);
+            return;
+        }
+
+        const chipText = chip.textContent.trim();
+        if (chipText === "전체") {
+            return;
+        }
+
+        const added = addTag(chipText);
+        if (!added) {
+            return;
+        }
+        categoryScroll
+            .querySelectorAll(".cat-chip:not(.parent-highlight)")
+            .forEach((chipElement) => chipElement.classList.remove("active", "sub-active"));
+
+        if (chip.getAttribute("data-is-sub")) {
+            chip.classList.add("sub-active");
+        } else {
+            chip.classList.add("active");
         }
     });
-    tagToggleButton?.addEventListener("click", toggleTagEditor);
+
+    categoryLeftButton?.addEventListener("click", () => {
+        categoryScroll?.scrollBy({ left: -200, behavior: "smooth" });
+    });
+    categoryRightButton?.addEventListener("click", () => {
+        categoryScroll?.scrollBy({ left: 200, behavior: "smooth" });
+    });
 
     locationDisplayButton?.addEventListener("click", () => {
         void openLocationPanel();
@@ -596,11 +893,19 @@ window.addEventListener("load", () => {
     shareChatCloseButtons.forEach((button) => {
         button.addEventListener("click", closeShareChatSheet);
     });
-    shareChatSearch?.addEventListener("input", syncShareUsers);
-    shareUserButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            selectLinkedProfile(button);
-        });
+    shareChatSearch?.addEventListener("input", () => {
+        void fetchExperts();
+    });
+    shareChatSearch?.addEventListener("change", () => {
+        void fetchExperts();
+    });
+    shareChatUserList?.addEventListener("click", (event) => {
+        const button = event.target.closest(".share-sheet__user");
+        if (!(button instanceof HTMLElement)) {
+            return;
+        }
+
+        selectLinkedProfile(button);
     });
 
     productSelectList?.addEventListener("click", (event) => {
@@ -623,12 +928,14 @@ window.addEventListener("load", () => {
     document.getElementById("composerModalOverlay")?.addEventListener("click", closeComposerModal);
 
     syncHiddenTags();
-    syncTagEditorState();
+    syncTagEditor();
+    syncTagDock();
     syncSubmitState();
     syncProductSelection();
     renderSelectedProduct();
-    syncShareUsers();
+    renderExperts([]);
     syncLocationUI();
+    checkCategoryScroll();
 
     window.setTimeout(openComposerModal, 0);
     window.setTimeout(() => {

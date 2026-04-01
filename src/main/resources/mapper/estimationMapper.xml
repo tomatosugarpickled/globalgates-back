@@ -21,13 +21,14 @@
             #{content},
             #{location},
             #{deadLine},
-            #{status}
+            cast(#{status} as estimation_status)
         )
     </insert>
 
     <select id="selectTotal" resultType="_int">
         select count(id)
         from tbl_estimation
+        where receiver_id = #{receiverId}
     </select>
 
     <select id="selectAll" resultType="com.app.globalgates.dto.EstimationDTO">
@@ -47,6 +48,7 @@
         from tbl_estimation e
                  join tbl_member requester on e.requester_id = requester.id
                  left join tbl_member receiver on e.receiver_id = receiver.id
+        where e.receiver_id = #{receiverId}
         order by e.created_datetime desc
         limit #{criteria.count}
         offset #{criteria.offset}
@@ -70,6 +72,36 @@
                  join tbl_member requester on e.requester_id = requester.id
                  left join tbl_member receiver on e.receiver_id = receiver.id
         where e.id = #{id}
+    </select>
+
+    <select id="selectExpertsForRequest" resultType="com.app.globalgates.dto.EstimationExpertDTO">
+        select m.id,
+               m.member_name as memberName,
+               m.member_nickname as memberNickname,
+               m.member_handle as memberHandle,
+               m.member_email as memberEmail,
+               (
+                   select f.file_name
+                   from tbl_member_profile_file mpf
+                            join tbl_file f on mpf.id = f.id
+                   where mpf.member_id = m.id
+                     and mpf.profile_image_type = 'profile'
+                   limit 1
+               ) as memberProfileFileName
+        from tbl_member m
+        where m.member_role = 'expert'
+          and m.member_status = 'active'
+          and m.id != #{memberId}
+          <if test="keyword != null and keyword != ''">
+              and (
+                  lower(m.member_name) like lower(concat('%', #{keyword}, '%'))
+                      or lower(coalesce(m.member_nickname, '')) like lower(concat('%', #{keyword}, '%'))
+                      or lower(coalesce(m.member_handle, '')) like lower(concat('%', #{keyword}, '%'))
+                      or lower(m.member_email) like lower(concat('%', #{keyword}, '%'))
+                  )
+          </if>
+        order by m.created_datetime desc
+        limit 20
     </select>
 
     <insert id="insertTag" useGeneratedKeys="true" keyProperty="id">

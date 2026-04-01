@@ -439,38 +439,20 @@
                 <div class="composerMeta" id="composerMeta">
                     <div class="composerMetaRow" id="composerMetaRow">
                         <div class="replyAudience" id="replyAudience">
-                            <div class="composerMetaActions">
-                                <button
-                                        type="button"
-                                        class="composerTagLabel"
-                                        id="composerTagToggle"
-                                        aria-expanded="false"
-                                        aria-controls="composerTagEditor"
-                                >
-                                    태그 추가
-                                </button>
-                                <button
-                                        type="button"
-                                        class="composerTagLabel"
-                                        id="productSelectButton"
-                                >
-                                    상품 추가
-                                </button>
-                            </div>
-                            <div
-                                    class="composerTagEditor"
-                                    id="composerTagEditor"
-                                    hidden=""
-                            >
-                                <input
-                                        type="text"
-                                        id="devTags"
-                                        class="composerTagField"
-                                        aria-label="태그 입력"
-                                        placeholder="태그 입력"
-                                />
-                            </div>
-                        </div>
+                          <div class="composerMetaActions">
+                              <button
+                                      type="button"
+                                      class="composerTagLabel"
+                                      id="productSelectButton"
+                              >
+                                  상품 추가
+                              </button>
+                              <button type="button" class="Composer-Tag-Label" id="composerTagToggle">태그 추가</button>
+                              <div class="Composer-Tag-Editor" id="composerTagEditor" hidden>
+                                  <input type="text" id="productTag" class="Composer-Tag-Field" placeholder="태그 입력 후 Enter"/>
+                              </div>
+                          </div>
+                      </div>
                         <button
                                 type="button"
                                 class="tweet-modal__location-display"
@@ -887,71 +869,7 @@
             </button>
         </header>
         <div class="productSelectModal__content">
-            <div class="productSelectModal__list" id="productSelectList">
-                <button
-                        type="button"
-                        class="productSelectModal__item"
-                        data-product-id="1"
-                        data-product-name="상품 이름 1"
-                        data-product-meta="₩50,000 · 100개"
-                        data-product-image="../../static/images/main/global-gates-logo.png"
-                        aria-pressed="false"
-                >
-                            <span class="productSelectModal__checkbox" aria-hidden="true">
-                                <svg viewBox="0 0 24 24"><g><path
-                                        d="M9 20c-.264 0-.518-.104-.707-.293l-4.785-4.785 1.414-1.414L9 17.586 19.072 7.5l1.42 1.416L9.708 19.7c-.188.19-.442.3-.708.3z"></path></g></svg>
-                            </span>
-                    <img class="productSelectModal__thumb" src="../../static/images/main/global-gates-logo.png"
-                         alt="상품 이름 1">
-                    <span class="productSelectModal__item-body">
-                                <strong class="productSelectModal__item-title">상품 이름 1</strong>
-                                <span class="productSelectModal__item-tags">#부품 #전자</span>
-                                <span class="productSelectModal__item-meta">₩50,000 · 100개</span>
-                            </span>
-                </button>
-                <button
-                        type="button"
-                        class="productSelectModal__item"
-                        data-product-id="2"
-                        data-product-name="상품 이름 2"
-                        data-product-meta="₩30,000 · 50개"
-                        data-product-image="../../static/images/main/global-gates-logo.png"
-                        aria-pressed="false"
-                >
-                            <span class="productSelectModal__checkbox" aria-hidden="true">
-                                <svg viewBox="0 0 24 24"><g><path
-                                        d="M9 20c-.264 0-.518-.104-.707-.293l-4.785-4.785 1.414-1.414L9 17.586 19.072 7.5l1.42 1.416L9.708 19.7c-.188.19-.442.3-.708.3z"></path></g></svg>
-                            </span>
-                    <img class="productSelectModal__thumb" src="../../static/images/main/global-gates-logo.png"
-                         alt="상품 이름 2">
-                    <span class="productSelectModal__item-body">
-                                <strong class="productSelectModal__item-title">상품 이름 2</strong>
-                                <span class="productSelectModal__item-tags">#부품 #기계</span>
-                                <span class="productSelectModal__item-meta">₩30,000 · 50개</span>
-                            </span>
-                </button>
-                <button
-                        type="button"
-                        class="productSelectModal__item"
-                        data-product-id="3"
-                        data-product-name="상품 이름 3"
-                        data-product-meta="₩80,000 · 200개"
-                        data-product-image="../../static/images/main/global-gates-logo.png"
-                        aria-pressed="false"
-                >
-                            <span class="productSelectModal__checkbox" aria-hidden="true">
-                                <svg viewBox="0 0 24 24"><g><path
-                                        d="M9 20c-.264 0-.518-.104-.707-.293l-4.785-4.785 1.414-1.414L9 17.586 19.072 7.5l1.42 1.416L9.708 19.7c-.188.19-.442.3-.708.3z"></path></g></svg>
-                            </span>
-                    <img class="productSelectModal__thumb" src="../../static/images/main/global-gates-logo.png"
-                         alt="상품 이름 3">
-                    <span class="productSelectModal__item-body">
-                                <strong class="productSelectModal__item-title">상품 이름 3</strong>
-                                <span class="productSelectModal__item-tags">#부품 #소재</span>
-                                <span class="productSelectModal__item-meta">₩80,000 · 200개</span>
-                            </span>
-                </button>
-            </div>
+            <div class="productSelectModal__list" id="productSelectList"></div>
             <div class="productSelectModal__empty" id="productSelectEmpty" hidden>
                 <p class="productSelectModal__empty-title">등록된 상품이 없습니다</p>
                 <p class="productSelectModal__empty-body">상품을 먼저 등록한 뒤 다시 선택해 주세요.</p>
@@ -1005,74 +923,8 @@
         <div
                 class="share-sheet__list"
                 id="estimationShareChatUserList"
-        >
-            <button
-                    type="button"
-                    class="share-sheet__user"
-                    data-share-user-email="partner@gates.com"
-                    data-share-user-name="Partner Connect"
-                    data-share-user-avatar="../../static/images/main/lown1.jpg"
-            >
-                        <span class="share-sheet__user-avatar">
-                            <img
-                                    src="../../static/images/main/lown1.jpg"
-                                    alt="Partner Connect"
-                            />
-                        </span>
-                <span class="share-sheet__user-body">
-                            <span class="share-sheet__user-name"
-                            >Partner Connect</span
-                            >
-                            <span class="share-sheet__user-handle"
-                            >partner@gates.com</span
-                            >
-                        </span>
-            </button>
-            <button
-                    type="button"
-                    class="share-sheet__user"
-                    data-share-user-email="buyer@partner.com"
-                    data-share-user-name="Buyer Partner"
-                    data-share-user-avatar="../../static/images/main/ad.png"
-            >
-                        <span class="share-sheet__user-avatar">
-                            <img
-                                    src="../../static/images/main/ad.png"
-                                    alt="Buyer Partner"
-                            />
-                        </span>
-                <span class="share-sheet__user-body">
-                            <span class="share-sheet__user-name"
-                            >Buyer Partner</span
-                            >
-                            <span class="share-sheet__user-handle"
-                            >buyer@partner.com</span
-                            >
-                        </span>
-            </button>
-            <button
-                    type="button"
-                    class="share-sheet__user"
-                    data-share-user-email="supply@connect.kr"
-                    data-share-user-name="Supply Connect"
-                    data-share-user-avatar="../../static/images/main/lown1.jpg"
-            >
-                        <span class="share-sheet__user-avatar">
-                            <img
-                                    src="../../static/images/main/lown1.jpg"
-                                    alt="Supply Connect"
-                            />
-                        </span>
-                <span class="share-sheet__user-body">
-                            <span class="share-sheet__user-name"
-                            >Supply Connect</span
-                            >
-                            <span class="share-sheet__user-handle"
-                            >supply@connect.kr</span
-                            >
-                        </span>
-            </button>
-        </div>
+        ></div>
+        <p class="share-sheet__empty" id="estimationShareChatEmpty" hidden>검색된 전문가가 없습니다.</p>
     </div>
 </div>
 </body>
