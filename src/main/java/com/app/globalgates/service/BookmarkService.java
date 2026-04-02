@@ -60,14 +60,14 @@ public class BookmarkService {
     }
 
     //    북마크 추가
-    @CacheEvict(value = {"bookmark:list", "community:post:list", "post:list", "post"}, allEntries = true)
+    @CacheEvict(value = {"bookmark", "bookmark:list", "community:post:list", "post:list", "post"}, allEntries = true)
     public void addBookmark(BookmarkDTO bookmarkDTO) {
         bookmarkDAO.save(bookmarkDTO);
     }
 
     //    북마크 삭제
     @Caching(evict = {
-            @CacheEvict(value = "bookmark", key = "#id"),
+            @CacheEvict(value = "bookmark", allEntries = true),
             @CacheEvict(value = "bookmark:list", allEntries = true)
     })
     public void deleteBookmark(Long id) {
@@ -93,7 +93,6 @@ public class BookmarkService {
     }
 
     //    회원/게시글 기준 북마크 단건 조회
-    @Cacheable(value = "bookmark", key = "'member:' + #memberId + ':post:' + #postId")
     public Optional<BookmarkDTO> getBookmark(Long memberId, Long postId) {
         return bookmarkDAO.findByMemberIdAndPostId(memberId, postId);
     }
