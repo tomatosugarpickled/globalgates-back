@@ -22,6 +22,7 @@ window.addEventListener("load", async () => {
 
     const PREVIEW_DURATION_MS = 280;
     const PERIOD_DAYS = { "7D": 7, "2W": 14, "4W": 28, "3M": 90 };
+
     let activeDetailTrigger = null;
     let pendingDecision = null;
 
@@ -39,11 +40,13 @@ window.addEventListener("load", async () => {
         }
 
         return tags
-            .map(
-                (tag, index) =>
-                    `<span class="Category-Tag" data-cate-id="cate${index + 1}">#${escapeHtml(tag.tagName)}</span>`,
-            )
+            .map((tag, index) => `<span class="Category-Tag" data-cate-id="cate${index + 1}">#${escapeHtml(tag.tagName)}</span>`)
             .join("");
+    };
+
+    const formatLocation = (location) => {
+        const text = String(location ?? "").trim();
+        return text ? escapeHtml(text) : "위치 미등록";
     };
 
     const toFilterState = (status) => {
@@ -62,46 +65,63 @@ window.addEventListener("load", async () => {
              data-estimation-card
              data-filter-state="${escapeHtml(toFilterState(estimation.status))}"
              data-estimation-detail-target="detail-${estimation.id}">
-            <header class="estimation-preview-card__header">
-                <div class="estimation-preview-card__meta">
-                    <span class="estimation-preview-card__status">${escapeHtml(estimation.status || "requesting")}</span>
-                    <span class="estimation-preview-card__date">${escapeHtml(estimation.createdDateTime || "")}</span>
-                </div>
-                <div class="estimation-more">
-                    <button type="button" class="estimation-more__trigger" data-estimation-more-trigger aria-expanded="false">
-                        <span>더보기</span>
-                    </button>
-                    <div class="dropdown-menu estimation-dropdown-menu" role="menu">
-                        <button type="button" class="menu-item estimation-delete-action" data-estimation-delete="detail-${estimation.id}">
-                            견적 요청 삭제하기
+            <div class="postAvatar postAvatar--image">
+                <img src="/images/main/ad.png" alt="" class="postAvatarImage"/>
+            </div>
+            <div class="postBody">
+                <header class="postHeader">
+                    <div class="postIdentity">
+                        <strong class="postName">${escapeHtml(estimation.receiverEmail || "전문가")}</strong>
+                        <span class="postHandle">견적 요청</span>
+                        <span class="postTime">${escapeHtml(estimation.createdDateTime || "")}</span>
+                    </div>
+                    <div class="estimation-preview-card__status-wrap">
+                        <span class="estimation-preview-card__status">${escapeHtml(estimation.status || "requesting")}</span>
+                    </div>
+                    <div class="estimation-more">
+                        <button type="button" class="tweet-more-btn" data-estimation-more-trigger aria-expanded="false" aria-label="더보기">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="tweet-more-icon">
+                                <g>
+                                    <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path>
+                                </g>
+                            </svg>
                         </button>
+                        <div class="dropdown-menu estimation-dropdown-menu" role="menu">
+                            <button type="button" class="menu-item estimation-delete-action" data-estimation-delete="detail-${estimation.id}">
+                                견적 요청 삭제하기
+                            </button>
+                        </div>
+                    </div>
+                </header>
+                <div class="estimation-preview-card__link">
+                    <div class="estimation-preview-card__person">
+                        <img src="/images/main/ad.png" alt="" class="estimation-preview-card__avatar"/>
+                        <span class="estimation-preview-card__email">${escapeHtml(estimation.requesterEmail || "-")}</span>
+                    </div>
+                    <span class="estimation-preview-card__icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M6.354 5.5H4a3 3 0 1 0 0 6h3a4 4 0 0 0 .82-1H4a2 2 0 1 1 0-4h2.646A4 4 0 0 1 6.354 5.5z"></path>
+                            <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"></path>
+                        </svg>
+                    </span>
+                    <div class="estimation-preview-card__person">
+                        <img src="/images/main/lown1.jpg" alt="" class="estimation-preview-card__avatar"/>
+                        <span class="estimation-preview-card__email">${escapeHtml(estimation.receiverEmail || "공개 견적")}</span>
                     </div>
                 </div>
-            </header>
-            <div class="estimation-preview-card__link">
-                <div class="estimation-preview-card__person">
-                    <img src="../../static/images/main/ad.png" alt="" class="estimation-preview-card__avatar"/>
-                    <span class="estimation-preview-card__email">${escapeHtml(estimation.requesterEmail || "-")}</span>
-                </div>
-                <span class="estimation-preview-card__icon" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M6.354 5.5H4a3 3 0 1 0 0 6h3a4 4 0 0 0 .82-1H4a2 2 0 1 1 0-4h2.646A4 4 0 0 1 6.354 5.5z"/>
-                        <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"/>
-                    </svg>
-                </span>
-                <div class="estimation-preview-card__person">
-                    <img src="../../static/images/main/lown1.jpg" alt="" class="estimation-preview-card__avatar"/>
-                    <span class="estimation-preview-card__email">${escapeHtml(estimation.receiverEmail || "공개 견적")}</span>
-                </div>
+                <button type="button"
+                        class="estimation-preview-card__body"
+                        data-estimation-detail-target="detail-${estimation.id}"
+                        aria-label="${escapeHtml(estimation.title || "견적 요청")} 상세 보기">
+                    <div class="Detail-Category-Tags">${formatTags(estimation.tags)}</div>
+                    <strong class="estimation-preview-card__title">${escapeHtml(estimation.title || "")}</strong>
+                    <p class="postText">${escapeHtml(estimation.content || "")}</p>
+                    <div class="estimation-preview-card__location">
+                        <span class="estimation-preview-card__location-label">위치</span>
+                        <span class="estimation-preview-card__location-text">${formatLocation(estimation.location)}</span>
+                    </div>
+                </button>
             </div>
-            <button type="button"
-                    class="estimation-preview-card__body"
-                    data-estimation-detail-target="detail-${estimation.id}"
-                    aria-label="${escapeHtml(estimation.title || "견적 요청")} 상세 보기">
-                <div class="Detail-Category-Tags">${formatTags(estimation.tags)}</div>
-                <strong class="estimation-preview-card__title">${escapeHtml(estimation.title || "")}</strong>
-                <p class="postText">${escapeHtml(estimation.content || "")}</p>
-            </button>
         </div>
     `;
 
@@ -113,17 +133,17 @@ window.addEventListener("load", async () => {
             </div>
             <div class="estimation-detail-panel__link">
                 <div class="estimation-preview-card__person">
-                    <img src="../../static/images/main/ad.png" alt="" class="estimation-preview-card__avatar"/>
+                    <img src="/images/main/ad.png" alt="" class="estimation-preview-card__avatar"/>
                     <span class="estimation-preview-card__email">${escapeHtml(estimation.requesterEmail || "-")}</span>
                 </div>
                 <span class="estimation-preview-card__icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M6.354 5.5H4a3 3 0 1 0 0 6h3a4 4 0 0 0 .82-1H4a2 2 0 1 1 0-4h2.646A4 4 0 0 1 6.354 5.5z"/>
-                        <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"/>
+                        <path d="M6.354 5.5H4a3 3 0 1 0 0 6h3a4 4 0 0 0 .82-1H4a2 2 0 1 1 0-4h2.646A4 4 0 0 1 6.354 5.5z"></path>
+                        <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4 4 0 0 1-.82 1H12a3 3 0 1 0 0-6z"></path>
                     </svg>
                 </span>
                 <div class="estimation-preview-card__person">
-                    <img src="../../static/images/main/lown1.jpg" alt="" class="estimation-preview-card__avatar"/>
+                    <img src="/images/main/lown1.jpg" alt="" class="estimation-preview-card__avatar"/>
                     <span class="estimation-preview-card__email">${escapeHtml(estimation.receiverEmail || "공개 견적")}</span>
                 </div>
             </div>
@@ -134,6 +154,10 @@ window.addEventListener("load", async () => {
             <section class="estimation-detail-panel__section">
                 <h4 class="estimation-detail-panel__section-title">상태</h4>
                 <p class="estimation-detail-panel__list">${escapeHtml(estimation.status || "requesting")}</p>
+            </section>
+            <section class="estimation-detail-panel__section">
+                <h4 class="estimation-detail-panel__section-title">위치</h4>
+                <p class="estimation-detail-panel__list">${formatLocation(estimation.location)}</p>
             </section>
             <div class="estimation-action-slot estimation-action-slot--modal">
                 <div class="estimation-action-group estimation-action-group--modal" data-estimation-decision-group="detail-${estimation.id}">
@@ -177,11 +201,6 @@ window.addEventListener("load", async () => {
         if (!filterTrigger || !filterMenu) return;
         filterMenu.hidden = true;
         filterTrigger.setAttribute("aria-expanded", "false");
-    };
-
-    const getMoreMenu = (button) => {
-        const menu = button.nextElementSibling;
-        return menu instanceof HTMLElement ? menu : null;
     };
 
     const closeMoreMenus = () => {
@@ -314,9 +333,9 @@ window.addEventListener("load", async () => {
 
         qAll("[data-estimation-more-trigger]").forEach((button) => {
             const wrapper = button.closest(".estimation-more");
-            const menu = getMoreMenu(button);
+            const menu = button.nextElementSibling;
 
-            if (!(wrapper instanceof HTMLElement) || !menu) return;
+            if (!(wrapper instanceof HTMLElement) || !(menu instanceof HTMLElement)) return;
 
             menu.addEventListener("click", (event) => event.stopPropagation());
             button.addEventListener("click", (event) => {
@@ -333,14 +352,8 @@ window.addEventListener("load", async () => {
         qAll("[data-estimation-decision]").forEach((button) => {
             button.addEventListener("click", (event) => {
                 event.stopPropagation();
-                syncDecisionButtons(
-                    button.dataset.estimationDecisionId,
-                    button.dataset.estimationDecision,
-                );
-                openConfirmModal(
-                    button.closest(".estimation-action-slot"),
-                    button.dataset.estimationDecision,
-                );
+                syncDecisionButtons(button.dataset.estimationDecisionId, button.dataset.estimationDecision);
+                openConfirmModal(button.closest(".estimation-action-slot"), button.dataset.estimationDecision);
             });
         });
     };
@@ -362,7 +375,10 @@ window.addEventListener("load", async () => {
 
     const loadEstimations = async () => {
         try {
-            const response = await fetch("/api/estimations/list/1");
+            const response = await fetch("/api/estimations/list/1", {
+                credentials: "include",
+                headers: { Accept: "application/json" },
+            });
             if (!response.ok) {
                 throw new Error(`견적 목록 조회 실패 (${response.status})`);
             }
@@ -414,37 +430,13 @@ window.addEventListener("load", async () => {
         const target = event.target;
         if (!(target instanceof Element)) return;
 
-        if (
-            filterMenu &&
-            !filterMenu.hidden &&
-            !target.closest("[data-activity-filter-menu]") &&
-            !target.closest("[data-activity-filter-trigger]")
-        ) {
+        if (filterMenu && !filterMenu.hidden && !target.closest("[data-activity-filter-menu]") && !target.closest("[data-activity-filter-trigger]")) {
             closeFilterMenu();
         }
 
-        if (
-            !target.closest("[data-estimation-more-trigger]") &&
-            !target.closest(".estimation-dropdown-menu")
-        ) {
+        if (!target.closest(".estimation-more")) {
             closeMoreMenus();
         }
-
-        const deleteAction = target.closest("[data-estimation-delete]");
-        if (deleteAction instanceof HTMLElement) {
-            const targetId = deleteAction.dataset.estimationDelete || "";
-            q(`[data-estimation-card][data-estimation-detail-target="${targetId}"]`)?.remove();
-            q(`[data-estimation-detail-panel="${targetId}"]`)?.remove();
-            closeMoreMenus();
-        }
-    });
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key !== "Escape") return;
-        if (filterMenu && !filterMenu.hidden) closeFilterMenu();
-        if (detailModal && !detailModal.hidden) closeDetailModal();
-        if (confirmModal && !confirmModal.hidden) closeConfirmModal();
-        closeMoreMenus();
     });
 
     setActiveTab("quotes");

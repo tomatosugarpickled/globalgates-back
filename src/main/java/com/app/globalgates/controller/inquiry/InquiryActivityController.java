@@ -1,26 +1,19 @@
 package com.app.globalgates.controller.inquiry;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/inquiry/**")
+@RequestMapping("/inquiry/activity/**")
 @RequiredArgsConstructor
 @Slf4j
-public class InquiryController {
+public class InquiryActivityController {
 
-    @GetMapping("chart")
-    public String goToInquiryPage() {
-        return "Inquiry/inquiry-chart";
+    @GetMapping("list")
+    public String goToInquiryActivityList() {
+        return "Inquiry/inquiry_active_list";
     }
-
-    @GetMapping("member-list")
-    public String goToInquiryMemberList() {
-        return "Inquiry/Inquiry_list";
-    }
-
 }

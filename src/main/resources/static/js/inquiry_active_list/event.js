@@ -2883,3 +2883,241 @@ function placeCaretAtEnd(element) {
     selection.removeAllRanges();
     selection.addRange(range);
 }
+
+window.addEventListener("load", () => {
+    const activityPanel = document.querySelector('[data-inquiry-panel="activity"]');
+    if (!activityPanel) return;
+
+    const toolbarBottom = activityPanel.querySelector(".activity-toolbar-bottom");
+    if (!toolbarBottom) return;
+    const startDateInput = activityPanel.querySelector("[data-activity-date-start]");
+    const endDateInput = activityPanel.querySelector("[data-activity-date-end]");
+    const quickPeriodChips = Array.from(activityPanel.querySelectorAll("[data-period-chip]"));
+
+    const escapeHtml = (value) =>
+        String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+
+    const getInitial = (nickname, handle) => {
+        const base = nickname?.trim() || handle?.replace("@", "")?.trim() || "?";
+        return escapeHtml(base.slice(0, 1).toUpperCase());
+    };
+
+    const staticCards = Array.from(activityPanel.querySelectorAll(".postCard"));
+    staticCards.forEach((card) => card.remove());
+
+    let listElement = activityPanel.querySelector("[data-activity-post-list]");
+    if (!listElement) {
+        listElement = document.createElement("section");
+        listElement.className = "activity-post-list";
+        listElement.setAttribute("data-activity-post-list", "");
+        toolbarBottom.insertAdjacentElement("afterend", listElement);
+    }
+
+    let emptyElement = activityPanel.querySelector("[data-activity-empty]");
+    if (!emptyElement) {
+        emptyElement = document.createElement("section");
+        emptyElement.className = "draft-panel__empty";
+        emptyElement.hidden = true;
+        emptyElement.setAttribute("data-activity-empty", "");
+        emptyElement.innerHTML = `
+            <strong class="draft-panel__empty-title">거래처 활동이 아직 없습니다.</strong>
+            <p class="draft-panel__empty-body">팔로우한 거래처가 작성한 게시글이 생기면 이곳에 표시됩니다.</p>
+        `;
+        listElement.insertAdjacentElement("afterend", emptyElement);
+    }
+
+    let moreWrap = activityPanel.querySelector("[data-activity-more-wrap]");
+    if (!moreWrap) {
+        moreWrap = document.createElement("div");
+        moreWrap.setAttribute("data-activity-more-wrap", "");
+        moreWrap.style.display = "flex";
+        moreWrap.style.justifyContent = "center";
+        moreWrap.style.margin = "24px 0 8px";
+        emptyElement.insertAdjacentElement("afterend", moreWrap);
+    }
+
+    let moreButton = activityPanel.querySelector("[data-activity-more]");
+    if (!moreButton) {
+        moreButton = document.createElement("button");
+        moreButton.type = "button";
+        moreButton.className = "draft-panel__action";
+        moreButton.hidden = true;
+        moreButton.textContent = "더 보기";
+        moreButton.setAttribute("data-activity-more", "");
+        moreWrap.appendChild(moreButton);
+    }
+
+    const countLabel = activityPanel.querySelector("[data-activity-count-text]") || activityPanel.querySelector(".activity-filter-button span[data-activity-filter-label]");
+    let currentPage = 1;
+    let totalLoaded = 0;
+    let isLoading = false;
+    let activePeriod = "7D";
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = `${date.getMonth() + 1}`.padStart(2, "0");
+        const day = `${date.getDate()}`.padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const applyPeriodRange = (period) => {
+        const end = new Date();
+        const start = new Date(end);
+
+        if (period === "7D") start.setDate(end.getDate() - 6);
+        if (period === "2W") start.setDate(end.getDate() - 13);
+        if (period === "4W") start.setDate(end.getDate() - 27);
+        if (period === "3M") start.setMonth(end.getMonth() - 3);
+
+        if (startDateInput) startDateInput.value = formatDate(start);
+        if (endDateInput) endDateInput.value = formatDate(end);
+    };
+
+    const syncPeriodChipState = (period) => {
+        quickPeriodChips.forEach((chip) => {
+            chip.classList.toggle("period-chip--active", chip.dataset.periodChip === period);
+        });
+    };
+
+    const renderHashtags = (hashtags = []) => {
+        if (!hashtags.length) return "";
+        return `
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+                ${hashtags.map((tag) => `<span class="period-chip">#${escapeHtml(tag.tagName)}</span>`).join("")}
+            </div>
+        `;
+    };
+
+    const renderMedia = (post) => {
+        if (!post.fileUrls || post.fileUrls.length === 0) return "";
+        const firstUrl = post.fileUrls[0];
+        if (!firstUrl || !/^https?:\/\//.test(firstUrl)) return "";
+
+        return `
+            <div class="postMedia">
+                <img src="${escapeHtml(firstUrl)}" alt="게시글 이미지" class="postMediaImage"/>
+            </div>
+        `;
+    };
+
+    const renderCard = (post) => `
+        <article class="postCard" data-post-id="${post.id}">
+            <div class="postAvatar">${getInitial(post.memberNickname, post.memberHandle)}</div>
+            <div class="postBody">
+                <header class="postHeader">
+                    <div class="postIdentity">
+                        <strong class="postName">${escapeHtml(post.memberNickname || "알 수 없는 거래처")}</strong>
+                        <span class="postHandle">${escapeHtml(post.memberHandle || "")}</span>
+                        <span class="postTime">${escapeHtml(post.createdDatetime || "")}</span>
+                    </div>
+                </header>
+                <p class="postText">${escapeHtml(post.postContent || "")}</p>
+                ${renderMedia(post)}
+                ${renderHashtags(post.hashtags)}
+                <footer class="postFooter" style="display:flex; gap:18px; color:#536471; font-size:14px; margin-top:14px;">
+                    <span>좋아요 ${post.likeCount ?? 0}</span>
+                    <span>답글 ${post.replyCount ?? 0}</span>
+                    <span>북마크 ${post.bookmarkCount ?? 0}</span>
+                </footer>
+            </div>
+        </article>
+    `;
+
+    const updateSummary = () => {
+        if (!countLabel) return;
+        countLabel.textContent = totalLoaded > 0 ? `활동 ${totalLoaded}건` : "거래처 활동";
+    };
+
+    const toggleEmpty = (hasPosts) => {
+        emptyElement.hidden = hasPosts;
+        listElement.hidden = !hasPosts;
+    };
+
+    const fetchPage = async (page) => {
+        const params = new URLSearchParams();
+        if (startDateInput?.value) params.set("startDate", startDateInput.value);
+        if (endDateInput?.value) params.set("endDate", endDateInput.value);
+
+        const response = await fetch(`/api/inquiry/activity/list/${page}?${params.toString()}`, {
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            throw new Error(`거래처 활동 목록 조회 실패: ${response.status}`);
+        }
+
+        return response.json();
+    };
+
+    const loadPage = async (page) => {
+        if (isLoading) return;
+
+        isLoading = true;
+        moreButton.disabled = true;
+
+        try {
+            const data = await fetchPage(page);
+            const posts = data.posts ?? [];
+            const hasMore = Boolean(data.criteria?.hasMore);
+
+            if (page === 1) {
+                listElement.innerHTML = "";
+                totalLoaded = 0;
+            }
+
+            if (posts.length > 0) {
+                listElement.insertAdjacentHTML("beforeend", posts.map(renderCard).join(""));
+                totalLoaded += posts.length;
+            }
+
+            toggleEmpty(totalLoaded > 0);
+            updateSummary();
+            moreButton.hidden = !hasMore;
+            currentPage = page;
+        } catch (error) {
+            console.error(error);
+            toggleEmpty(false);
+            if (countLabel) {
+                countLabel.textContent = "조회 실패";
+            }
+            moreButton.hidden = true;
+        } finally {
+            isLoading = false;
+            moreButton.disabled = false;
+        }
+    };
+
+    moreButton.addEventListener("click", () => {
+        loadPage(currentPage + 1);
+    });
+
+    quickPeriodChips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+            activePeriod = chip.dataset.periodChip || "7D";
+            syncPeriodChipState(activePeriod);
+            applyPeriodRange(activePeriod);
+            loadPage(1);
+        });
+    });
+
+    startDateInput?.addEventListener("change", () => {
+        activePeriod = "";
+        syncPeriodChipState(activePeriod);
+        loadPage(1);
+    });
+
+    endDateInput?.addEventListener("change", () => {
+        activePeriod = "";
+        syncPeriodChipState(activePeriod);
+        loadPage(1);
+    });
+
+    syncPeriodChipState(activePeriod);
+    applyPeriodRange(activePeriod);
+    loadPage(1);
+});

@@ -48,6 +48,8 @@ select * from tbl_member;
 
 select * from tbl_follow;
 
+select * from tbl_bookmark;
+
 select * from tbl_subscription;
 
 select * from tbl_payment_subscribe;
@@ -55,6 +57,8 @@ select * from tbl_payment_subscribe;
 select * from tbl_badge;
 
 select * from tbl_post_like;
+
+select * from tbl_search_history;
 
 alter table tbl_subscription add column quartz boolean default true;
 

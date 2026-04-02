@@ -1436,5 +1436,199 @@
         if (drawnPortals.has(8)) drawReportMonthly();
     });
 
+    let adminStatsDashboard = null;
+
+    const chartPalette = ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4', '#8ecdf8', '#7a8b95'];
+
+    const getSeriesRows = (map, period, useSecondary = false) =>
+        (map?.[period] ?? []).map((point) => [
+            point.label,
+            useSecondary ? (point.secondaryValue ?? 0) : (point.value ?? 0),
+        ]);
+
+    const redrawLoadedCharts = () => {
+        if (drawnPortals.has(6)) {
+            drawMemberTrend();
+            drawMemberType();
+            drawHourly();
+        }
+        if (drawnPortals.has(7)) {
+            drawPostMonthly();
+            drawPostCategory();
+        }
+        if (drawnPortals.has(8)) {
+            drawReportMonthly();
+            drawReportStatus();
+            drawReportMemberType();
+            drawReportPostType();
+        }
+    };
+
+    const loadAdminStatsDashboard = async () => {
+        try {
+            adminStatsDashboard = await fetchJson("/api/admin/stats/dashboard");
+            redrawLoadedCharts();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    function drawMemberTrend() {
+        const joinedRows = getSeriesRows(adminStatsDashboard?.memberTrend, trendPeriod);
+        const droppedRows = getSeriesRows(adminStatsDashboard?.memberTrend, trendPeriod, true);
+        const rows = joinedRows.map((row, index) => [row[0], row[1], droppedRows[index]?.[1] ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Period", "Joined", "Dropped"]].concat(rows));
+        const options = {
+            colors: ['#1d9bf0', '#cfd9de'],
+            vAxis: {minValue: 0, format: '0', textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            legend: {position: 'top', textStyle: {fontSize: 12, color: '#0f1419'}},
+            bar: {groupWidth: '65%'},
+            chartArea: {left: 50, right: 24, top: 36, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-member-trend')).draw(data, options);
+    }
+
+    function drawMemberType() {
+        const rows = (adminStatsDashboard?.memberTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Role", "Members"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#cfd9de', '#536471', '#0f1419', '#1d9bf0'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-member-type')).draw(data, options);
+    }
+
+    function drawHourly() {
+        const rows = [["Hour", "Visits"]].concat(getSeriesRows(adminStatsDashboard?.hourlyVisits, hourlyPeriod));
+        const data = google.visualization.arrayToDataTable(rows);
+        const options = {
+            colors: ['#1d9bf0'],
+            hAxis: {
+                title: "Hour", minValue: 0, maxValue: 23,
+                ticks: [0, 3, 6, 9, 12, 15, 18, 21, 23],
+                textStyle: {fontSize: 11, color: '#536471'},
+                titleTextStyle: {fontSize: 12, color: '#536471', italic: false},
+            },
+            vAxis: {
+                title: "Visits",
+                textStyle: {fontSize: 11, color: '#536471'},
+                titleTextStyle: {fontSize: 12, color: '#536471', italic: false},
+                minValue: 0,
+            },
+            legend: {position: 'none'},
+            pointSize: 6,
+            chartArea: {left: 55, right: 20, top: 20, bottom: 45},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ScatterChart(document.getElementById('chart-hourly')).draw(data, options);
+    }
+
+    function drawPostMonthly() {
+        const rows = getSeriesRows(adminStatsDashboard?.postMonthly, postMonthlyPeriod);
+        const data = google.visualization.arrayToDataTable([["Period", "Posts"]].concat(rows));
+        const options = {
+            colors: ['#0f1419'],
+            legend: {position: 'none'},
+            bar: {groupWidth: '65%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            chartArea: {left: 50, right: 24, top: 20, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-post-monthly')).draw(data, options);
+    }
+
+    function drawPostCategory() {
+        const rows = (adminStatsDashboard?.postCategories?.[postCategoryPeriod] ?? []).map((point, index) => [
+            point.label,
+            point.value ?? 0,
+            chartPalette[index % chartPalette.length],
+        ]);
+        const data = google.visualization.arrayToDataTable([["Category", "Posts", {role: "style"}]].concat(rows));
+        const options = {
+            legend: {position: 'none'},
+            bar: {groupWidth: '60%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {left: 55, right: 20, top: 20, bottom: 50},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-post-category')).draw(data, options);
+    }
+
+    function drawReportMonthly() {
+        const rows = getSeriesRows(adminStatsDashboard?.reportMonthly, reportMonthlyPeriod);
+        const data = google.visualization.arrayToDataTable([["Period", "Reports"]].concat(rows));
+        const options = {
+            colors: ['#536471'],
+            legend: {position: 'none'},
+            bar: {groupWidth: '65%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            chartArea: {left: 50, right: 24, top: 20, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-report-monthly')).draw(data, options);
+    }
+
+    function drawReportStatus() {
+        const rows = (adminStatsDashboard?.reportStatuses ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Status", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#cfd9de', '#0f1419', '#536471'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-status')).draw(data, options);
+    }
+
+    function drawReportMemberType() {
+        const rows = (adminStatsDashboard?.reportMemberTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Type", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-member-type')).draw(data, options);
+    }
+
+    function drawReportPostType() {
+        const rows = (adminStatsDashboard?.reportPostTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Type", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-post-type')).draw(data, options);
+    }
+
+    loadAdminStatsDashboard();
+
 
 };

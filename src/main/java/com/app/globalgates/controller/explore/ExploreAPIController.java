@@ -26,8 +26,9 @@ public class ExploreAPIController implements ExploreAPIControllerDocs {
 
 //    추천 상품 목록 조회
     @GetMapping("products/{page}")
-    public ResponseEntity<?> getRecommends(@PathVariable int page) {
-        PostProductWithPagingDTO posts = postProductService.getRecommendProducts(page);
+    public ResponseEntity<?> getRecommends(@PathVariable int page,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        PostProductWithPagingDTO posts = postProductService.getRecommendProducts(page, userDetails.getId());
         return ResponseEntity.ok(posts);
     }
 
@@ -67,13 +68,15 @@ public class ExploreAPIController implements ExploreAPIControllerDocs {
     }
 
     // 북마크 조회 후, 생성 or 삭제
-    @PostMapping("/api/explore/bookmarks")
-    public ResponseEntity<?> checkBookmarks(@RequestBody BookmarkDTO bookmarkDTO,
+    @PostMapping("/api/explore/bookmarks/{postId}")
+    public ResponseEntity<?> checkBookmarks(@PathVariable Long postId,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Optional<BookmarkDTO> exising = bookmarkService.getBookmark(userDetails.getId(), bookmarkDTO.getPostId());
-        log.info("정보가 바인딩이 되었나?? : ", bookmarkDTO);
+        Optional<BookmarkDTO> exising = bookmarkService.getBookmark(userDetails.getId(), postId);
+        log.info("정보가 바인딩이 되었나?? : {}", exising);
 
         if(!exising.isPresent()) {
+            BookmarkDTO bookmarkDTO = new BookmarkDTO();
+            bookmarkDTO.setPostId(postId);
             bookmarkDTO.setMemberId(userDetails.getId());
             bookmarkDTO.setFolderId(null);
             bookmarkService.addBookmark(bookmarkDTO);
