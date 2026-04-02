@@ -4,7 +4,7 @@
 do $$
 begin
     if exists (
-        select 1;;
+        select 1
         from pg_type t
                  join pg_enum e on t.oid = e.enumtypid
         where t.typname = 'estimation_status'

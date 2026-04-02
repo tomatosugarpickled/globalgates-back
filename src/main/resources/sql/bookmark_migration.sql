@@ -8,3 +8,8 @@
 
 
 alter table tbl_bookmark add constraint uq_bookmark_member_post unique (member_id, post_id);
+
+select * from tbl_follow;
+select * from tbl_bookmark;
+select * from tbl_post;
+select * from tbl_bookmark_folder;
