@@ -18,6 +18,8 @@ window.onload = () => {
     );
 
     const PREVIEW_DURATION_MS = 280;
+    let expertDashboard = null;
+    let chartsLoaded = false;
 
     // ===== 공통 유틸 =====
     const getTextContent = (element) =>
@@ -30,6 +32,57 @@ window.onload = () => {
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#39;");
+
+    const fetchJson = async (url) => {
+        const response = await fetch(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { Accept: "application/json" },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`);
+        }
+
+        return response.json();
+    };
+
+    const renderChartsIfReady = () => {
+        if (!chartsLoaded || !expertDashboard) return;
+        initCharts();
+    };
+
+    const applyOverviewCards = () => {
+        const cards = Array.from(document.querySelectorAll(".Expert-State-Card"));
+        const overview = expertDashboard?.overview;
+        if (!cards.length || !overview) return;
+
+        const values = [
+            overview.profileViewCount ?? 0,
+            overview.dealCount ?? 0,
+            overview.inquiryRequestCount ?? 0,
+            overview.averageResponseSpeed ?? "-",
+            overview.likeCount ?? 0,
+            overview.bookmarkCount ?? 0,
+        ];
+
+        cards.forEach((card, index) => {
+            const valueElement = card.querySelector(".Expert-State-Value");
+            if (valueElement && values[index] !== undefined) {
+                valueElement.textContent = String(values[index]);
+            }
+        });
+    };
+
+    const loadDashboard = async () => {
+        try {
+            expertDashboard = await fetchJson("/api/inquiry/chart/dashboard");
+            applyOverviewCards();
+            renderChartsIfReady();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     // ===== 탭 표시 제어 =====
     const ensureActivityPanelVisible = () => {
@@ -128,7 +181,10 @@ window.onload = () => {
         packages: ["corechart", "geochart"],
         language: "ko",
     });
-    google.charts.setOnLoadCallback(initCharts);
+    google.charts.setOnLoadCallback(() => {
+        chartsLoaded = true;
+        renderChartsIfReady();
+    });
 
     /**
      * TODO: GET /api/expert/stats/profile-views?period={period}
@@ -633,4 +689,46 @@ window.onload = () => {
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeDropbox();
     });
+
+    function fetchProfileViewData(period) {
+        return (expertDashboard?.profileViewCount?.[period] ?? []).map((point) => [
+            point.label,
+            point.value ?? 0,
+        ]);
+    }
+
+    function fetchInquiryRequestData(period) {
+        return (expertDashboard?.inquiryRequestCount?.[period] ?? []).map((point) => [
+            point.label,
+            point.value ?? 0,
+        ]);
+    }
+
+    function fetchConnectChangeData() {
+        return (expertDashboard?.connectChanges ?? []).map((point) => [
+            point.label,
+            point.value ?? 0,
+            -(point.secondaryValue ?? 0),
+        ]);
+    }
+
+    function fetchDealCategoryData() {
+        return [["카테고리", "건수"]].concat(
+            (expertDashboard?.dealCategories ?? []).map((point) => [
+                point.label,
+                point.value ?? 0,
+            ]),
+        );
+    }
+
+    function fetchDealCountryData() {
+        return [["Country", "거래 건수"]].concat(
+            (expertDashboard?.dealCountries ?? []).map((point) => [
+                point.label,
+                point.value ?? 0,
+            ]),
+        );
+    }
+
+    loadDashboard();
 };

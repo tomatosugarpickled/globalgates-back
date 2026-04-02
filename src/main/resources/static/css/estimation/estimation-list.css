@@ -17,6 +17,10 @@ body.modal-open {
     align-items: flex-start;
 }
 
+.estimation-preview-card .postBody {
+    width: 100%;
+}
+
 .estimation-preview-card__link {
     display: flex;
     align-items: center;
@@ -85,6 +89,58 @@ body.modal-open {
     text-align: left;
     border: 0;
     background: transparent;
+}
+
+.estimation-preview-card__status-wrap {
+    margin-left: auto;
+}
+
+.estimation-preview-card__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #e8f5ff;
+    color: #1170b8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.estimation-preview-card__location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #f7f9f9;
+}
+
+.estimation-preview-card__location-label {
+    color: #536471;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.estimation-preview-card__location-text {
+    color: #0f1419;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .estimation-preview-card__body:hover .estimation-preview-card__title,
