@@ -174,4 +174,23 @@ public class SettingAPIController {
         }
     }
 
+    // setting 화면의 국가 변경도 인증된 현재 사용자 기준으로만 처리한다.
+    // 프런트는 선택된 국가 라벨 문자열 하나만 보내고, 서버는 현재 로그인 사용자 행만 갱신한다.
+    @PostMapping("country")
+    public ResponseEntity<?> updateCountry(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody Map<String, String> request
+    ) {
+        try {
+            memberService.updateCountry(
+                    userDetails.getLoginId(),
+                    request.get("memberCountry")
+            );
+
+            return ResponseEntity.ok(Map.of("message", "국가가 저장되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
 }

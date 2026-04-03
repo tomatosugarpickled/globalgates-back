@@ -317,6 +317,27 @@ public class MemberService {
         memberDAO.updateLanguage(member.getId(), normalizedLanguage);
     }
 
+    // setting의 국가 선택은 단일 라벨 문자열만 넘어오는 구조다.
+    // memberRegion은 주소용으로 이미 쓰고 있으므로 국가 저장은 member_country만 별도로 갱신한다.
+    @Transactional
+    @CachePut(value = "member", key = "#loginId")
+    public void updateCountry(String loginId, String memberCountry) {
+        MemberDTO member = memberDAO.findMemberByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        String normalizedCountry = memberCountry == null ? "" : memberCountry.trim();
+
+        if (normalizedCountry.isEmpty()) {
+            throw new IllegalArgumentException("국가를 선택하세요.");
+        }
+
+        if (normalizedCountry.equals(member.getMemberCountry())) {
+            return;
+        }
+
+        memberDAO.updateCountry(member.getId(), normalizedCountry);
+    }
+
     // 푸시 master on/off는 "전체 preset" 역할을 한다.
     // 따라서 master를 켜면 상세 push도 전부 true, 끄면 상세 push도 전부 false로 함께 맞춘다.
     // void 반환 메서드에서는 CachePut보다 CacheEvict가 안전하므로 다음 조회에서 최신 member를 다시 읽게 만든다.
