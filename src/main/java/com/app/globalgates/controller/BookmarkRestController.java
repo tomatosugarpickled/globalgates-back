@@ -42,10 +42,11 @@ public class BookmarkRestController implements BookmarkRestControllerDocs {
         return bookmarkService.getFolders(memberId);
     }
 
-    @LogStatus
+    @LogStatusWithReturn
     @PostMapping("/folders")
-    public void createFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO) {
+    public Map<String, Long> createFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO) {
         bookmarkService.createFolder(bookmarkFolderDTO);
+        return Map.of("id", bookmarkFolderDTO.getId());
     }
 
     @LogStatus
@@ -121,7 +122,7 @@ public class BookmarkRestController implements BookmarkRestControllerDocs {
     public ResponseEntity<?> handleDataIntegrity(DataIntegrityViolationException e) {
         log.error("데이터 무결성 위반: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("error", "이미 북마크된 게시물입니다."));
+                .body(Map.of("error", "이 폴더에 이미 북마크된 게시물입니다."));
     }
 
     private void applyPostFiles(List<BookmarkDTO> bookmarks) {

@@ -35,10 +35,11 @@ public class PostDTO {
     private int replyCount;
     private int bookmarkCount;
 
-    // 좋아요, 북마크, 신고 여부
+    // 좋아요, 북마크, 신고, 팔로우 여부
     private boolean isLiked;
     private boolean isBookmarked;
     private boolean isReported;
+    private boolean isFollowed;
 
     // 해시태그
     private List<PostHashtagDTO> hashtags = new ArrayList<>();

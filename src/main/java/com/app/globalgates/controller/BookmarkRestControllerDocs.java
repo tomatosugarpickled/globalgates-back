@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Bookmark", description = "Bookmark API")
 public interface BookmarkRestControllerDocs {
@@ -26,7 +27,7 @@ public interface BookmarkRestControllerDocs {
             description = "새 북마크 폴더를 생성한다.",
             parameters = {@Parameter(name = "bookmarkFolderDTO", description = "생성할 폴더 정보 (memberId, folderName)")}
     )
-    void createFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO);
+    Map<String, Long> createFolder(@RequestBody BookmarkFolderDTO bookmarkFolderDTO);
 
     @Operation(
             summary = "폴더 수정",

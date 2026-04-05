@@ -288,7 +288,9 @@
         toggleHiddenLayer(activeShareModal, false);
         activeShareModal = null;
         activeShareBookmarkButton = null;
-        activeShareBookmarkPostId = "";
+        if (!pendingShareBookmarkReopen) {
+            activeShareBookmarkPostId = "";
+        }
         if (shareChatSearchInput) {
             shareChatSearchInput.value = "";
         }
@@ -458,14 +460,13 @@
         if (!result.ok) return;
         const folders = result.data || [];
         let html = `<button type="button" class="bookmark-share-sheet-folder" data-share-folder-id="">
-            <span class="bookmark-share-sheet-folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.998 8.5c0-1.38 1.119-2.5 2.5-2.5h9c1.381 0 2.5 1.12 2.5 2.5v14.12l-7-3.5-7 3.5V8.5zM18.5 2H8.998v2H18.5c.275 0 .5.224.5.5V15l2 1.4V4.5c0-1.38-1.119-2.5-2.5-2.5z"/></svg></span>
+            <span class="bookmark-share-sheet-folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.75 3h10.5A2.25 2.25 0 0119.5 5.25v15.07a.75.75 0 01-1.2.6L12 16.2l-6.3 4.72a.75.75 0 01-1.2-.6V5.25A2.25 2.25 0 016.75 3z"/></svg></span>
             <span class="bookmark-share-sheet-folder-name">미분류</span>
         </button>`;
         folders.forEach((f) => {
             html += `<button type="button" class="bookmark-share-sheet-folder" data-share-folder-id="${f.id}">
-                <span class="bookmark-share-sheet-folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.998 8.5c0-1.38 1.119-2.5 2.5-2.5h9c1.381 0 2.5 1.12 2.5 2.5v14.12l-7-3.5-7 3.5V8.5zM18.5 2H8.998v2H18.5c.275 0 .5.224.5.5V15l2 1.4V4.5c0-1.38-1.119-2.5-2.5-2.5z"/></svg></span>
+                <span class="bookmark-share-sheet-folder-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.75 3h10.5A2.25 2.25 0 0119.5 5.25v15.07a.75.75 0 01-1.2.6L12 16.2l-6.3 4.72a.75.75 0 01-1.2-.6V5.25A2.25 2.25 0 016.75 3z"/></svg></span>
                 <span class="bookmark-share-sheet-folder-name">${escapeHtml(f.folderName)}</span>
-                <span class="bookmark-share-sheet-folder-count">${f.bookmarkCount || 0}</span>
             </button>`;
         });
         shareBookmarkFolderList.innerHTML = html;
@@ -821,14 +822,36 @@
         folderNameInput &&
         folderNameCount
     ) {
+        const folderNameError = document.getElementById("folderNameError");
+
+        async function checkDuplicateFolderName(name) {
+            const result = await BookmarkService.getFolders(memberId);
+            if (!result.ok) return false;
+            return (result.data || []).some(f => f.folderName === name);
+        }
+
+        function showFolderError(msg) {
+            if (!folderNameError) return;
+            folderNameError.textContent = msg;
+            folderNameError.hidden = false;
+        }
+
+        function hideFolderError() {
+            if (!folderNameError) return;
+            folderNameError.textContent = "";
+            folderNameError.hidden = true;
+        }
+
         function updateModalState() {
             const value = folderNameInput.value.trim();
             folderNameCount.textContent = `${folderNameInput.value.length} / 25`;
             modalSubmitButton.disabled = value.length === 0;
+            hideFolderError();
         }
 
         function resetModalForm() {
             folderNameInput.value = "";
+            hideFolderError();
             updateModalState();
         }
 
@@ -860,21 +883,35 @@
             const value = folderNameInput.value.trim();
             if (!value) return;
             modalSubmitButton.disabled = true;
+            const isDuplicate = await checkDuplicateFolderName(value);
+            if (isDuplicate) {
+                showFolderError("중복된 북마크 이름입니다");
+                modalSubmitButton.disabled = false;
+                return;
+            }
+            const shouldAddPost = pendingShareBookmarkReopen && activeShareBookmarkPostId;
+            const savedPostId = activeShareBookmarkPostId;
             const result = await BookmarkService.createFolder(memberId, value);
             if (result.ok) {
-                showToast(`${value} 폴더를 만들었습니다`);
+                const newFolderId = result.data?.id;
+                if (shouldAddPost && newFolderId) {
+                    const existing = await BookmarkService.getByMemberAndPost(memberId, Number(savedPostId));
+                    if (existing.ok && existing.data) {
+                        await BookmarkService.moveFolder(existing.data.id, newFolderId);
+                    } else {
+                        await BookmarkService.add(memberId, Number(savedPostId), newFolderId);
+                    }
+                    showToast(`${value} 폴더에 추가했습니다`);
+                } else {
+                    showToast(`${value} 폴더를 만들었습니다`);
+                }
                 await loadFolders();
             } else if (result.message) {
                 showToast(result.message);
             }
+            pendingShareBookmarkReopen = false;
+            activeShareBookmarkPostId = "";
             closeModal();
-            if (pendingShareBookmarkReopen && activeShareBookmarkPostId) {
-                pendingShareBookmarkReopen = false;
-                toggleHiddenLayer(shareBookmarkModal, true);
-                activeShareModal = shareBookmarkModal;
-                updateBodyScrollLock();
-                await loadShareBookmarkFolders();
-            }
         });
     }
 

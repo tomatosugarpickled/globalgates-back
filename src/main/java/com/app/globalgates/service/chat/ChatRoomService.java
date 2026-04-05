@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -91,18 +92,19 @@ public class ChatRoomService {
         chatRoomDAO.updateAlias(conversationId, memberId, alias);
     }
 
-//    뮤트 토글
+//    스크린샷 차단 토글
     @Transactional
-    public boolean toggleMute(Long conversationId, Long memberId) {
-        boolean current = chatRoomDAO.isMuted(conversationId, memberId);
+    @LogStatusWithReturn
+    public boolean toggleScreenBlock(Long conversationId, Long memberId) {
+        boolean current = chatRoomDAO.isScreenBlocked(conversationId, memberId);
         boolean next = !current;
-        chatRoomDAO.updateMuted(conversationId, memberId, next);
+        chatRoomDAO.updateScreenBlocked(conversationId, memberId, next);
         return next;
     }
 
-//    뮤트 상태 조회
-    public boolean isMuted(Long conversationId, Long memberId) {
-        return chatRoomDAO.isMuted(conversationId, memberId);
+//    스크린샷 차단 상태 조회
+    public boolean isScreenBlocked(Long conversationId, Long memberId) {
+        return chatRoomDAO.isScreenBlocked(conversationId, memberId);
     }
 
 //    대화방 soft delete
@@ -110,5 +112,18 @@ public class ChatRoomService {
     @LogStatus
     public void softDeleteConversation(Long conversationId, Long memberId) {
         chatRoomDAO.softDeleteConversation(conversationId, memberId);
+    }
+
+//    사라진 메시지 설정 변경
+    @Transactional
+    @LogStatusWithReturn
+    public String updateDisappearMessage(Long conversationId, Long memberId, String setting) {
+        chatRoomDAO.updateDisappearMessage(conversationId, memberId, setting);
+        return setting;
+    }
+
+//    사라진 메시지 설정 조회
+    public Map<String, Object> getDisappearMessage(Long conversationId, Long memberId) {
+        return chatRoomDAO.getDisappearMessage(conversationId, memberId);
     }
 }

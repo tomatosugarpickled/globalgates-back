@@ -17,7 +17,6 @@ const BookmarkLayout = (function () {
         return `<button class="bookmark-item" type="button" data-bookmark-folder="${escapeHtml(folder.folderName)}" data-folder-id="${folder.id}" aria-label="${escapeHtml(folder.folderName)} 북마크 열기">
             <span class="bookmark-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.75 3h10.5A2.25 2.25 0 0119.5 5.25v15.07a.75.75 0 01-1.2.6L12 16.2l-6.3 4.72a.75.75 0 01-1.2-.6V5.25A2.25 2.25 0 016.75 3z"/></svg></span>
             <span class="bookmark-item-label">${escapeHtml(folder.folderName)}</span>
-            <span class="bookmark-item-count">${folder.bookmarkCount || 0}</span>
             <span class="bookmark-item-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"/></svg></span>
         </button>`;
     }
@@ -41,9 +40,8 @@ const BookmarkLayout = (function () {
         const rawHandle = b.memberHandle || "";
         const handle = rawHandle.startsWith("@") ? escapeHtml(rawHandle) : (rawHandle ? escapeHtml("@" + rawHandle) : "");
         const avatarInitial = (b.memberNickname || b.memberHandle || "?").charAt(0);
-        const avatarHtml = b.memberProfileFileName
-            ? `<div class="bookmark-post-avatar bookmark-post-avatar--image"><img src="${escapeHtml(b.memberProfileFileName)}" alt="${nickname} 프로필 이미지"/></div>`
-            : `<div class="bookmark-post-avatar">${escapeHtml(avatarInitial)}</div>`;
+        const profileSrc = b.memberProfileFileName || "/images/profile/default_image.png";
+        const avatarHtml = `<div class="bookmark-post-avatar bookmark-post-avatar--image"><img src="${escapeHtml(profileSrc)}" alt="${nickname} 프로필 이미지"/></div>`;
         const likeCount = b.likeCount || 0;
         const replyCount = b.replyCount || 0;
         const bookmarkCount = b.bookmarkCount || 0;
