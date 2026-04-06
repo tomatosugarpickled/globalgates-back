@@ -192,6 +192,16 @@ const service = (() => {
         });
     };
 
+    const logout = async () => {
+        const response = await fetch("/api/auth/logout", {
+            method: "POST",
+        });
+
+        if (!response.ok) {
+            throw new Error("로그아웃 실패");
+        }
+    };
+
     return {
         getPostList: getPostList, getExpertList: getExpertList, getPost: getPost, writePost: writePost, updatePost: updatePost, deletePost: deletePost,
         addLike: addLike, deleteLike: deleteLike,
@@ -204,6 +214,7 @@ const service = (() => {
         getMyProducts: getMyProducts,
         getSuggestions: getSuggestions,
         getAds: getAds,
-        savePostTemp: savePostTemp, getPostTemps: getPostTemps, loadPostTemp: loadPostTemp, deletePostTemp: deletePostTemp, deletePostTemps: deletePostTemps
+        savePostTemp: savePostTemp, getPostTemps: getPostTemps, loadPostTemp: loadPostTemp, deletePostTemp: deletePostTemp, deletePostTemps: deletePostTemps,
+        logout: logout
     };
 })();

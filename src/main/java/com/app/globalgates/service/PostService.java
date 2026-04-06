@@ -186,6 +186,41 @@ public class PostService {
         return postWithPagingDTO;
     }
 
+    // 마이페이지 Replies 탭은 "내가 작성한 댓글"만 보여준다.
+    // Posts / Likes와 같은 PostWithPagingDTO를 재사용해서
+    // 카드 렌더링과 무한 페이징 구조를 그대로 가져간다.
+    @Cacheable(value="post:list", key="'reply:page:' + #page + ':memberId:' + #memberId")
+    public PostWithPagingDTO getMyReplies(int page, Long memberId) {
+        PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
+        Criteria criteria = new Criteria(page, postDAO.findReplyTotalByMemberId(memberId));
+
+        List<PostDTO> posts = postDAO.findRepliesWrittenByMemberId(criteria, memberId).stream()
+                .map(postDTO -> {
+                    List<PostFileDTO> files = new ArrayList<>(postFileDAO.findAllByPostId(postDTO.getId()));
+                    if (!files.isEmpty()) {
+                        postDTO.setPostFiles(files);
+                        postDTO.setFileUrls(
+                                files.stream()
+                                        .map(PostFileDTO::getFilePath)
+                                        .collect(Collectors.toList())
+                        );
+                    }
+                    postDTO.setHashtags(postHashtagDAO.findAllByPostId(postDTO.getId()));
+                    return postDTO;
+                }).collect(Collectors.toList());
+
+        criteria.setHasMore(posts.size() > criteria.getRowCount());
+        postWithPagingDTO.setCriteria(criteria);
+
+        if (criteria.isHasMore()) {
+            posts.remove(posts.size() - 1);
+        }
+
+        posts.forEach(post -> post.setCreatedDatetime(DateUtils.toRelativeTime(post.getCreatedDatetime())));
+        postWithPagingDTO.setPosts(posts);
+        return postWithPagingDTO;
+    }
+
     // 마이페이지 헤더의 "게시물 수"는 목록과 같은 기준으로 보여줘야 한다.
     // 즉 현재 로그인 사용자의 active 상태 일반 게시글 개수만 반환하고,
     // 댓글이나 상품 게시글은 기존 selectTotalByMemberId 쿼리 조건에 따라 제외한다.
