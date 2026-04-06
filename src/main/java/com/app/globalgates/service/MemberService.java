@@ -546,6 +546,12 @@ public class MemberService {
         return memberDAO.findMemberByLoginId(loginId).orElseThrow(MemberNotFoundException::new);
     }
 
+    // 마이페이지의 상대 프로필 조회는 로그인 식별값이 아니라 회원 id로 바로 조회한다.
+    // 1차는 화면 분기만 필요하므로 별도 DTO 가공 없이 기존 member 조회를 그대로 재사용한다.
+    public MemberDTO getMemberById(Long memberId) {
+        return memberDAO.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+    }
+
     // 검색 값에 따른 회원들 조회
     @Cacheable(value="member", key="'page:' + #page + ':keyword:' + #keyword + ':memberId:' + #memberId")
     @LogStatusWithReturn

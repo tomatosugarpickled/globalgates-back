@@ -6,6 +6,15 @@
     <title>마이페이지</title>
     <link rel="stylesheet" href="/css/mypage/mypage.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script th:inline="javascript">
+        // 목록 탭은 같은 UI를 쓰고 owner/visitor에 따라 API만 다르게 호출하면 되므로
+        // event.js에는 최소 컨텍스트인 owner 여부, 현재 로그인 id, 페이지 주인 id만 내려준다.
+        window.mypageContext = {
+            isOwner: [[${isOwner}]],
+            loginMemberId: [[${loginMemberId}]],
+            pageMemberId: [[${member.id}]]
+        };
+    </script>
     <script src="/js/mypage/service.js"></script>
     <script src="/js/mypage/layout.js"></script>
     <script src="/js/mypage/event.js"></script>
@@ -50,7 +59,45 @@
                         </div>
                     </div>
                     <div class="Profile-Edit-Wrap">
-                        <div class="off">
+                        <!-- 내 페이지면 프로필 수정만 보여주고,
+                             상대 페이지면 상대 프로필용 액션 버튼으로 교체한다. -->
+                        <th:block th:if="${isOwner}">
+                            <button type="button" class="Profile-Edit-Btn Edit">프로필 수정</button>
+                        </th:block>
+
+                        <th:block th:unless="${isOwner}">
+                            <!-- 상대 프로필의 Approve 버튼은 최초 렌더에서도 현재 팔로우 상태를 반영한다. -->
+                            <button
+                                    type="button"
+                                    class="Profile-Edit-Btn"
+                                    th:classappend="${isFollowing} ? ' Connected' : ' Connect'"
+                                    th:text="${isFollowing} ? 'Approved' : 'Approve'">
+                                Approve
+                            </button>
+
+                            <!-- 견적요청은 상대 회원이 expert일 때만 노출한다. -->
+                            <button
+                                    th:if="${member.memberRole != null and member.memberRole.name() == 'EXPERT'}"
+                                    type="button"
+                                    class="Profile-Edit-Btn Request"
+                                    title="견적요청">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" style="color: rgb(15, 20, 25);">
+                                    <g>
+                                        <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                                    </g>
+                                </svg>
+                            </button>
+
+                            <!-- 상대 페이지에서만 채팅 시작 진입점을 보여준다.
+                                 이번 단계에서는 동작을 연결하지 않고 버튼 모양만 먼저 맞춘다. -->
+                            <button type="button" class="Profile-Edit-Btn Chat" title="채팅">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" style="color: rgb(15, 20, 25);">
+                                    <g>
+                                        <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                                    </g>
+                                </svg>
+                            </button>
+
                             <button type="button" class="Profile-Edit-Btn More" title="더보기">
                                 <svg viewBox="0 0 24 24" aria-hidden="true" style="color: rgb(15, 20, 25);">
                                     <g>
@@ -58,34 +105,31 @@
                                     </g>
                                 </svg>
                             </button>
-                            <button type="button" class="Profile-Edit-Btn Request" title="견적요청">
-                                <svg viewBox="0 0 24 24" aria-hidden="true" style="color: rgb(15, 20, 25);">
-                                    <g>
-                                        <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
-                                    </g>
-                                </svg>
-                            </button>
-                            <button type="button" class="Profile-Edit-Btn Connect">Approve</button>
-                            <button type="button" class="Profile-Edit-Btn Connected">Approved</button>
-                        </div>
-                        <button type="button" class="Profile-Edit-Btn Edit">프로필 수정</button>
+                        </th:block>
                     </div>
                 </div>
                 <div class="Profile-Name-Block" data-testid="UserName">
                     <div class="Profile-Display-Name-Row">
                         <span class="Profile-Display-Name" th:text="${member.memberNickname ?: member.memberName ?: ''}"></span>
                         <div class="Profile-Display-Badge">
-                            <svg fill="#1d9bf0" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
+                            <!-- 뱃지는 페이지 주인의 role + subscription tier 기준으로 하나만 보여준다. -->
+                            <svg
+                                th:if="${member.memberRole != null and member.memberRole.name() == 'EXPERT'}"
+                                fill="#1d9bf0" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
                                 <g>
                                     <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
                                 </g>
                             </svg>
-                            <svg fill="#cac670" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
+                            <svg
+                                th:if="${(member.memberRole == null or member.memberRole.name() != 'EXPERT') and subscriptionTier == 'pro'}"
+                                fill="#cac670" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
                                 <g>
                                     <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
                                 </g>
                             </svg>
-                            <svg fill="purple" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
+                            <svg
+                                th:if="${(member.memberRole == null or member.memberRole.name() != 'EXPERT') and subscriptionTier == 'pro_plus'}"
+                                fill="purple" viewBox="0 0 22 22" aria-label="인증된 계정" role="img">
                                 <g>
                                     <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
                                 </g>
@@ -106,14 +150,14 @@
                 </div>
                 <div class="Profile-Follow-Row">
                     <a href="" class="Profile-Follow-Link">
-                        <!-- 현재 로그인한 사용자가 "연결하고 있는" 회원 수를 보여준다.
+                        <!-- 현재 보고 있는 페이지 주인이 "연결하고 있는" 회원 수를 보여준다.
                              서비스 로직은 기존 followings 개념을 그대로 유지하고,
                              화면 텍스트만 서비스 용어에 맞춰 커넥팅으로 바꿔서 렌더링한다. -->
                         <span class="Profile-Follow-Count" th:text="${connectingCount}">0</span>
                         <span class="Profile-Follow-Label">커넥팅</span>
                     </a>
                     <a href="" class="Profile-Follow-Link">
-                        <!-- 현재 로그인한 사용자를 "연결한" 회원 수를 보여준다.
+                        <!-- 현재 보고 있는 페이지 주인을 "연결한" 회원 수를 보여준다.
                              서비스 로직은 기존 followers 개념을 그대로 유지하고,
                              화면 텍스트만 커넥터로 바꿔서 출력한다. -->
                         <span class="Profile-Follow-Count" th:text="${connectorCount}">0</span>
@@ -144,12 +188,14 @@
                         <div class="Profile-Tab-Item MyProducts">
                             <div class="Profile-Tab-Item-Inner">
                                 <div class="Profile-Tab-Content-Row">
-                                    <span class="Profile-Tab-Text">내 상품</span>
+                                    <span class="Profile-Tab-Text" th:text="${isOwner} ? '내 상품' : '상품'">내 상품</span>
                                     <div class="Profile-Tab-Indicator off"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="Profile-Tab-Item Likes">
+                        <!-- 좋아요 탭은 현재 owner 전용 목록 API만 있으므로
+                             상대 페이지에서는 잘못된 데이터가 섞이지 않게 우선 숨긴다. -->
+                        <div th:if="${isOwner}" class="Profile-Tab-Item Likes">
                             <div class="Profile-Tab-Item-Inner">
                                 <div class="Profile-Tab-Content-Row">
                                     <span class="Profile-Tab-Text">좋아요</span>
@@ -178,7 +224,8 @@
             <div class="Profile-Content MyProducts off">
                 <div class="Profile-Content-Header">
                     <div class="Content-Header-Text">더 좋은 상품으로 다른 사업자분들과 연결되세요.</div>
-                    <button type="button" class="Content-Header-Button">상품 등록</button>
+                    <!-- 상품 등록은 owner 화면에서만 노출한다. -->
+                    <button th:if="${isOwner}" type="button" class="Content-Header-Button">상품 등록</button>
                 </div>
                 <!-- 내 상품은 더미 마크업을 두지 않고, layout.js가 실제 목록을 뿌린다. -->
                 <!-- 첫 페이지에 데이터가 없으면 layout.js가 "등록된 상품이 없습니다." 문구를 넣는다. -->
@@ -186,7 +233,7 @@
             </div>
 
             <!-- 좋아요 목록 -->
-            <div class="Profile-Content Likes off">
+            <div th:if="${isOwner}" class="Profile-Content Likes off">
                 <div class="Profile-Content-List">
                     <!-- Likes 탭도 더미 카드를 두지 않고 layout.js가 실제 목록을 뿌린다. -->
                     <!-- 첫 페이지에 데이터가 없으면 layout.js가 "좋아요한 게시글이 없습니다." 문구를 넣는다. -->
@@ -204,7 +251,7 @@
         <div class="Sidebar-Inner">
             <div class="Sidebar-Card">
                 <div class="Sidebar-Card-Header">
-                    <span class="Sidebar-Card-Title">내가 팔로우한 사업자들</span>
+                    <span class="Sidebar-Card-Title" th:text="${isOwner} ? '내가 팔로우한 사업자들' : '이 회원이 팔로우한 사업자들'">내가 팔로우한 사업자들</span>
                 </div>
                 <!-- 이 영역은 본문 탭처럼 동적 페이징되는 목록이 아니라, mypage 진입 시 즉시 보여줄 요약 카드다.
                      따라서 별도 JS/API를 추가하지 않고 서버에서 전달한 팔로잉 목록을 Thymeleaf로 바로 렌더링한다. -->
@@ -268,21 +315,24 @@
             </div>
             <div class="Sidebar-Card">
                 <div class="Sidebar-Card-Header">
-                    <span class="Sidebar-Card-Title">내 견적 요청 목록</span>
+                    <span class="Sidebar-Card-Title"
+                          th:text="${member.memberRole != null and member.memberRole.name() == 'EXPERT' ? '받은 견적 요청 목록' : '보낸 견적 요청 목록'}">
+                        견적 요청 목록
+                    </span>
                 </div>
-                <div class="Sidebar-Request-List">
-                    <div class="Request-Container">
-                        <a href="" style="text-decoration: none;">
-                            <div class="Request-Title">견척요청 신청 이름</div>
-                            <div class="Request-With">
-                                <span class="With-People">@회원 이름</span>
-                                <span class="With-People">@전문가 이름</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                <!-- expert / non-expert 모두 같은 카드 마크업을 쓰고,
+                     실제 목록 방향만 mypage API가 role 기준으로 분기한다. -->
+                <div class="Sidebar-Request-List" data-mypage-estimation-list></div>
                 <div class="Sidebar-Card-More">
-                    <a href="" class="Sidebar-Card-More-Link">더 보기</a>
+                    <a th:if="${member.memberRole != null and member.memberRole.name() == 'EXPERT'}"
+                       href="/estimation/list"
+                       class="Sidebar-Card-More-Link">더 보기</a>
+                    <button th:if="${member.memberRole == null or member.memberRole.name() != 'EXPERT'}"
+                            type="button"
+                            class="Sidebar-Card-More-Link"
+                            data-mypage-estimation-more>
+                        더 보기
+                    </button>
                 </div>
             </div>
         </div>
@@ -323,6 +373,14 @@
             <span class="Button-Icon"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path
                     d="M3 2h18.61l-3.5 7 3.5 7H5v6H3V2zm2 12h13.38l-2.5-5 2.5-5H5v10z"></path></g></svg></span>
             <span class="Button-Text">게시글 신고하기</span>
+        </button>
+    </div>
+</div>
+
+<div class="Post-More-Menu OwnerPost off">
+    <div class="More-Menu-Buttons">
+        <button type="button" class="Menu-Button DeleteOwnedPost" style="color:#f4212e;">
+            <span class="Button-Text" style="color:#f4212e;">게시물 삭제하기</span>
         </button>
     </div>
 </div>
