@@ -1,5 +1,7 @@
 package com.app.globalgates.service;
 
+import com.app.globalgates.aop.annotation.LogStatus;
+import com.app.globalgates.aop.annotation.LogStatusWithReturn;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class S3Service {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
+    @LogStatusWithReturn
     private String getFileName(MultipartFile file, String path) {
         String originalFileName = file.getOriginalFilename();
         String extension = null;
@@ -36,6 +39,7 @@ public class S3Service {
     }
 
     //    업로드
+    @LogStatusWithReturn
     public String uploadFile(MultipartFile file, String path) throws IOException {
         String fileName = getFileName(file, path);
 
@@ -52,6 +56,7 @@ public class S3Service {
     }
 
     //    파일 조회
+    @LogStatusWithReturn
     public String getPresignedUrl(String fileName, Duration validDuration) throws IOException {
 
 //        사용 예시
@@ -76,6 +81,7 @@ public class S3Service {
     }
 
     //    파일 다운로드
+    @LogStatusWithReturn
     public String getPresignedDownloadUrl(String fileName, String originalFileName, Duration validDuration) throws IOException {
         GetObjectRequest request =
                 GetObjectRequest.builder()
@@ -94,6 +100,7 @@ public class S3Service {
     }
 
     //    파일 삭제
+    @LogStatus
     public void deleteFile(String fileName) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)

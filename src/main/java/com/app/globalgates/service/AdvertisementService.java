@@ -16,6 +16,7 @@ import com.app.globalgates.repository.FileAdvertisementDAO;
 import com.app.globalgates.repository.FileDAO;
 import com.app.globalgates.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class AdvertisementService {
     // 광고 등록
     @Transactional
     @LogStatus
+    @CacheEvict(value = {"ad:list", "ad:detail"}, allEntries = true)
     public void save(AdvertisementDTO advertisementDTO) {
         advertisementDAO.save(advertisementDTO);
     }
@@ -44,6 +46,7 @@ public class AdvertisementService {
     // 광고 이미지 저장
     @Transactional
     @LogStatus
+    @CacheEvict(value = {"ad:list", "ad:detail"}, allEntries = true)
     public void saveFile(Long adId, MultipartFile image, String s3Key) {
         FileDTO fileDTO = new FileDTO();
         fileDTO.setOriginalName(image.getOriginalFilename());
@@ -125,6 +128,7 @@ public class AdvertisementService {
     // 광고 이미지 삭제
     @Transactional
     @LogStatus
+    @CacheEvict(value = {"ad:list", "ad:detail"}, allEntries = true)
     public void delete(Long id) {
         List<FileAdvertisementDTO> files = fileAdvertisementDAO.findByAdId(id);
 
@@ -134,27 +138,9 @@ public class AdvertisementService {
         advertisementDAO.delete(id);
     }
 
-
-    // toDTO
-    public AdvertisementDTO toDTO(AdvertisementVO adVO) {
-        AdvertisementDTO adDTO = new AdvertisementDTO();
-        adDTO.setId(adVO.getId());
-        adDTO.setAdvertiserId(adVO.getAdvertiserId());
-        adDTO.setTitle(adVO.getTitle());
-        adDTO.setHeadline(adVO.getHeadline());
-        adDTO.setDescription(adVO.getDescription());
-        adDTO.setLandingUrl(adVO.getLandingUrl());
-        adDTO.setBudget(adVO.getBudget());
-        adDTO.setImpressionEstimate(adVO.getImpressionEstimate());
-        adDTO.setReceiptId(adVO.getReceiptId());
-        adDTO.setStatus(adVO.getStatus());
-        adDTO.setCreatedDatetime(adVO.getCreatedDatetime());
-        adDTO.setUpdatedDatetime(adVO.getUpdatedDatetime());
-
-        return adDTO;
-    }
-
     // 피드용 광고목록
+    @Cacheable(value = "ad:list", key = "'main'")
+    @LogStatusWithReturn
     public List<AdvertisementDTO> getAdsInMain() {
         return advertisementDAO.findAll().stream()
                 .map(adDTO -> {
@@ -176,4 +162,22 @@ public class AdvertisementService {
         return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
 
+    // toDTO
+    public AdvertisementDTO toDTO(AdvertisementVO adVO) {
+        AdvertisementDTO adDTO = new AdvertisementDTO();
+        adDTO.setId(adVO.getId());
+        adDTO.setAdvertiserId(adVO.getAdvertiserId());
+        adDTO.setTitle(adVO.getTitle());
+        adDTO.setHeadline(adVO.getHeadline());
+        adDTO.setDescription(adVO.getDescription());
+        adDTO.setLandingUrl(adVO.getLandingUrl());
+        adDTO.setBudget(adVO.getBudget());
+        adDTO.setImpressionEstimate(adVO.getImpressionEstimate());
+        adDTO.setReceiptId(adVO.getReceiptId());
+        adDTO.setStatus(adVO.getStatus());
+        adDTO.setCreatedDatetime(adVO.getCreatedDatetime());
+        adDTO.setUpdatedDatetime(adVO.getUpdatedDatetime());
+
+        return adDTO;
+    }
 }

@@ -1,6 +1,7 @@
 package com.app.globalgates.service.video_chat;
 
 import com.app.globalgates.aop.annotation.LogStatus;
+import com.app.globalgates.aop.annotation.LogStatusWithReturn;
 import com.app.globalgates.common.enumeration.FileContentType;
 import com.app.globalgates.domain.FileRecodingVO;
 import com.app.globalgates.domain.video_chat.VideoChatVO;
@@ -32,6 +33,7 @@ public class VideoChatService {
     private final FileRecodingDAO fileRecodingDAO;
 
     @Transactional
+    @LogStatusWithReturn
     public VideoChatDTO getOrCreateSession(Long conversationId, Long callerId, Long receiverId) {
         Optional<VideoChatVO> optSession  =  videoChatDAO.findSession(conversationId);
         VideoChatVO session;
@@ -75,6 +77,7 @@ public class VideoChatService {
     }
 
     // 회의 id로 해당 회의의 녹음 파일 조회
+    @LogStatusWithReturn
     public FileRecodingDTO getRecodingFile(Long meetingId) {
         return fileRecodingDAO.findByMeetingId(meetingId);
     }
@@ -85,6 +88,7 @@ public class VideoChatService {
         videoChatDAO.updateSessionEnd(conversationId);
     }
 
+    // toDTO
     public VideoChatDTO toDTO (VideoChatVO videoChatVO) {
         return VideoChatDTO.builder()
                 .id(videoChatVO.getId())

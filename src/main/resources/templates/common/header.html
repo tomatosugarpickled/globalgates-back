@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/common/layout}"
+      layout:decorate="~{common/layout}"
       layout:fragment="header">
 <body>
-<aside class="sidebar-left" id="navigationSidebar">
+<aside th:fragment="header" class="sidebar-left" id="navigationSidebar">
     <div class="sidebar-inner">
         <!-- 브랜드 로고: 좌측 상단에서 서비스 아이덴티티를 고정적으로 노출한다. -->
         <div class="nav-logo">

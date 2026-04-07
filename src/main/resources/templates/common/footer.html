@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/common/layout}"
+      layout:decorate="~{common/layout}"
       layout:fragment="footer">
 <body>
-<aside class="trendSidebar" id="trendSidebar">
+<aside th:fragment="footer" class="trendSidebar" id="trendSidebar">
     <div class="trendPanel">
         <form class="searchForm" id="searchForm">
             <label class="searchField">

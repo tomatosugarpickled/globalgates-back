@@ -40,6 +40,11 @@ public class MeetingService {
         meetingDAO.update(meetingDTO.toVO());
     }
 
+    // 회의 삭제
+    public void delete(Long id) {
+        meetingDAO.delete(id);
+    }
+
     public MeetingDTO toDTO(MeetingVO meetingVO) {
         MeetingDTO meetingDTO = new MeetingDTO();
         meetingDTO.setId(meetingVO.getId());

@@ -27,4 +27,9 @@
         where id = #{id}
     </update>
 
+    <delete id="delete">
+        delete from tbl_meeting
+        where id = #{id}
+    </delete>
+
 </mapper>

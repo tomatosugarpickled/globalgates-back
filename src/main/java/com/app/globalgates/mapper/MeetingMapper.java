@@ -18,4 +18,7 @@ public interface MeetingMapper {
     // 회의 업데이트
     public void update(MeetingVO meetingVO);
 
+    // 회의 삭제
+    public void delete(Long id);
+
 }

@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/video-chat/**")
 @Slf4j
-public class VideoChatAPIController {
+public class VideoChatAPIController implements VideoChatAPIControllerDocs {
     private final ChatRoomService chatRoomService;
     private final VideoChatService videoChatService;
     private final MeetingService meetingService;
@@ -76,21 +76,29 @@ public class VideoChatAPIController {
     public ResponseEntity<?> uploadRecording(@RequestParam("file") MultipartFile file,
                                              @ModelAttribute MeetingDTO meetingDTO,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        meetingDTO.setRequesterId(userDetails.getId());
+        String url = null;
+
         try {
             // 회의 정보 등록
-            meetingDTO.setRequesterId(userDetails.getId());
             meetingService.save(meetingDTO);
 
-            // 녹음 파일 경로 생성
+            // 녹음 파일 경로 생성 및 등록
             String fileName = "recording/" + userDetails.getId() + "/"
                     + meetingDTO.getId() + "_" + System.currentTimeMillis() + ".webm";
+            url = s3Service.uploadFile(file, fileName);
 
-            // 녹음 파일 등록
-            String url = s3Service.uploadFile(file, fileName);
+            // 녹음 파일 정보 DB 저장
             videoChatService.saveRecodingFile(meetingDTO, file, url);
 
             return ResponseEntity.ok(Map.of("url", url));
         } catch (Exception e) {
+            if(url != null) {
+                s3Service.deleteFile(url);
+            }
+            if (meetingDTO.getId() != null) {
+                meetingService.delete(meetingDTO.getId());
+            }
             return ResponseEntity.internalServerError()
                     .body(Map.of("errorMessage", "업로드 실패: " + e.getMessage()));
         }

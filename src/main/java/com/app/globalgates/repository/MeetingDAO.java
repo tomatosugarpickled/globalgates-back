@@ -27,4 +27,9 @@ public class MeetingDAO {
     public void update(MeetingVO meetingVO) {
         meetingMapper.update(meetingVO);
     }
+
+    // 회의 삭제
+    public void delete(Long id) {
+        meetingMapper.delete(id);
+    }
 }
