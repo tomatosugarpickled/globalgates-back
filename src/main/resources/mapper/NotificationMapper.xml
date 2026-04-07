@@ -15,14 +15,15 @@
         n.created_datetime,
         m.member_name       as sender_name,
         m.member_handle     as sender_handle,
-        pf.file_path        as sender_profile_image,
-        p.post_content      as post_content
+        f.file_path          as sender_profile_image,
+        p.content            as post_content
     </sql>
 
     <sql id="notificationJoins">
         from tbl_notification n
         left join tbl_member m on n.sender_id = m.id
         left join tbl_member_profile_file pf on m.id = pf.member_id and pf.profile_image_type = 'profile'
+        left join tbl_file f on pf.id = f.id
         left join tbl_post p on n.target_id = p.id and n.target_type = 'post'
     </sql>
 

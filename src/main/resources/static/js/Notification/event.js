@@ -2542,104 +2542,105 @@ window.onload = function () {
         {passive: true},
     );
 
-    // 알림 탭 클릭 시 해당 탭을 활성화하고 알림 목록을 필터링한다
-    // data-notif-tab="all" → 모든 알림 표시
-    // data-notif-tab="mentions" → data-notif-type="mention" 인 알림만 표시
+    // 알림 탭 클릭 시 해당 탭을 활성화한다 (목록 렌더링은 service.js가 API로 처리)
     notifTabs.forEach((tab) => {
         tab.addEventListener("click", (e) => {
             e.preventDefault();
-            // 모든 탭의 활성 상태를 해제하고 클릭된 탭만 활성화
             notifTabs.forEach((t) => {
                 t.classList.remove("notif-tab--active");
                 t.setAttribute("aria-selected", "false");
             });
             tab.classList.add("notif-tab--active");
             tab.setAttribute("aria-selected", "true");
-
-            // 선택된 탭 이름에 따라 알림 목록 필터링
-            const filter = tab.dataset.notifTab; // "all" 또는 "mentions"
-            const notifItems = document.querySelectorAll(".notif-list > [data-notif-type]");
-            notifItems.forEach((item) => {
-                if (filter === "all") {
-                    // 전체 탭: 모든 알림 표시
-                    item.style.display = "";
-                } else if (filter === "mentions") {
-                    // 멘션 탭: data-notif-type="mention" 인 항목만 표시
-                    item.style.display = item.dataset.notifType === "mention" ? "" : "none";
-                }
-            });
         });
     });
 
-    // 좋아요 버튼 클릭 시 활성/비활성을 토글한다
-    document.querySelectorAll(".tweet-action-btn--like").forEach((button) => {
-        const path = button.querySelector("path"),
-            count = button.querySelector(".tweet-action-count");
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const isActive = button.classList.toggle("active");
-            if (!path || !count) return;
-            button.setAttribute("data-testid", isActive ? "unlike" : "like");
-            button.setAttribute(
-                "aria-label",
-                isActive ? "1 마음에 들어요" : "0 마음에 들어요",
-            );
-            path.setAttribute(
-                "d",
-                isActive ? path.dataset.pathActive : path.dataset.pathInactive,
-            );
-            count.textContent = isActive ? "1" : "";
-        });
-    });
-
-    // 북마크 버튼 클릭 시 활성/비활성을 토글한다
-    document
-        .querySelectorAll(".tweet-action-btn--bookmark")
-        .forEach((button) => {
+    // 동적 렌더링된 알림 항목에 이벤트를 바인딩하는 함수
+    // service.js에서 API 렌더링 완료 후 호출한다.
+    window.bindNotificationItemEvents = function () {
+        // 좋아요 버튼 클릭 시 활성/비활성을 토글한다
+        document.querySelectorAll(".tweet-action-btn--like").forEach((button) => {
+            if (button.dataset.bound) return;
+            button.dataset.bound = "true";
+            const path = button.querySelector("path"),
+                count = button.querySelector(".tweet-action-count");
             button.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setBookmarkButtonState(
-                    button,
-                    !button.classList.contains("active"),
+                const isActive = button.classList.toggle("active");
+                if (!path || !count) return;
+                button.setAttribute("data-testid", isActive ? "unlike" : "like");
+                button.setAttribute(
+                    "aria-label",
+                    isActive ? "1 마음에 들어요" : "0 마음에 들어요",
                 );
+                path.setAttribute(
+                    "d",
+                    isActive ? path.dataset.pathActive : path.dataset.pathInactive,
+                );
+                count.textContent = isActive ? "1" : "";
             });
         });
 
-    // 답글 버튼 클릭 시 답글 모달을 연다
-    document.querySelectorAll("[data-testid='reply']").forEach((button) => {
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeShareDropdown();
-            closeNotificationDropdown();
-            openReplyModal(button);
-        });
-    });
+        // 북마크 버튼 클릭 시 활성/비활성을 토글한다
+        document
+            .querySelectorAll(".tweet-action-btn--bookmark")
+            .forEach((button) => {
+                if (button.dataset.bound) return;
+                button.dataset.bound = "true";
+                button.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setBookmarkButtonState(
+                        button,
+                        !button.classList.contains("active"),
+                    );
+                });
+            });
 
-    // 더보기(캐럿) 버튼 클릭 시 드롭다운을 토글한다
-    document.querySelectorAll("[data-testid='caret']").forEach((button) => {
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            activeMoreButton === button
-                ? closeNotificationDropdown()
-                : openNotificationDropdown(button);
+        // 답글 버튼 클릭 시 답글 모달을 연다
+        document.querySelectorAll("[data-testid='reply']").forEach((button) => {
+            if (button.dataset.bound) return;
+            button.dataset.bound = "true";
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeShareDropdown();
+                closeNotificationDropdown();
+                openReplyModal(button);
+            });
         });
-    });
 
-    // 공유 버튼 클릭 시 공유 드롭다운을 토글한다
-    document.querySelectorAll(".tweet-action-btn--share").forEach((button) => {
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeNotificationDropdown();
-            activeShareButton === button
-                ? closeShareDropdown()
-                : openShareDropdown(button);
+        // 더보기(캐럿) 버튼 클릭 시 드롭다운을 토글한다
+        document.querySelectorAll("[data-testid='caret']").forEach((button) => {
+            if (button.dataset.bound) return;
+            button.dataset.bound = "true";
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                activeMoreButton === button
+                    ? closeNotificationDropdown()
+                    : openNotificationDropdown(button);
+            });
         });
-    });
+
+        // 공유 버튼 클릭 시 공유 드롭다운을 토글한다
+        document.querySelectorAll(".tweet-action-btn--share").forEach((button) => {
+            if (button.dataset.bound) return;
+            button.dataset.bound = "true";
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeNotificationDropdown();
+                activeShareButton === button
+                    ? closeShareDropdown()
+                    : openShareDropdown(button);
+            });
+        });
+    };
+
+    // 초기 정적 HTML 요소에도 바인딩
+    window.bindNotificationItemEvents();
 
     // 답글 모달 닫기 버튼 클릭 시 모달을 닫는다
     replyCloseButton?.addEventListener("click", closeReplyModal);
