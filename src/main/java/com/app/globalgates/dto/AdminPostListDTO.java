@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -22,4 +24,6 @@ public class AdminPostListDTO {
     private String categoryName;
     private Status postStatus;
     private String createdDatetime;
+    private List<PostFileDTO> postFiles;
+    private List<String> fileUrls;
 }

@@ -1,4 +1,4 @@
-window.onload = () => {
+﻿window.onload = () => {
     const tabButtons = Array.from(
         document.querySelectorAll("[data-inquiry-tab]"),
     );
@@ -21,7 +21,7 @@ window.onload = () => {
     let expertDashboard = null;
     let chartsLoaded = false;
 
-    // ===== 공통 유틸 =====
+    // 공통 유틸리티
     const getTextContent = (element) =>
         element?.textContent?.replace(/\s+/g, " ").trim() ?? "";
 
@@ -84,7 +84,7 @@ window.onload = () => {
         }
     };
 
-    // ===== 탭 표시 제어 =====
+    // 탭과 패널 표시 제어
     const ensureActivityPanelVisible = () => {
         panels.forEach((panel) => {
             panel.hidden = panel.dataset.inquiryPanel !== "activity";
@@ -94,7 +94,7 @@ window.onload = () => {
     const setActiveTabVisual = (tabName) => {
         tabButtons.forEach((tab) => {
             const isActive = tab.dataset.inquiryTab === tabName;
-            tab.classList.toggle("Inquiry-Tab--Active", isActive);
+    // 드롭다운 닫기 유틸리티
             tab.setAttribute("aria-selected", String(isActive));
         });
     };
@@ -108,7 +108,7 @@ window.onload = () => {
         }, PREVIEW_DURATION_MS);
     };
 
-    // ===== 열린 UI 닫기 헬퍼 =====
+    // ===== ?대┛ UI ?リ린 ?ы띁 =====
     const closeFilterMenu = () => {
         if (!filterTrigger || !filterMenu) {
             return;
@@ -118,7 +118,7 @@ window.onload = () => {
         filterTrigger.setAttribute("aria-expanded", "false");
     };
 
-    // ===== 초기 이벤트 바인딩 =====
+    // ===== 珥덇린 ?대깽??諛붿씤??=====
     const initializeTabs = () => {
         ensureActivityPanelVisible();
         tabButtons.forEach((tab) => {
@@ -169,14 +169,14 @@ window.onload = () => {
         });
     };
 
-    // 화면에 필요한 모든 상호작용을 한 번에 연결한다.
+    // ?붾㈃???꾩슂??紐⑤뱺 ?곹샇?묒슜????踰덉뿉 ?곌껐?쒕떎.
     initializeTabs();
     initializePeriodChips();
     initializeFilterDropdown();
 
-    // ─────────────────────────────────────────────────────
-    // 차트 파트 *******************************************
-    // ─────────────────────────────────────────────────────
+    // ?????????????????????????????????????????????????????
+    // 李⑦듃 ?뚰듃 *******************************************
+    // ?????????????????????????????????????????????????????
     google.charts.load("current", {
         packages: ["corechart", "geochart"],
         language: "ko",
@@ -189,7 +189,7 @@ window.onload = () => {
     /**
      * TODO: GET /api/expert/stats/profile-views?period={period}
      * @param {'7d'|'30d'|'6m'} period
-     * @returns {Array<[string, number]>}  [날짜/기간 라벨, 값]
+     * @returns {Array<[string, number]>}  [?좎쭨/湲곌컙 ?쇰꺼, 媛?
      */
 
     function fetchProfileViewData(period) {
@@ -217,7 +217,7 @@ window.onload = () => {
             });
         }
 
-        // 6m – 월별 집계
+        // 6m ???붾퀎 吏묎퀎
         return Array.from({length: 6}, (_, i) => {
             const d = new Date(now);
             d.setMonth(d.getMonth() - (5 - i));
@@ -269,7 +269,7 @@ window.onload = () => {
 
     /**
      * TODO: GET /api/expert/stats/connect-changes
-     * 팔로우(양수) / 언팔로우(음수) 주간 변동 데이터
+     * 팔로우(양수) / 언팔로우(음수) 주간 변화 데이터
      */
     function fetchConnectChangeData() {
         const labels = ["1월", "2월", "3월", "4월", "5월", "6월"];
@@ -289,7 +289,7 @@ window.onload = () => {
             ["카테고리", "건수"],
             ["전자/반도체", 148],
             ["화학/소재", 97],
-            ["식품/농산물", 83],
+            ["식품/특산물", 83],
             ["의류/섬유", 62],
             ["기계/설비", 55],
             ["기타", 43],
@@ -298,11 +298,11 @@ window.onload = () => {
 
     /**
      * TODO: GET /api/expert/stats/deal-countries
-     * 성사 계약 거래처 국가 분포
+     * ?깆궗 怨꾩빟 嫄곕옒泥?援?? 遺꾪룷
      */
     function fetchDealCountryData() {
         return [
-            ["Country", "거래 건수"],
+            ["Country", "嫄곕옒 嫄댁닔"],
             ["China", 210],
             ["United States", 175],
             ["Germany", 132],
@@ -316,7 +316,7 @@ window.onload = () => {
         ];
     }
 
-    /** Google Charts 전반에 걸쳐 공유하는 기본 폰트/색 설정 */
+    /** Google Charts ?꾨컲??嫄몄퀜 怨듭쑀?섎뒗 湲곕낯 ?고듃/???ㅼ젙 */
     function baseOptions() {
         return {
             fontName: "DM Sans",
@@ -347,12 +347,12 @@ window.onload = () => {
     }
 
     // =====================================================
-    // 4. 차트 렌더러
+    // 4. 李⑦듃 ?뚮뜑??
     // =====================================================
 
-    // ── 2층: 선 그래프 ──────────────────────────────────
+    // ?? 2痢? ??洹몃옒????????????????????????????????????
 
-    /** 현재 활성 지표와 기간을 추적하는 상태 */
+    /** ?꾩옱 ?쒖꽦 吏?쒖? 湲곌컙??異붿쟻?섎뒗 ?곹깭 */
     const lineChartState = {
         metric: "profileViewCount", // 'profileViewCount' | 'inquiryRequestCount'
         period: "7d", // '7d' | '30d' | '6m'
@@ -360,15 +360,15 @@ window.onload = () => {
 
     let lineChartInstance = null;
 
-    // 선 그래프 재 랜더링
+    // ??洹몃옒?????쒕뜑留?
     function drawLineChart() {
         const container = document.getElementById("chart-line");
         if (!container) return;
 
-        // 로딩 표시
+        // 濡쒕뵫 ?쒖떆
         container.classList.add("is-loading");
 
-        // 지표에 맞는 데이터 페치
+        // 지표에 맞는 데이터 선택
         const rawRows =
             lineChartState.metric === "profileViewCount"
                 ? fetchProfileViewData(lineChartState.period)
@@ -418,12 +418,12 @@ window.onload = () => {
         lineChartInstance.draw(data, options);
     }
 
-    // ── 3층 왼쪽: 막대 그래프 ───────────────────────────
+    // ?? 3痢??쇱そ: 留됰? 洹몃옒?????????????????????????????
 
     let barChartInstance = null;
 
     /**
-     * 커넥트 변동 추이 막대 그래프를 렌더링한다.
+     * 而ㅻ꽖??蹂??異붿씠 留됰? 洹몃옒?꾨? ?뚮뜑留곹븳??
      */
     function drawBarChart() {
         const container = document.getElementById("chart-bar");
@@ -434,7 +434,7 @@ window.onload = () => {
         const rawRows = fetchConnectChangeData();
 
         const data = new google.visualization.DataTable();
-        data.addColumn("string", "기간");
+        data.addColumn("string", "湲곌컙");
         data.addColumn("number", "Apporve");
         data.addColumn("number", "DIsapporve");
         data.addRows(rawRows);
@@ -473,12 +473,12 @@ window.onload = () => {
         barChartInstance.draw(data, options);
     }
 
-    // ── 3층 오른쪽: 도넛 그래프 ─────────────────────────
+    // ?? 3痢??ㅻⅨ履? ?꾨꽋 洹몃옒???????????????????????????
 
     let donutChartInstance = null;
 
     /**
-     * 거래 카테고리 분포 도넛 차트를 렌더링한다.
+     * 嫄곕옒 移댄뀒怨좊━ 遺꾪룷 ?꾨꽋 李⑦듃瑜??뚮뜑留곹븳??
      */
     function drawDonutChart() {
         const container = document.getElementById("chart-donut");
@@ -536,12 +536,12 @@ window.onload = () => {
         donutChartInstance.draw(data, options);
     }
 
-    // ── 4층: 지오 차트 ──────────────────────────────────
+    // ?? 4痢? 吏??李⑦듃 ??????????????????????????????????
 
     let geoChartInstance = null;
 
     /**
-     * 거래된 사업자 나라 분포 지오 차트를 렌더링한다.
+     * 嫄곕옒???ъ뾽???섎씪 遺꾪룷 吏??李⑦듃瑜??뚮뜑留곹븳??
      */
     function drawGeoChart() {
         const container = document.getElementById("chart-geo");
@@ -587,7 +587,7 @@ window.onload = () => {
     }
 
     // =====================================================
-    // 5. 리사이즈 대응
+    // 5. 由ъ궗?댁쫰 ???
     // =====================================================
     let resizeTimer = null;
     window.addEventListener("resize", () => {
@@ -601,7 +601,7 @@ window.onload = () => {
     });
 
     // =====================================================
-    // 6. 모든 차트 초기 렌더
+    // 6. 紐⑤뱺 李⑦듃 珥덇린 ?뚮뜑
     // =====================================================
     function initCharts() {
         drawLineChart();
@@ -611,12 +611,12 @@ window.onload = () => {
     }
 
     // =====================================================
-    // 7. UI 상호작용 초기화
-    //    [수정] window.addEventListener("DOMContentLoaded") 래퍼 제거
-    //           → window.onload 안에서 직접 실행되도록 변경
+    // 7. UI ?곹샇?묒슜 珥덇린??
+    //    [?섏젙] window.addEventListener("DOMContentLoaded") ?섑띁 ?쒓굅
+    //           ??window.onload ?덉뿉??吏곸젒 ?ㅽ뻾?섎룄濡?蹂寃?
     // =====================================================
 
-    // ── 2층: 지표 드롭다운 ───────────────────────────
+    // ?? 2痢? 吏???쒕∼?ㅼ슫 ???????????????????????????
     const dropbox = document.querySelector("[data-dropbox]");
     const dropTrigger = document.querySelector("[data-dropbox-trigger]");
     const dropMenu = document.querySelector("[data-dropbox-menu]");
@@ -643,23 +643,23 @@ window.onload = () => {
             const newMetric = option.dataset.metric;
             if (!newMetric) return;
 
-            // 선택 상태 업데이트
+            // ?좏깮 ?곹깭 ?낅뜲?댄듃
             dropOptions.forEach((o) => {
                 const isSelected = o === option;
                 o.setAttribute("aria-selected", String(isSelected));
             });
 
-            // 라벨 업데이트
+            // ?쇰꺼 ?낅뜲?댄듃
             if (dropLabel) dropLabel.textContent = option.textContent.trim();
 
-            // 차트 상태 업데이트 후 재렌더
+            // 李⑦듃 ?곹깭 ?낅뜲?댄듃 ???щ젋??
             lineChartState.metric = newMetric;
             closeDropbox();
             drawLineChart();
         });
     });
 
-    // ── 2층: 기간 필터 버튼 ──────────────────────────
+    // ?? 2痢? 湲곌컙 ?꾪꽣 踰꾪듉 ??????????????????????????
     const periodButtons = Array.from(
         document.querySelectorAll("[data-line-period]"),
     );
@@ -678,14 +678,14 @@ window.onload = () => {
         });
     });
 
-    // ── 전역 클릭: 드롭다운 닫기 ─────────────────────
+    // ?? ?꾩뿭 ?대┃: ?쒕∼?ㅼ슫 ?リ린 ?????????????????????
     document.addEventListener("click", (e) => {
         if (dropbox && !dropbox.contains(e.target)) {
             closeDropbox();
         }
     });
 
-    // ── ESC 키: 드롭다운 닫기 ────────────────────────
+    // ?? ESC ?? ?쒕∼?ㅼ슫 ?リ린 ????????????????????????
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeDropbox();
     });
@@ -713,7 +713,7 @@ window.onload = () => {
     }
 
     function fetchDealCategoryData() {
-        return [["카테고리", "건수"]].concat(
+        return [["移댄뀒怨좊━", "嫄댁닔"]].concat(
             (expertDashboard?.dealCategories ?? []).map((point) => [
                 point.label,
                 point.value ?? 0,
@@ -722,7 +722,7 @@ window.onload = () => {
     }
 
     function fetchDealCountryData() {
-        return [["Country", "거래 건수"]].concat(
+        return [["Country", "嫄곕옒 嫄댁닔"]].concat(
             (expertDashboard?.dealCountries ?? []).map((point) => [
                 point.label,
                 point.value ?? 0,

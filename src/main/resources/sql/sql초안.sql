@@ -126,7 +126,7 @@ create type oauth_provider as enum (
 'naver',
 'google'
 );
-create table tbl_oauth (
+create table https://youtu.be/WBFw4c6Pn7Q?si=makozSbMVsVpmBrgauth (
 id               bigint         generated always as identity primary key,
 provider_id varchar(255) unique not null,          -- 공급자 측 고유 사용자 식별자
 provider         oauth_provider not null,          -- oauth 공급자 (enum: kakao/facebook/naver)
@@ -523,6 +523,12 @@ next_billing_cycle varchar(255) default null,
 constraint fk_subscription_member foreign key(member_id)
 references tbl_member(id)
 );
+
+alter table tbl_subscription add column next_tier varchar(255) default null;
+alter table tbl_subscription add column next_billing_cycle varchar(255) default null;
+
+ALTER TABLE tbl_post ADD COLUMN IF NOT EXISTS product_id bigint;
+
 
 -- [44] tbl_payment  ─ 결제 내역
 -- 결제 처리 상태

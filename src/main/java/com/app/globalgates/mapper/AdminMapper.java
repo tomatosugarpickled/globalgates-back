@@ -39,4 +39,21 @@ public interface AdminMapper {
                                                 @Param("keyword") String keyword,
                                                 @Param("targetType") String targetType,
                                                 @Param("reportStatus") String reportStatus);
+
+    int updateMemberStatus(@Param("memberId") Long memberId,
+                           @Param("memberStatus") String memberStatus);
+
+    int updatePostStatus(@Param("postIds") List<Long> postIds,
+                         @Param("postStatus") String postStatus);
+
+    int updatePostContent(@Param("postId") Long postId,
+                          @Param("postContent") String postContent);
+
+    int updatePostCategory(@Param("postId") Long postId,
+                           @Param("categoryId") Long categoryId);
+
+    int updateReportStatus(@Param("reportIds") List<Long> reportIds,
+                           @Param("reportStatus") String reportStatus);
+
+    int deleteReports(@Param("reportIds") List<Long> reportIds);
 }

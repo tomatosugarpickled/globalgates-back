@@ -18,6 +18,7 @@ public class AdminMemberListDTO {
     private String memberName;
     private String memberEmail;
     private String companyName;
+    private String birthDate;
     private MemberRole memberRole;
     private Status memberStatus;
     private String createdDatetime;

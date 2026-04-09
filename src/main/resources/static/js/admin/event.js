@@ -43,6 +43,7 @@
 
     const memberTypeSelect = document.querySelector("#memberTypeSelect");
 
+    let currentMemberId = null;
     let postOriginal = {};
     let newsOriginal = {};
 
@@ -75,42 +76,61 @@
     };
 
     const memberRoleBadgeMap = {
-        business: { className: "badge-normal", text: "business" },
-        expert: { className: "badge-expert", text: "expert" },
-        admin: { className: "badge-proplus", text: "admin" }
+        business: { className: "badge-normal", text: "비즈니스" },
+        expert: { className: "badge-expert", text: "전문가" },
+        admin: { className: "badge-proplus", text: "관리자" }
     };
 
     const memberStatusBadgeMap = {
-        active: { className: "badge-active", text: "active" },
-        inactive: { className: "badge-reject", text: "inactive" },
-        banned: { className: "badge-reject", text: "banned" }
+        active: { className: "badge-active", text: "활성" },
+        inactive: { className: "badge-reject", text: "비활성" },
+        banned: { className: "badge-reject", text: "정지" }
     };
 
     const postTypeBadgeMap = {
-        product: { className: "badge-buy", text: "product" },
-        general: { className: "badge-qna", text: "general" }
+        product: { className: "badge-buy", text: "상품글" },
+        general: { className: "badge-qna", text: "일반글" }
     };
 
     const reportStatusBadgeMap = {
-        pending: { className: "badge-pending", text: "pending" },
-        applied: { className: "badge-done", text: "done" },
-        rejected: { className: "badge-reject", text: "rejected" }
+        pending: { className: "badge-pending", text: "대기" },
+        applied: { className: "badge-done", text: "승인" },
+        rejected: { className: "badge-reject", text: "반려" }
     };
 
-    const fetchJson = async (url) => {
-        const response = await fetch(url, {
+    const requestJson = async (url, options = {}) => {
+        const requestOptions = {
             method: "GET",
             headers: {
                 "Accept": "application/json"
-            }
-        });
+            },
+            credentials: "include",
+            ...options
+        };
+
+        if (requestOptions.body !== undefined && requestOptions.body !== null) {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                "Content-Type": "application/json"
+            };
+            requestOptions.body = JSON.stringify(requestOptions.body);
+        }
+
+        const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
             throw new Error(`Request failed: ${response.status}`);
         }
 
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+            return null;
+        }
+
         return response.json();
     };
+
+    const fetchJson = (url) => requestJson(url);
 
     const buildQuery = (params) => {
         const searchParams = new URLSearchParams();
@@ -155,47 +175,47 @@
     const setAdminFilterOptions = () => {
         setOptions(filterMemberGrade, [
             { value: "all", label: "등급 전체" },
-            { value: "business", label: "business" },
-            { value: "expert", label: "expert" },
-            { value: "admin", label: "admin" }
+            { value: "business", label: "비즈니스" },
+            { value: "expert", label: "전문가" },
+            { value: "admin", label: "관리자" }
         ]);
 
         setOptions(filterMemberStatus, [
             { value: "all", label: "상태 전체" },
-            { value: "active", label: "active" },
-            { value: "inactive", label: "inactive" },
-            { value: "banned", label: "banned" }
+            { value: "active", label: "활성" },
+            { value: "inactive", label: "비활성" },
+            { value: "banned", label: "정지" }
         ]);
 
         setOptions(filterPostType, [
             { value: "all", label: "글종류 전체" },
-            { value: "product", label: "product" },
-            { value: "general", label: "general" }
+            { value: "product", label: "상품글" },
+            { value: "general", label: "일반글" }
         ]);
 
         setOptions(filterReportMember, [
             { value: "all", label: "상태 전체" },
-            { value: "pending", label: "pending" },
-            { value: "applied", label: "done" },
-            { value: "rejected", label: "rejected" }
+            { value: "pending", label: "대기" },
+            { value: "applied", label: "승인" },
+            { value: "rejected", label: "반려" }
         ]);
 
         setOptions(filterReportPost, [
             { value: "all", label: "상태 전체" },
-            { value: "pending", label: "pending" },
-            { value: "applied", label: "done" },
-            { value: "rejected", label: "rejected" }
+            { value: "pending", label: "대기" },
+            { value: "applied", label: "승인" },
+            { value: "rejected", label: "반려" }
         ]);
 
         setOptions(document.querySelector("#statusSelect"), [
-            { value: "active", label: "active" },
-            { value: "inactive", label: "inactive" },
-            { value: "banned", label: "banned" }
+            { value: "active", label: "활성" },
+            { value: "inactive", label: "비활성" },
+            { value: "banned", label: "정지" }
         ]);
 
         setOptions(document.querySelector("#peType"), [
-            { value: "product", label: "product" },
-            { value: "general", label: "general" }
+            { value: "product", label: "상품글" },
+            { value: "general", label: "일반글" }
         ]);
     };
 
@@ -340,6 +360,12 @@
         return result;
     }
 
+    function getCheckedIds(tbody, datasetKey) {
+        return getCheckedRows(tbody)
+            .map((row) => Number(row.dataset[datasetKey]))
+            .filter((id) => Number.isFinite(id));
+    }
+
     const badgeToStatus = (badge) => {
         switch (badge) {
             case "badge-pending":
@@ -350,23 +376,6 @@
                 return "rejected";
         }
     };
-
-
-    const postDummyAttach = [
-        {
-            type: "image",
-            srcs: ["../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG"]
-        },
-        {type: "video", src: "../../static/video/Video-Project-2.mp4"},
-        {
-            type: "image",
-            srcs: ["../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG"]
-        },
-        {type: "none"},
-        {type: "image", srcs: ["../../static/images/admin/file-ex.PNG"]},
-        {type: "video", src: "../../static/video/Video-Project-2.mp4"},
-        {type: "image", srcs: ["../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG"]},
-    ];
 
     const aiNews = {
         title: "[속보] 코스피 8% 급락, 무역 시장 변동성 확대",
@@ -541,13 +550,14 @@
         if (!member) return;
 
         document.querySelector("#name").textContent = member.memberName || "-";
-        document.querySelector("#age").textContent = "-";
+        currentMemberId = memberId;
+        document.querySelector("#age").textContent = member.birthDate || "-";
         document.querySelector("#email").textContent = member.memberEmail || "-";
         document.querySelector("#phone").textContent = "-";
         document.querySelector("#company").textContent = member.companyName || "-";
         document.querySelector("#joinDate").textContent = member.createdDatetime || "-";
         document.querySelector("#statusSelect").value = member.memberStatus || "active";
-        memberTypeSelect.textContent = member.memberRole || "-";
+        memberTypeSelect.textContent = memberRoleBadgeMap[member.memberRole]?.text || member.memberRole || "-";
 
         modalMemberDetail.classList.remove("off");
     });
@@ -566,12 +576,22 @@
         }
     });
 
-    document.querySelector("#modalMemberSave").addEventListener("click", (e) => {
-        let result = confirm("수정한 내용을 저장하시겠습니까?");
+    document.querySelector("#modalMemberSave").addEventListener("click", async (e) => {
+        if (!currentMemberId) return;
+        const result = confirm("회원 상태를 저장하시겠습니까?");
 
-        if (result) {
-            alert("저장되었습니다.");
+        if (!result) return;
+
+        try {
+            await requestJson(`/api/admin/members/${currentMemberId}/status?memberStatus=${encodeURIComponent(document.querySelector("#statusSelect").value)}`, {
+                method: "PATCH"
+            });
+            await loadMembers();
+            alert("회원 상태가 저장되었습니다.");
             modalMemberDetail.classList.add("off");
+        } catch (error) {
+            console.error(error);
+            alert("회원 상태 저장 중 오류가 발생했습니다.");
         }
     });
 
@@ -587,34 +607,67 @@
         }
     });
 
-    document.querySelector("#postHideBtn").addEventListener("click", (e) => {
-        const checked = getCheckedRows(postTbody);
-        if (!checked.length) {
+    document.querySelector("#postHideBtn").addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(postTbody, "postId");
+        if (!checkedIds.length) {
             alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 게시물을 숨기시겠습니까?`)) return;
-        checked.forEach(tr => tr.classList.add("row-hidden"));
+        if (!confirm(`선택한 ${checkedIds.length}개의 게시물을 숨기시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/posts/status?postStatus=inactive", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadPosts();
+            alert("게시물이 숨김 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("게시물 숨김 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    document.querySelector("#postShowBtn").addEventListener("click", (e) => {
-        const checked = getCheckedRows(postTbody);
-        if (!checked.length) {
+    document.querySelector("#postShowBtn").addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(postTbody, "postId");
+        if (!checkedIds.length) {
             alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 게시물을 다시 표시하시겠습니까?`)) return;
-        checked.forEach(tr => tr.classList.remove("row-hidden"));
+        if (!confirm(`선택한 ${checkedIds.length}개의 게시물을 다시 표시하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/posts/status?postStatus=active", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadPosts();
+            alert("게시물이 공개 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("게시물 공개 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    document.querySelector("#postDeleteBtn").addEventListener("click", (e) => {
-        const checked = getCheckedRows(postTbody);
-        if (!checked.length) {
+    document.querySelector("#postDeleteBtn").addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(postTbody, "postId");
+        if (!checkedIds.length) {
             alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 게시물을 삭제하시겠습니까?`)) return;
-        checked.forEach(tr => tr.remove());
+        if (!confirm(`선택한 ${checkedIds.length}개의 게시물을 삭제 처리하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/posts", {
+                method: "DELETE",
+                body: checkedIds
+            });
+            await loadPosts();
+            alert("게시물이 삭제 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("게시물 삭제 처리 중 오류가 발생했습니다.");
+        }
     });
 
     const applyPostFilter = runAdminSearch(loadPosts);
@@ -657,39 +710,48 @@
         if (!post) return;
 
         document.querySelector("#peAuthor").textContent = post.authorName || "-";
-        document.querySelector("#peTitle").textContent = post.postTitle || "-";
-        document.querySelector("#peContent").textContent = post.postContent || "-";
+        document.querySelector("#peContent").value = post.postContent || "";
         document.querySelector("#peType").value = post.postType || "general";
         document.querySelector("#peCategory").value = post.categoryName || "기타";
         document.querySelector("#peDate").textContent = post.createdDatetime || "-";
+        document.querySelector("#peType").disabled = true;
+        document.querySelector("#peCategory").disabled = post.postType !== "product";
 
         postOriginal = {
+            id: postId,
+            content: document.querySelector("#peContent").value,
             type: document.querySelector("#peType").value,
             category: document.querySelector("#peCategory").value
         };
 
-        const rowIdx = state.posts.findIndex((item) => item.id === postId);
-        const attach = postDummyAttach[(rowIdx < 0 ? 0 : rowIdx) % postDummyAttach.length];
+        const files = Array.isArray(post.postFiles) ? post.postFiles : [];
         const postAttachImages = document.querySelector("#postAttachImages");
         const postAttachVideo = document.querySelector("#postAttachVideo");
         const postAttachNone = document.querySelector("#postAttachNone");
+        const postVideoThumb = document.querySelector("#postVideoThumb");
+        const videoViewerVideo = document.querySelector("#videoViewerVideo");
 
         postAttachImages.innerHTML = "";
         postAttachImages.classList.add("off");
         postAttachVideo.classList.add("off");
         postAttachNone.classList.add("off");
+        videoViewerVideo.src = "";
+        postVideoThumb.dataset.videoUrl = "";
 
-        if (attach.type === "image") {
-            attach.srcs.forEach((src) => {
+        const imageFiles = files.filter((file) => file.contentType === "image");
+        const videoFile = files.find((file) => file.contentType === "video");
+
+        if (imageFiles.length) {
+            imageFiles.forEach((file) => {
                 const img = document.createElement("img");
-                img.src = src;
+                img.src = file.filePath;
                 img.className = "report-attach-thumb";
                 img.alt = "첨부 이미지";
                 postAttachImages.appendChild(img);
             });
             postAttachImages.classList.remove("off");
-        } else if (attach.type === "video") {
-            document.querySelector("#videoViewerVideo").src = attach.src;
+        } else if (videoFile) {
+            postVideoThumb.dataset.videoUrl = videoFile.filePath;
             postAttachVideo.classList.remove("off");
         } else {
             postAttachNone.classList.remove("off");
@@ -713,22 +775,36 @@
         }
     });
 
-    document.querySelector("#modalPostSave").addEventListener("click", (e) => {
-        let result = confirm("수정한 내용을 저장하시겠습니까?");
+    document.querySelector("#modalPostSave").addEventListener("click", async (e) => {
+        if (!postOriginal.id) return;
+        const result = confirm("게시물 수정 내용을 저장하시겠습니까?");
 
-        if (result) {
-            alert("저장되었습니다.");
+        if (!result) return;
+
+        try {
+            await requestJson(`/api/admin/posts/${postOriginal.id}`, {
+                method: "PATCH",
+                body: {
+                    postContent: document.querySelector("#peContent").value.trim(),
+                    categoryName: document.querySelector("#peCategory").disabled ? null : document.querySelector("#peCategory").value
+                }
+            });
+            await loadPosts();
+            alert("게시물 정보가 저장되었습니다.");
             modalPostEdit.classList.add("off");
+        } catch (error) {
+            console.error(error);
+            alert("게시물 저장 중 오류가 발생했습니다.");
         }
     });
 
     const checkPostChanged = () => {
         const changed =
-            document.querySelector("#peType").value !== postOriginal.type ||
-            document.querySelector("#peCategory").value !== postOriginal.category;
+            document.querySelector("#peContent").value !== postOriginal.content ||
+            (!document.querySelector("#peCategory").disabled && document.querySelector("#peCategory").value !== postOriginal.category);
         document.querySelector("#modalPostSave").disabled = !changed;
     };
-    document.querySelector("#peType").addEventListener("change", checkPostChanged);
+    document.querySelector("#peContent").addEventListener("input", checkPostChanged);
     document.querySelector("#peCategory").addEventListener("change", checkPostChanged);
 
 
@@ -815,34 +891,67 @@
         });
     });
 
-    reportMemberDoneBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportMemberTbody);
-        if (!checked.length) {
+    reportMemberDoneBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportMemberTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 승인 처리하시겠습니까?`)) return;
-        alert("승인 처리되었습니다.");
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 승인 처리하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports/status?reportStatus=applied", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadReportMembers();
+            alert("회원 신고가 승인 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("회원 신고 승인 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    reportMemberRejectBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportMemberTbody);
-        if (!checked.length) {
+    reportMemberRejectBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportMemberTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 반려 처리하시겠습니까?`)) return;
-        alert("반려 처리되었습니다.");
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 반려 처리하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports/status?reportStatus=rejected", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadReportMembers();
+            alert("회원 신고가 반려 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("회원 신고 반려 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    reportMemberDeleteBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportMemberTbody);
-        if (!checked.length) {
+    reportMemberDeleteBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportMemberTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 삭제하시겠습니까?`)) return;
-        checked.forEach(tr => tr.remove());
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 삭제하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports", {
+                method: "DELETE",
+                body: checkedIds
+            });
+            await loadReportMembers();
+            alert("회원 신고가 삭제되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("회원 신고 삭제 중 오류가 발생했습니다.");
+        }
     });
 
     const applyReportMemberFilter = runAdminSearch(loadReportMembers);
@@ -860,34 +969,67 @@
         });
     });
 
-    reportPostDoneBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportPostTbody);
-        if (!checked.length) {
+    reportPostDoneBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportPostTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 승인 처리하시겠습니까?`)) return;
-        alert("승인 처리되었습니다.");
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 승인 처리하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports/status?reportStatus=applied", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadReportPosts();
+            alert("글 신고가 승인 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("글 신고 승인 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    reportPostRejectBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportPostTbody);
-        if (!checked.length) {
+    reportPostRejectBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportPostTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 반려 처리하시겠습니까?`)) return;
-        alert("반려 처리되었습니다.");
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 반려 처리하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports/status?reportStatus=rejected", {
+                method: "PATCH",
+                body: checkedIds
+            });
+            await loadReportPosts();
+            alert("글 신고가 반려 처리되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("글 신고 반려 처리 중 오류가 발생했습니다.");
+        }
     });
 
-    reportPostDeleteBtn.addEventListener("click", (e) => {
-        const checked = getCheckedRows(reportPostTbody);
-        if (!checked.length) {
+    reportPostDeleteBtn.addEventListener("click", async (e) => {
+        const checkedIds = getCheckedIds(reportPostTbody, "reportId");
+        if (!checkedIds.length) {
             alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`선택한 ${checked.length}개의 신고를 삭제하시겠습니까?`)) return;
-        checked.forEach(tr => tr.remove());
+        if (!confirm(`선택한 ${checkedIds.length}개의 신고를 삭제하시겠습니까?`)) return;
+
+        try {
+            await requestJson("/api/admin/reports", {
+                method: "DELETE",
+                body: checkedIds
+            });
+            await loadReportPosts();
+            alert("글 신고가 삭제되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("글 신고 삭제 중 오류가 발생했습니다.");
+        }
     });
 
     const applyReportPostFilter = runAdminSearch(loadReportPosts);
@@ -962,6 +1104,11 @@
     });
 
     document.querySelector("#postVideoThumb").addEventListener("click", (e) => {
+        const videoUrl = e.currentTarget.dataset.videoUrl;
+        if (!videoUrl) {
+            return;
+        }
+        document.querySelector("#videoViewerVideo").src = videoUrl;
         modalVideoViewer.classList.remove("off");
     });
 

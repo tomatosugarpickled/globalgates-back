@@ -1,5 +1,7 @@
 package com.app.globalgates.service;
 
+import com.app.globalgates.common.enumeration.ReportStatus;
+import com.app.globalgates.common.enumeration.Status;
 import com.app.globalgates.common.pagination.Criteria;
 import com.app.globalgates.dto.AdminMemberListDTO;
 import com.app.globalgates.dto.AdminMemberWithPagingDTO;
@@ -7,16 +9,29 @@ import com.app.globalgates.dto.AdminPostListDTO;
 import com.app.globalgates.dto.AdminPostWithPagingDTO;
 import com.app.globalgates.dto.AdminReportListDTO;
 import com.app.globalgates.dto.AdminReportWithPagingDTO;
+import com.app.globalgates.dto.PostFileDTO;
+import com.app.globalgates.repository.CategoryDAO;
 import com.app.globalgates.repository.AdminDAO;
+import com.app.globalgates.repository.PostFileDAO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
     private final AdminDAO adminDAO;
+    private final PostFileDAO postFileDAO;
+    private final CategoryDAO categoryDAO;
+    private final S3Service s3Service;
 
     public AdminMemberWithPagingDTO getAdminMembers(int page, String keyword, String memberRole, String memberStatus) {
         Criteria criteria = new Criteria(page, adminDAO.findAdminMemberTotal(keyword, memberRole, memberStatus));
@@ -36,6 +51,13 @@ public class AdminService {
     public AdminPostWithPagingDTO getAdminPosts(int page, String keyword, String postType, String categoryName, String postStatus) {
         Criteria criteria = new Criteria(page, adminDAO.findAdminPostTotal(keyword, postType, categoryName, postStatus));
         List<AdminPostListDTO> posts = adminDAO.findAdminPosts(criteria, keyword, postType, categoryName, postStatus);
+
+        posts.forEach(post -> {
+            List<PostFileDTO> files = new ArrayList<>(postFileDAO.findAllByPostId(post.getId()));
+            files.forEach(file -> file.setFilePath(toPresignedUrlOrOriginal(file.getFilePath())));
+            post.setPostFiles(files);
+            post.setFileUrls(files.stream().map(PostFileDTO::getFilePath).collect(Collectors.toList()));
+        });
 
         criteria.setHasMore(posts.size() > criteria.getRowCount());
         if (criteria.isHasMore()) {
@@ -61,5 +83,96 @@ public class AdminService {
         result.setReports(reports);
         result.setCriteria(criteria);
         return result;
+    }
+
+    @Transactional
+    public void updateMemberStatus(Long memberId, String memberStatus) {
+        Status status = Status.getStatus(memberStatus);
+        if (status == null) {
+            throw new IllegalArgumentException("유효하지 않은 회원 상태입니다.");
+        }
+        adminDAO.updateMemberStatus(memberId, status.getValue());
+    }
+
+    @Transactional
+    public void updatePostStatus(List<Long> postIds, String postStatus) {
+        Status status = Status.getStatus(postStatus);
+        if (status == null) {
+            throw new IllegalArgumentException("유효하지 않은 게시물 상태입니다.");
+        }
+
+        List<Long> filteredIds = filterIds(postIds);
+        if (filteredIds.isEmpty()) {
+            return;
+        }
+
+        adminDAO.updatePostStatus(filteredIds, status.getValue());
+    }
+
+    @Transactional
+    public void updatePost(Long postId, String postContent, String categoryName) {
+        adminDAO.updatePostContent(postId, postContent == null ? "" : postContent.trim());
+
+        if (categoryName != null && !categoryName.isBlank()) {
+            categoryDAO.findByCategoryName(categoryName.trim())
+                    .ifPresent(category -> adminDAO.updatePostCategory(postId, category.getId()));
+        }
+    }
+
+    @Transactional
+    public void deletePosts(List<Long> postIds) {
+        updatePostStatus(postIds, Status.INACTIVE.getValue());
+    }
+
+    @Transactional
+    public void updateReportStatus(List<Long> reportIds, String reportStatus) {
+        ReportStatus status = ReportStatus.getReportStatus(reportStatus);
+        if (status == null) {
+            throw new IllegalArgumentException("유효하지 않은 신고 상태입니다.");
+        }
+
+        List<Long> filteredIds = filterIds(reportIds);
+        if (filteredIds.isEmpty()) {
+            return;
+        }
+
+        adminDAO.updateReportStatus(filteredIds, status.getValue());
+    }
+
+    @Transactional
+    public void deleteReports(List<Long> reportIds) {
+        List<Long> filteredIds = filterIds(reportIds);
+        if (filteredIds.isEmpty()) {
+            return;
+        }
+
+        adminDAO.deleteReports(filteredIds);
+    }
+
+    private List<Long> filterIds(List<Long> ids) {
+        if (ids == null) {
+            return List.of();
+        }
+        return ids.stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+    }
+
+    private String toPresignedUrlOrOriginal(String filePath) {
+        if (filePath == null || filePath.isBlank()) {
+            return "";
+        }
+
+        if (filePath.startsWith("http://") || filePath.startsWith("https://") || filePath.startsWith("/")) {
+            return filePath;
+        }
+
+        try {
+            return s3Service.getPresignedUrl(filePath, Duration.ofMinutes(10));
+        } catch (Exception e) {
+            log.warn("admin presigned URL 생성 실패. 원본 경로를 그대로 사용합니다. filePath={}", filePath, e);
+            return filePath;
+        }
     }
 }

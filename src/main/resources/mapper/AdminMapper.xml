@@ -26,6 +26,7 @@
                m.member_name,
                m.member_email,
                bm.company_name,
+               m.birth_date,
                m.member_role,
                m.member_status,
                to_char(m.created_datetime, 'YYYY-MM-DD HH24:MI:SS') as created_datetime
@@ -183,4 +184,53 @@
         limit #{criteria.count}
         offset #{criteria.offset}
     </select>
+
+    <update id="updateMemberStatus">
+        update tbl_member
+        set member_status = #{memberStatus}::member_status,
+            updated_datetime = now()
+        where id = #{memberId}
+    </update>
+
+    <update id="updatePostStatus">
+        update tbl_post
+        set post_status = #{postStatus}::post_status,
+            updated_datetime = now()
+        where id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </update>
+
+    <update id="updatePostContent">
+        update tbl_post
+        set content = #{postContent},
+            updated_datetime = now()
+        where id = #{postId}
+    </update>
+
+    <update id="updatePostCategory">
+        update tbl_post_product
+        set product_category_id = #{categoryId},
+            updated_datetime = now()
+        where id = #{postId}
+    </update>
+
+    <update id="updateReportStatus">
+        update tbl_report
+        set status = #{reportStatus}::report_status,
+            updated_datetime = now()
+        where id in
+        <foreach item="reportId" collection="reportIds" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </update>
+
+    <delete id="deleteReports">
+        delete from tbl_report
+        where id in
+        <foreach item="reportId" collection="reportIds" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </delete>
 </mapper>

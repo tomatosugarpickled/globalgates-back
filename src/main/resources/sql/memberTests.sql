@@ -75,3 +75,33 @@ alter table tbl_post add post_read_count int default 0;
 -- 3. 같은 제목의 게시글이 이미 있으면 다시 넣지 않는다.
 -- 4. 기존 데이터는 수정하지 않고, 필요한 데이터만 append 한다.
 -- ============================================================
+
+
+
+select
+    id,
+    member_email,
+    member_phone,
+    member_name,
+    member_status,
+    member_login_verified
+from tbl_member
+order by id desc;
+
+
+insert into tbl_oauth (
+    provider_id,
+    provider,
+    profile_url,
+    member_id
+) values (
+             'kakao-restore-42',
+             'kakao',
+             null,
+             35
+         );
+
+
+
+
+
