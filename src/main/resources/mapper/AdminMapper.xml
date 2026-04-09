@@ -216,6 +216,133 @@
         where id = #{postId}
     </update>
 
+    <update id="clearEstimationProducts">
+        update tbl_estimation
+        set product_id = null,
+            updated_datetime = now()
+        where product_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </update>
+
+    <delete id="deletePostMentions">
+        delete from tbl_mention
+        where post_id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePostReports">
+        delete from tbl_report
+        where target_type = 'post'
+          and (
+            target_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+            or target_id in (
+                select id from tbl_post where reply_post_id in
+                <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+            )
+          )
+    </delete>
+
+    <delete id="deletePostBookmarks">
+        delete from tbl_bookmark
+        where post_id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePostFiles">
+        delete from tbl_post_file
+        where post_id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePostLikes">
+        delete from tbl_post_like
+        where post_id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePostHashtags">
+        delete from tbl_post_hashtag_rel
+        where post_id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePostProducts">
+        delete from tbl_post_product
+        where id in (
+            select id from tbl_post where reply_post_id in
+            <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        )
+        or id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteReplyPosts">
+        delete from tbl_post
+        where reply_post_id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePosts">
+        delete from tbl_post
+        where id in
+        <foreach item="postId" collection="postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+
     <update id="updateReportStatus">
         update tbl_report
         set status = #{reportStatus}::report_status,
@@ -224,6 +351,21 @@
         <foreach item="reportId" collection="reportIds" open="(" separator="," close=")">
             #{reportId}
         </foreach>
+    </update>
+
+    <update id="updateReportedPostStatusByReportIds">
+        update tbl_post
+        set post_status = #{postStatus}::post_status,
+            updated_datetime = now()
+        where id in (
+            select distinct r.target_id
+            from tbl_report r
+            where r.target_type = 'post'
+              and r.id in
+              <foreach item="reportId" collection="reportIds" open="(" separator="," close=")">
+                  #{reportId}
+              </foreach>
+        )
     </update>
 
     <delete id="deleteReports">

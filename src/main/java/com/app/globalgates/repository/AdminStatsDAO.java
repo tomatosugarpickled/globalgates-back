@@ -13,6 +13,9 @@ import java.util.List;
 public class AdminStatsDAO {
     private final AdminStatsMapper adminStatsMapper;
 
+    public Long findTotalMemberCount() { return adminStatsMapper.selectTotalMemberCount(); }
+    public Long findTotalPostCount() { return adminStatsMapper.selectTotalPostCount(); }
+    public Long findTotalReportCount() { return adminStatsMapper.selectTotalReportCount(); }
     public List<ChartPointDTO> findMemberJoinedDaily(LocalDateTime startAt, LocalDateTime endAt) { return adminStatsMapper.selectMemberJoinedDaily(startAt, endAt); }
     public List<ChartPointDTO> findMemberDroppedDaily(LocalDateTime startAt, LocalDateTime endAt) { return adminStatsMapper.selectMemberDroppedDaily(startAt, endAt); }
     public List<ChartPointDTO> findMemberJoinedMonthly(LocalDateTime startAt, LocalDateTime endAt) { return adminStatsMapper.selectMemberJoinedMonthly(startAt, endAt); }

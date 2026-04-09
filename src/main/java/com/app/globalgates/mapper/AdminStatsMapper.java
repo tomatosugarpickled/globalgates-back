@@ -9,6 +9,12 @@ import java.util.List;
 
 @Mapper
 public interface AdminStatsMapper {
+    Long selectTotalMemberCount();
+
+    Long selectTotalPostCount();
+
+    Long selectTotalReportCount();
+
     List<ChartPointDTO> selectMemberJoinedDaily(@Param("startAt") LocalDateTime startAt,
                                                 @Param("endAt") LocalDateTime endAt);
 

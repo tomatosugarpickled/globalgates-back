@@ -31,6 +31,9 @@ public class AdminStatsService {
 
     public AdminStatsDashboardDTO getDashboard() {
         AdminStatsDashboardDTO dashboardDTO = new AdminStatsDashboardDTO();
+        dashboardDTO.setTotalMemberCount(adminStatsDAO.findTotalMemberCount());
+        dashboardDTO.setTotalPostCount(adminStatsDAO.findTotalPostCount());
+        dashboardDTO.setTotalReportCount(adminStatsDAO.findTotalReportCount());
         dashboardDTO.setMemberTrend(buildDualPeriodMap(
                 adminStatsDAO.findMemberJoinedDaily(daysAgoStart(6), tomorrowStart()),
                 adminStatsDAO.findMemberDroppedDaily(daysAgoStart(6), tomorrowStart()),

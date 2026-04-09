@@ -1,0 +1,25 @@
+package com.app.globalgates.service;
+
+import com.app.globalgates.dto.NewsDTO;
+import com.app.globalgates.repository.AdminNewsDAO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class AdminNewsService {
+    private final AdminNewsDAO adminNewsDAO;
+
+    public List<NewsDTO> getAdminNews() {
+        return adminNewsDAO.findAll();
+    }
+
+    @Transactional
+    public void createAdminNews(NewsDTO newsDTO) {
+        adminNewsDAO.save(newsDTO);
+    }
+}

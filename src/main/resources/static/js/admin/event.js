@@ -80,6 +80,7 @@
 
     const state = {
         members: [],
+        news: [],
         posts: [],
         reportMembers: [],
         reportPosts: [],
@@ -91,6 +92,23 @@
         currentPostPage: 1,
         currentReportMemberPage: 1,
         currentReportPostPage: 1
+    };
+
+    const newsCategoryLabelMap = {
+        trade: "무역동향",
+        market: "수출입",
+        policy: "정책",
+        technology: "전자재료",
+        etc: "기타"
+    };
+
+    const newsCategoryValueMap = {
+        "무역동향": "trade",
+        "수출입": "market",
+        "정책": "policy",
+        "전자재료": "technology",
+        "경제": "etc",
+        "기타": "etc"
     };
 
     const memberRoleBadgeMap = {
@@ -276,9 +294,10 @@
             return;
         }
 
+        const rowOffset = ((state.currentMemberPage || 1) - 1) * 10;
         memberTbody.innerHTML = members.map((member, index) => `
             <div class="div-tr" data-member-id="${member.id}">
-                <div class="div-td">${index + 1}</div>
+                <div class="div-td">${rowOffset + index + 1}</div>
                 <div class="div-td">${escapeHtml(member.memberName)}</div>
                 <div class="div-td td-email">${escapeHtml(member.memberEmail)}</div>
                 <div class="div-td">${escapeHtml(member.companyName || "-")}</div>
@@ -295,14 +314,38 @@
             return;
         }
 
+        const rowOffset = ((state.currentPostPage || 1) - 1) * 10;
         postTbody.innerHTML = posts.map((post, index) => `
-            <div class="div-tr" data-post-id="${post.id}">
+            <div class="div-tr ${post.postStatus === "inactive" ? "row-hidden" : ""}" data-post-id="${post.id}">
                 <div class="div-td"><input type="checkbox"/></div>
-                <div class="div-td">${index + 1}</div>
+                <div class="div-td">${rowOffset + index + 1}</div>
                 <div class="div-td">${escapeHtml(post.authorName)}</div>
                 <div class="div-td">${getBadgeMarkup(post.postType, postTypeBadgeMap, "badge-qna")}</div>
                 <div class="div-td">${escapeHtml(post.categoryName || "-")}</div>
                 <div class="div-td">${escapeHtml(post.createdDatetime || "-")}</div>
+            </div>
+        `).join("");
+    };
+
+    const renderNews = (newsList) => {
+        if (!newsList.length) {
+            renderEmptyRow(newsTbody, 6);
+            return;
+        }
+
+        newsTbody.innerHTML = newsList.map((news, index) => `
+            <div class="div-tr" data-news-id="${news.id}"
+                 data-news-content="${escapeHtml(news.newsContent || "")}"
+                 data-news-source-url="${escapeHtml(news.newsSourceUrl || "")}"
+                 data-news-created-datetime="${escapeHtml(news.createdDatetime || "-")}">
+                <div class="div-td"><input type="checkbox"/></div>
+                <div class="div-td">${index + 1}</div>
+                <div class="div-td">${escapeHtml(news.newsSourceUrl || "-")}</div>
+                <div class="div-td">
+                    <div class="news-title">${escapeHtml(news.newsTitle)}</div>
+                </div>
+                <div class="div-td">${escapeHtml(newsCategoryLabelMap[news.newsCategory] || news.newsCategory || "-")}</div>
+                <div class="div-td">${escapeHtml(news.createdDatetime || "-")}</div>
             </div>
         `).join("");
     };
@@ -313,6 +356,8 @@
             return;
         }
 
+        const currentPage = targetType === "post" ? state.currentReportPostPage : state.currentReportMemberPage;
+        const rowOffset = ((currentPage || 1) - 1) * 10;
         tbody.innerHTML = reports.map((report, index) => {
             const targetCell = targetType === "post"
                 ? `<div class="report-post-title">${escapeHtml(report.targetName)}</div>`
@@ -321,7 +366,7 @@
             return `
                 <div class="div-tr" data-report-id="${report.id}" data-report-target-type="${targetType}">
                     <div class="div-td"><input type="checkbox"/></div>
-                    <div class="div-td">${index + 1}</div>
+                    <div class="div-td">${rowOffset + index + 1}</div>
                     <div class="div-td">${escapeHtml(report.reporterName)}</div>
                     <div class="div-td">${targetCell}</div>
                     <div class="div-td">${escapeHtml(report.reason)}</div>
@@ -373,6 +418,14 @@
             state.currentPostPage = page;
             runAdminSearch(loadPosts)();
         });
+    };
+
+    const loadNews = async () => {
+        const response = await fetchJson("/api/admin/news");
+        state.news = Array.isArray(response) ? response : [];
+        renderNews(state.news);
+        applyNewsFilter();
+        document.querySelector("#newsCheckAll").checked = false;
     };
 
     const loadReportMembers = async () => {
@@ -576,16 +629,16 @@
         if (!tr) return;
         const tds = tr.querySelectorAll(".div-td");
 
-        document.querySelector("#newsDetailTitle").value = tds[3].textContent;
-        document.querySelector("#newsDetailSource").value = tds[2].textContent;
-        document.querySelector("#newsDetailCategory").value = tds[4].textContent;
-        document.querySelector("#newsDetailContent").value = aiNews.summary;
+        document.querySelector("#newsDetailTitle").value = tds[3].textContent.trim();
+        document.querySelector("#newsDetailSource").value = tr.dataset.newsSourceUrl || "";
+        document.querySelector("#newsDetailCategory").value = tds[4].textContent.trim();
+        document.querySelector("#newsDetailContent").value = tr.dataset.newsContent || "";
 
         newsOriginal = {
             title: tds[3].textContent,
             source: tds[2].textContent,
             category: tds[4].textContent,
-            content: aiNews.summary
+            content: tr.dataset.newsContent || ""
         };
 
         document.querySelector("#modalNewsSave").disabled = true;
@@ -925,9 +978,11 @@
     });
 
 
-    newsSubmitBtn.addEventListener("click", (e) => {
+    newsSubmitBtn.addEventListener("click", async (e) => {
         const title = document.querySelector("#newsTitle").value.trim();
         const content = document.querySelector("#newsContent").value.trim();
+        const sourceUrl = document.querySelector("#newsSource").value.trim();
+        const category = document.querySelector("#newsCategory").value;
         if (!title || !content) {
             alert("제목과 내용을 입력해주세요.");
             return;
@@ -936,29 +991,25 @@
         let result = confirm("뉴스를 등록하시겠습니까?");
         if (!result) return;
 
-        // ═══ [n8n 연동용] 실제 DB 등록 fetch ═══
-        // 백엔드 NewsAPIController POST /api/news 엔드포인트 활성화 후 주석 해제
-        // const category = document.querySelector("#newsCategory").value;
-        // const sourceUrl = document.querySelector("#newsSource").value.trim();
-        //
-        // fetch("/api/news", {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({
-        //         newsTitle: title,
-        //         newsContent: content,
-        //         newsSourceUrl: sourceUrl,
-        //         newsCategory: category,
-        //         newsType: "general"   // 속보일 경우 "emergency"
-        //     })
-        // }).then(res => {
-        //     if (!res.ok) throw new Error("등록 실패");
-        //     alert("뉴스가 등록되었습니다.");
-        // }).catch(err => {
-        //     alert("뉴스 등록에 실패했습니다: " + err.message);
-        // });
-
-        alert("뉴스가 등록되었습니다.");
+        try {
+            await requestJson("/api/admin/news", {
+                method: "POST",
+                body: {
+                    adminId: null,
+                    newsTitle: title,
+                    newsContent: content,
+                    newsSourceUrl: sourceUrl,
+                    newsCategory: newsCategoryValueMap[category] || "etc",
+                    newsType: "general"
+                }
+            });
+            await loadNews();
+            alert("뉴스가 등록되었습니다.");
+        } catch (error) {
+            console.error(error);
+            alert("뉴스 등록 중 오류가 발생했습니다.");
+            return;
+        }
 
         document.querySelector("#newsUrl").value = "";
         document.querySelector("#newsTitle").value = "";
@@ -1353,6 +1404,7 @@
 
     setAdminFilterOptions();
     runAdminSearch(loadMembers)();
+    runAdminSearch(loadNews)();
     runAdminSearch(loadPosts)();
     runAdminSearch(loadReportMembers)();
     runAdminSearch(loadReportPosts)();
@@ -1734,6 +1786,15 @@
         }, null);
     };
 
+    const findLastPointValue = (points = [], secondary = false) => {
+        if (!points.length) {
+            return 0;
+        }
+
+        const target = points[points.length - 1];
+        return Number(secondary ? (target.secondaryValue ?? 0) : (target.value ?? 0));
+    };
+
     const formatHourLabel = (label) => {
         const hour = Number(label);
         if (!Number.isFinite(hour)) {
@@ -1749,23 +1810,26 @@
         if (!adminStatsDashboard) return;
 
         const memberTypes = adminStatsDashboard.memberTypes ?? [];
-        const memberTrendRows = adminStatsDashboard.memberTrend?.[trendPeriod] ?? [];
-        const hourlyRows = adminStatsDashboard.hourlyVisits?.[hourlyPeriod] ?? [];
-        const postMonthlyRows = adminStatsDashboard.postMonthly?.[postMonthlyPeriod] ?? [];
-        const postCategoryRows = adminStatsDashboard.postCategories?.[postCategoryPeriod] ?? [];
-        const reportMonthlyRows = adminStatsDashboard.reportMonthly?.[reportMonthlyPeriod] ?? [];
+        const memberTrendMonthlyRows = adminStatsDashboard.memberTrend?.["6m"] ?? [];
+        const hourlyRows = adminStatsDashboard.hourlyVisits?.["30d"] ?? [];
+        const postMonthlyRows = adminStatsDashboard.postMonthly?.["6m"] ?? [];
+        const postMonthlyThirtyRows = adminStatsDashboard.postMonthly?.["30d"] ?? [];
+        const postCategoryRows = adminStatsDashboard.postCategories?.["6m"] ?? [];
         const reportStatuses = adminStatsDashboard.reportStatuses ?? [];
         const reportMemberTypes = adminStatsDashboard.reportMemberTypes ?? [];
         const reportPostTypes = adminStatsDashboard.reportPostTypes ?? [];
 
+        const totalMembers = Number(adminStatsDashboard.totalMemberCount ?? sumPointValues(memberTypes));
+        const totalPosts = Number(adminStatsDashboard.totalPostCount ?? sumPointValues(postMonthlyRows));
+        const totalReports = Number(adminStatsDashboard.totalReportCount ?? sumPointValues(reportStatuses));
         const busiestHour = findTopPoint(hourlyRows);
         const topCategory = findTopPoint(postCategoryRows);
-        const totalPosts = sumPointValues(postMonthlyRows);
-        const dailyAverage = postMonthlyRows.length ? (totalPosts / postMonthlyRows.length) : 0;
+        const recentThirtyPosts = sumPointValues(postMonthlyThirtyRows);
+        const dailyAverage = recentThirtyPosts / 30;
 
-        document.querySelector("#statsMemberTotal").textContent = formatNumber(sumPointValues(memberTypes));
-        document.querySelector("#statsMemberJoined").textContent = formatNumber(sumPointValues(memberTrendRows));
-        document.querySelector("#statsMemberDropped").textContent = formatNumber(sumPointValues(memberTrendRows, true));
+        document.querySelector("#statsMemberTotal").textContent = formatNumber(totalMembers);
+        document.querySelector("#statsMemberJoined").textContent = formatNumber(findLastPointValue(memberTrendMonthlyRows));
+        document.querySelector("#statsMemberDropped").textContent = formatNumber(findLastPointValue(memberTrendMonthlyRows, true));
         document.querySelector("#statsMemberBusyHour").textContent = formatHourLabel(busiestHour?.label);
         document.querySelector("#statsMemberFree").textContent = formatNumber(findExactPointValue(memberTypes, ["free"]));
         document.querySelector("#statsMemberPro").textContent = formatNumber(findExactPointValue(memberTypes, ["pro"]));
@@ -1773,11 +1837,11 @@
         document.querySelector("#statsMemberExpert").textContent = formatNumber(findExactPointValue(memberTypes, ["expert"]));
 
         document.querySelector("#statsPostTotal").textContent = formatNumber(totalPosts);
-        document.querySelector("#statsPostMonthly").textContent = formatNumber(sumPointValues(adminStatsDashboard.postMonthly?.["30d"] ?? []));
+        document.querySelector("#statsPostMonthly").textContent = formatNumber(findLastPointValue(postMonthlyRows));
         document.querySelector("#statsPostDailyAverage").textContent = dailyAverage.toFixed(1);
         document.querySelector("#statsPostTopCategory").textContent = topCategory?.label || "-";
 
-        document.querySelector("#statsReportTotal").textContent = formatNumber(sumPointValues(reportMonthlyRows));
+        document.querySelector("#statsReportTotal").textContent = formatNumber(totalReports);
         document.querySelector("#statsReportMember").textContent = formatNumber(sumPointValues(reportMemberTypes));
         document.querySelector("#statsReportPost").textContent = formatNumber(sumPointValues(reportPostTypes));
         document.querySelector("#statsReportPending").textContent = formatNumber(findPointValue(reportStatuses, ["pending", "대기"]));

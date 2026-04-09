@@ -55,8 +55,52 @@ public class AdminDAO {
         adminMapper.updatePostCategory(postId, categoryId);
     }
 
+    public void clearEstimationProducts(List<Long> postIds) {
+        adminMapper.clearEstimationProducts(postIds);
+    }
+
+    public void deletePostMentions(List<Long> postIds) {
+        adminMapper.deletePostMentions(postIds);
+    }
+
+    public void deletePostReports(List<Long> postIds) {
+        adminMapper.deletePostReports(postIds);
+    }
+
+    public void deletePostBookmarks(List<Long> postIds) {
+        adminMapper.deletePostBookmarks(postIds);
+    }
+
+    public void deletePostFiles(List<Long> postIds) {
+        adminMapper.deletePostFiles(postIds);
+    }
+
+    public void deletePostLikes(List<Long> postIds) {
+        adminMapper.deletePostLikes(postIds);
+    }
+
+    public void deletePostHashtags(List<Long> postIds) {
+        adminMapper.deletePostHashtags(postIds);
+    }
+
+    public void deletePostProducts(List<Long> postIds) {
+        adminMapper.deletePostProducts(postIds);
+    }
+
+    public void deleteReplyPosts(List<Long> postIds) {
+        adminMapper.deleteReplyPosts(postIds);
+    }
+
+    public void deletePosts(List<Long> postIds) {
+        adminMapper.deletePosts(postIds);
+    }
+
     public void updateReportStatus(List<Long> reportIds, String reportStatus) {
         adminMapper.updateReportStatus(reportIds, reportStatus);
+    }
+
+    public void updateReportedPostStatusByReportIds(List<Long> reportIds, String postStatus) {
+        adminMapper.updateReportedPostStatusByReportIds(reportIds, postStatus);
     }
 
     public void deleteReports(List<Long> reportIds) {

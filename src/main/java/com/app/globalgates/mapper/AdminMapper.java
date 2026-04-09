@@ -52,8 +52,31 @@ public interface AdminMapper {
     int updatePostCategory(@Param("postId") Long postId,
                            @Param("categoryId") Long categoryId);
 
+    int clearEstimationProducts(@Param("postIds") List<Long> postIds);
+
+    int deletePostMentions(@Param("postIds") List<Long> postIds);
+
+    int deletePostReports(@Param("postIds") List<Long> postIds);
+
+    int deletePostBookmarks(@Param("postIds") List<Long> postIds);
+
+    int deletePostFiles(@Param("postIds") List<Long> postIds);
+
+    int deletePostLikes(@Param("postIds") List<Long> postIds);
+
+    int deletePostHashtags(@Param("postIds") List<Long> postIds);
+
+    int deletePostProducts(@Param("postIds") List<Long> postIds);
+
+    int deleteReplyPosts(@Param("postIds") List<Long> postIds);
+
+    int deletePosts(@Param("postIds") List<Long> postIds);
+
     int updateReportStatus(@Param("reportIds") List<Long> reportIds,
                            @Param("reportStatus") String reportStatus);
+
+    int updateReportedPostStatusByReportIds(@Param("reportIds") List<Long> reportIds,
+                                            @Param("postStatus") String postStatus);
 
     int deleteReports(@Param("reportIds") List<Long> reportIds);
 }

@@ -7,6 +7,9 @@ import java.util.Map;
 
 @Data
 public class AdminStatsDashboardDTO {
+    private Long totalMemberCount;
+    private Long totalPostCount;
+    private Long totalReportCount;
     private Map<String, List<ChartPointDTO>> memberTrend;
     private List<ChartPointDTO> memberTypes;
     private Map<String, List<ChartPointDTO>> hourlyVisits;

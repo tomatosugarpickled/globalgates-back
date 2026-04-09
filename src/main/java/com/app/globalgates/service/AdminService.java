@@ -121,7 +121,21 @@ public class AdminService {
 
     @Transactional
     public void deletePosts(List<Long> postIds) {
-        updatePostStatus(postIds, Status.INACTIVE.getValue());
+        List<Long> filteredIds = filterIds(postIds);
+        if (filteredIds.isEmpty()) {
+            return;
+        }
+
+        adminDAO.clearEstimationProducts(filteredIds);
+        adminDAO.deletePostMentions(filteredIds);
+        adminDAO.deletePostReports(filteredIds);
+        adminDAO.deletePostBookmarks(filteredIds);
+        adminDAO.deletePostFiles(filteredIds);
+        adminDAO.deletePostLikes(filteredIds);
+        adminDAO.deletePostHashtags(filteredIds);
+        adminDAO.deletePostProducts(filteredIds);
+        adminDAO.deleteReplyPosts(filteredIds);
+        adminDAO.deletePosts(filteredIds);
     }
 
     @Transactional
@@ -137,6 +151,12 @@ public class AdminService {
         }
 
         adminDAO.updateReportStatus(filteredIds, status.getValue());
+
+        if (status == ReportStatus.APPLIED) {
+            adminDAO.updateReportedPostStatusByReportIds(filteredIds, Status.INACTIVE.getValue());
+        } else if (status == ReportStatus.REJECTED) {
+            adminDAO.updateReportedPostStatusByReportIds(filteredIds, Status.ACTIVE.getValue());
+        }
     }
 
     @Transactional
