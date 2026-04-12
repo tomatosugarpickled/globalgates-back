@@ -135,7 +135,7 @@
     };
 
     const reportStatusBadgeMap = {
-        pending: { className: "badge-pending", text: "대기" },
+        pending: { className: "badge-pending", text: "심사중" },
         applied: { className: "badge-done", text: "승인" },
         rejected: { className: "badge-reject", text: "반려" }
     };
@@ -317,15 +317,15 @@
         ]);
 
         setOptions(filterReportMember, [
-            { value: "all", label: "상태 전체" },
-            { value: "pending", label: "대기" },
+            { value: "all", label: "전체" },
+            { value: "pending", label: "심사중" },
             { value: "applied", label: "승인" },
             { value: "rejected", label: "반려" }
         ]);
 
         setOptions(filterReportPost, [
-            { value: "all", label: "상태 전체" },
-            { value: "pending", label: "대기" },
+            { value: "all", label: "전체" },
+            { value: "pending", label: "심사중" },
             { value: "applied", label: "승인" },
             { value: "rejected", label: "반려" }
         ]);
@@ -918,8 +918,9 @@
         document.querySelector("#peType").value = post.postType || "general";
         document.querySelector("#peCategory").value = post.categoryName || "기타";
         document.querySelector("#peDate").textContent = post.createdDatetime || "-";
+        document.querySelector("#peContent").readOnly = true;
         document.querySelector("#peType").disabled = true;
-        document.querySelector("#peCategory").disabled = post.postType !== "product";
+        document.querySelector("#peCategory").disabled = true;
 
         postOriginal = {
             id: postId,
@@ -927,6 +928,7 @@
             type: document.querySelector("#peType").value,
             category: document.querySelector("#peCategory").value
         };
+        document.querySelector("#modalPostSave").disabled = true;
 
         const files = Array.isArray(post.postFiles) ? post.postFiles : [];
         const postAttachImages = document.querySelector("#postAttachImages");
@@ -1003,10 +1005,7 @@
     });
 
     const checkPostChanged = () => {
-        const changed =
-            document.querySelector("#peContent").value !== postOriginal.content ||
-            (!document.querySelector("#peCategory").disabled && document.querySelector("#peCategory").value !== postOriginal.category);
-        document.querySelector("#modalPostSave").disabled = !changed;
+        document.querySelector("#modalPostSave").disabled = true;
     };
     document.querySelector("#peContent").addEventListener("input", checkPostChanged);
     document.querySelector("#peCategory").addEventListener("change", checkPostChanged);

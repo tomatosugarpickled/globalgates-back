@@ -18,7 +18,7 @@ public class ReportStatusHandler implements TypeHandler<ReportStatus> {
     @Override
     public ReportStatus getResult(ResultSet rs, String columnName) throws SQLException {
         return switch (rs.getString(columnName)) {
-            case "pending" -> ReportStatus.APPLIED;
+            case "pending" -> ReportStatus.PENDING;
             case "applied" -> ReportStatus.APPLIED;
             case "rejected" -> ReportStatus.REJECTED;
             default -> null;
@@ -28,7 +28,7 @@ public class ReportStatusHandler implements TypeHandler<ReportStatus> {
     @Override
     public ReportStatus getResult(ResultSet rs, int columnIndex) throws SQLException {
         return switch (rs.getString(columnIndex)) {
-            case "pending" -> ReportStatus.APPLIED;
+            case "pending" -> ReportStatus.PENDING;
             case "applied" -> ReportStatus.APPLIED;
             case "rejected" -> ReportStatus.REJECTED;
             default -> null;
@@ -38,7 +38,7 @@ public class ReportStatusHandler implements TypeHandler<ReportStatus> {
     @Override
     public ReportStatus getResult(CallableStatement cs, int columnIndex) throws SQLException {
         return switch (cs.getString(columnIndex)) {
-            case "pending" -> ReportStatus.APPLIED;
+            case "pending" -> ReportStatus.PENDING;
             case "applied" -> ReportStatus.APPLIED;
             case "rejected" -> ReportStatus.REJECTED;
             default -> null;

@@ -340,6 +340,37 @@ button {
     color: #ffffff;
 }
 
+.activity-hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.activity-hashtag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border: 1px solid #cfe4f6;
+    border-radius: 999px;
+    background:
+        linear-gradient(180deg, rgba(29, 155, 240, 0.14) 0%, rgba(29, 155, 240, 0.06) 100%),
+        #ffffff;
+    color: #0f6fbf;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    box-shadow: 0 6px 16px rgba(15, 111, 191, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.activity-hashtag:hover {
+    transform: translateY(-1px);
+    border-color: #9ccbf0;
+    box-shadow: 0 10px 20px rgba(15, 111, 191, 0.12);
+}
+
 .activity-toolbar__caret {
     width: 8px;
     height: 8px;

@@ -487,13 +487,13 @@
         <!-- 회원 신고/5踰덊꺆 -->
         <div class="page" id="page-report-member">
             <div class="report-search-bar">
-                <label class="post-filter-check"><input type="checkbox" id="showPendingMemberOnly"/> 대기만 보기</label>
+                <label class="post-filter-check"><input type="checkbox" id="showPendingMemberOnly"/> 심사중만 보기</label>
                 <label class="post-filter-check"><input type="checkbox" id="showDoneMemberOnly"/> 승인만 보기</label>
                 <label class="post-filter-check"><input type="checkbox" id="showRejectedMemberOnly"/> 반려만 보기</label>
                 <select class="filter-select" id="filterReportMember">
                     <option value="all">전체</option>
-                    <option value="pending">대기</option>
-                    <option value="done">승인</option>
+                    <option value="pending">심사중</option>
+                    <option value="applied">승인</option>
                     <option value="rejected">반려</option>
                 </select>
                 <input class="search-input" type="text" placeholder="신고자 또는 신고대상 검색"/>
@@ -577,13 +577,13 @@
         <!-- 글 신고/6踰덊꺆 -->
         <div class="page" id="page-report-post">
             <div class="report-search-bar">
-                <label class="post-filter-check"><input type="checkbox" id="showPendingPostOnly"/> 대기만 보기</label>
+                <label class="post-filter-check"><input type="checkbox" id="showPendingPostOnly"/> 심사중만 보기</label>
                 <label class="post-filter-check"><input type="checkbox" id="showDonePostOnly"/> 승인만 보기</label>
                 <label class="post-filter-check"><input type="checkbox" id="showRejectedPostOnly"/> 반려만 보기</label>
                 <select class="filter-select" id="filterReportPost">
                     <option value="all">전체</option>
-                    <option value="pending">대기</option>
-                    <option value="done">승인</option>
+                    <option value="pending">심사중</option>
+                    <option value="applied">승인</option>
                     <option value="rejected">반려</option>
                 </select>
                 <input class="search-input" type="text" placeholder="신고자 검색"/>
@@ -802,7 +802,7 @@
                     <div class="stats-data-value" id="statsReportPost">0</div>
                 </div>
                 <div class="stats-data-card">
-                    <div class="stats-data-label">대기</div>
+                    <div class="stats-data-label">심사중</div>
                     <div class="stats-data-value" id="statsReportPending">0</div>
                 </div>
                 <div class="stats-data-card">
@@ -934,12 +934,12 @@
                 </div>
                 <div class="modal-field-row-top">
                     <div class="modal-field-label">내용</div>
-                    <textarea class="form-textarea" id="peContent" rows="6"></textarea>
+                    <textarea class="form-textarea" id="peContent" rows="6" readonly></textarea>
                 </div>
                 <div class="modal-field-row">
                     <div class="modal-field-label">글종류</div>
                     <div class="modal-field-value">
-                        <select class="status-select" id="peType">
+                        <select class="status-select" id="peType" disabled>
                             <option value="product">상품글</option>
                             <option value="general">일반글</option>
                         </select>
@@ -948,7 +948,7 @@
                 <div class="modal-field-row">
                     <div class="modal-field-label">상품종류</div>
                     <div class="modal-field-value">
-                        <select class="status-select" id="peCategory">
+                        <select class="status-select" id="peCategory" disabled>
                             <option>전자재료</option>
                             <option>원자재</option>
                             <option>특산물</option>

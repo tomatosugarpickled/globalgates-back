@@ -2759,8 +2759,8 @@ window.addEventListener("load", () => {
     const renderHashtags = (hashtags = []) => {
         if (!hashtags.length) return "";
         return `
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
-                ${hashtags.map((tag) => `<span class="period-chip">#${escapeHtml(tag.tagName)}</span>`).join("")}
+            <div class="activity-hashtags">
+                ${hashtags.map((tag) => `<span class="activity-hashtag">#${escapeHtml(tag.tagName)}</span>`).join("")}
             </div>
         `;
     };
