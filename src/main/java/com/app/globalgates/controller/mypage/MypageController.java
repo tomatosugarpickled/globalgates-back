@@ -13,6 +13,7 @@ import com.app.globalgates.service.SubscriptionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,9 @@ public class MypageController {
     private final FollowService followService;
     private final PostService postService;
     private final SubscriptionService subscriptionService;
+
+    @Value("${google.maps.api-key:}")
+    private String googleMapsApiKey;
 
     @GetMapping("/mypage")
     public String goToMypage(@RequestParam(required = false) Long memberId, HttpServletRequest request, Model model) {
@@ -67,7 +71,7 @@ public class MypageController {
 
         // 프로필/배너 파일이 없을 때도 화면이 깨지지 않도록 기본 이미지를 먼저 둔다.
         String profileImageUrl = "/images/profile/default_image.png";
-        String bannerImageUrl = "/images/profile/basic-banner.jpg";
+        String bannerImageUrl = "/images/profile/basic-banner.png";
 
         MemberProfileFileDTO profileFile = memberProfileFileDAO.findByMemberId(member.getId());
         MemberProfileFileDTO bannerFile = memberProfileFileDAO.findBannerByMemberId(member.getId());
@@ -126,11 +130,26 @@ public class MypageController {
             }
         });
 
+        // 견적요청 모달의 작성자 아바타에 쓰일 로그인 사용자 프로필 이미지.
+        // page 주인의 profileImageUrl과는 별개. 방문자(=작성자) 본인을 표시하기 위함이다.
+        String loginMemberProfileImageUrl = "/images/profile/default_image.png";
+        MemberProfileFileDTO loginProfileFile = memberProfileFileDAO.findByMemberId(loginMember.getId());
+        if (loginProfileFile != null) {
+            try {
+                loginMemberProfileImageUrl = s3Service.getPresignedUrl(
+                        loginProfileFile.getFileName(), Duration.ofMinutes(10));
+            } catch (Exception ignored) {
+                // 변환 실패 시 default_image.png 그대로 둠.
+            }
+        }
+
         // mypage 템플릿에서는 member + 이미지 url 모델을 같이 사용한다.
         model.addAttribute("member", member);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("loginMember", loginMember);
         model.addAttribute("loginMemberId", loginMember.getId());
+        model.addAttribute("loginMemberProfileImageUrl", loginMemberProfileImageUrl);
         model.addAttribute("subscriptionTier", subscriptionTier);
         model.addAttribute("profileImageUrl", profileImageUrl);
         model.addAttribute("bannerImageUrl", bannerImageUrl);
@@ -138,6 +157,7 @@ public class MypageController {
         model.addAttribute("connectorCount", connectorCount);
         model.addAttribute("myPostCount", myPostCount);
         model.addAttribute("myFollowings", myFollowings);
+        model.addAttribute("googleMapsApiKey", googleMapsApiKey);
         return "mypage/mypage";
     }
 }

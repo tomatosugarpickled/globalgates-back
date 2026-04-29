@@ -49,13 +49,6 @@ public class MypageAPIController implements MypageAPIControllerDocs {
     ) {
         PostProductWithPagingDTO result = postProductService.getMyProducts(page, userDetails.getId());
 
-        // 마이페이지 "내 상품" 탭도 main 피드와 같은 기준으로 이미지 URL을 내려줘야 한다.
-        // 현재 서비스/DB 계층은 파일 경로에 S3 raw key를 유지하고 있고,
-        // 기존 프런트는 그 값을 직접 S3 주소로 이어 붙여서 해석하려고 했다.
-        //
-        // 하지만 이 프로젝트의 다른 화면(main, 프로필 등)은
-        // "응답 직전에 presigned URL로 바꿔서 브라우저에 전달"하는 방식을 이미 사용한다.
-        // 따라서 mypage도 동일한 정책으로 맞추는 것이 가장 일관적이고 안전하다.
         result.getPosts().forEach(product -> {
             if (product.getPostFiles() == null || product.getPostFiles().isEmpty()) {
                 return;
@@ -114,6 +107,12 @@ public class MypageAPIController implements MypageAPIControllerDocs {
         // 이 변환은 저장 모델을 바꾸는 작업이 아니라, 화면 응답 전용 표현을 만드는 단계다.
         // 따라서 controller에서 처리하는 편이 현재 프로젝트 구조와 가장 잘 맞는다.
         result.getPosts().forEach(post -> {
+            if (post.getMemberProfileFileName() != null && !post.getMemberProfileFileName().isBlank()) {
+                post.setMemberProfileFileName(
+                        toPresignedUrlOrOriginal(post.getMemberProfileFileName())
+                );
+            }
+
             if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
                 return;
             }
@@ -136,6 +135,12 @@ public class MypageAPIController implements MypageAPIControllerDocs {
         PostWithPagingDTO result = postService.getMyPosts(page, memberId);
 
         result.getPosts().forEach(post -> {
+            if (post.getMemberProfileFileName() != null && !post.getMemberProfileFileName().isBlank()) {
+                post.setMemberProfileFileName(
+                        toPresignedUrlOrOriginal(post.getMemberProfileFileName())
+                );
+            }
+
             if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
                 return;
             }
@@ -162,6 +167,12 @@ public class MypageAPIController implements MypageAPIControllerDocs {
         // 댓글 목록도 게시글 카드와 같은 첨부파일 구조를 가지므로,
         // 브라우저가 직접 쓸 수 있도록 presigned URL로 가공해서 내려준다.
         result.getPosts().forEach(post -> {
+            if (post.getMemberProfileFileName() != null && !post.getMemberProfileFileName().isBlank()) {
+                post.setMemberProfileFileName(
+                        toPresignedUrlOrOriginal(post.getMemberProfileFileName())
+                );
+            }
+
             if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
                 return;
             }
@@ -185,6 +196,12 @@ public class MypageAPIController implements MypageAPIControllerDocs {
         PostWithPagingDTO result = postService.getMyReplies(page, memberId);
 
         result.getPosts().forEach(post -> {
+            if (post.getMemberProfileFileName() != null && !post.getMemberProfileFileName().isBlank()) {
+                post.setMemberProfileFileName(
+                        toPresignedUrlOrOriginal(post.getMemberProfileFileName())
+                );
+            }
+
             if (post.getPostFiles() == null || post.getPostFiles().isEmpty()) {
                 return;
             }
