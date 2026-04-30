@@ -485,8 +485,17 @@ window.addEventListener("load", function () {
         const panel = subPanel({
             panel: productSelectModal,
             onOpen: async () => {
+                // 견적 요청은 선택한 회원의 상품을 대상으로 한다.
+                if (!state.selectedMemberId) {
+                    estimationLayout.showProductList([]);
+                    state.productItems = [];
+                    const empty = document.getElementById("productSelectEmpty");
+                    if (empty) empty.textContent = "먼저 회원을 선택해 주세요";
+                    syncProductSelection();
+                    return;
+                }
                 try {
-                    const products = await estimationService.getProducts();
+                    const products = await estimationService.getProducts(state.selectedMemberId);
                     estimationLayout.showProductList(products);
                     state.productItems = Array.from(
                         productSelectList?.querySelectorAll(".productSelectModal__item") ?? []
